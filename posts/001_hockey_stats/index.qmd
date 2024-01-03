@@ -1,9 +1,8 @@
 ---
-title: "#001: hockey stats"
+title: "001: hockey stats"
 author: "Dan MacGuigan"
 date: "2024-01-03"
 categories: [code, analysis, sports, hockey]
-#image: "image.jpg"
 ---
 
 Today we're going to explore some sports data.
@@ -13,23 +12,4 @@ This got me thinking. Which year did the Flyers roster experience the most turno
 
 To answer this question, we will turn to [hockey-reference.com/](https://www.hockey-reference.com/).
 
-First, let's download a table of all Flyers players across the team's history. Rather than scraping the website, I manually accessed the data [here](https://www.hockey-reference.com/teams/PHI/skaters.html#stats)
-
-```{python}
-#| label: fig-polar
-#| fig-cap: "A line plot on a polar axis"
-
-import numpy as np
-import matplotlib.pyplot as plt
-
-r = np.arange(0, 2, 0.01)
-theta = 5 * np.pi * r
-fig, ax = plt.subplots(
-  subplot_kw = {'projection': 'polar'} 
-)
-ax.plot(theta, r)
-ax.set_rticks([0.5, 1, 1.5, 2])
-ax.grid(True)
-plt.show()
-```
-
+First, let's download a table of all Flyers players across the team's history. Rather than scraping the website, I manually accessed the data [here](https://www.hockey-reference.com/teams/PHI/skaters.html#stats).
