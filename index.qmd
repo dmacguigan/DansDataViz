@@ -1,5 +1,5 @@
 ---
-title: "Dans Data Viz"
+title: "Dan's Data Viz"
 listing:
   contents: posts
   sort: "date desc"
