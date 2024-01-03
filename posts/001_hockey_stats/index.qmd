@@ -13,7 +13,7 @@ This got me thinking. Which year did the Flyers roster experience the most turno
 
 To answer this question, we will turn to [hockey-reference.com/](https://www.hockey-reference.com/).
 
-First, let's download a table of all Flyers players across the team's history. Rather than scraping the website, I manually accessed the data [here](https://www.hockey-reference.com/teams/PHI/skaters.html#stats). I saved the CSV file in a data folder for this post.
+First, let's download a table of all Flyers players across the team's history. Rather than scraping the website, I manually accessed the data [here](https://www.hockey-reference.com/teams/PHI/skaters.html#stats)
 
 ```{python}
 #| label: fig-polar
