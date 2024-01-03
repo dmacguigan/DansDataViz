@@ -2,14 +2,208 @@
 title: "001: hockey stats"
 author: "Dan MacGuigan"
 date: "2024-01-03"
-categories: [code, analysis, sports, hockey]
+categories: [code, analysis, API, sports, hockey]
+
+css: styles.css
 ---
+
+
 
 Today we're going to explore some sports data.
 While watching my favorite hockey team this year (the Philadeplphia Flyers), I've felt like I barely know the players. There was a lot of turnover in the roster in the past couple of years. 
 
 This got me thinking. Which year did the Flyers roster experience the most turnover?
 
-To answer this question, we will turn to [hockey-reference.com/](https://www.hockey-reference.com/).
+To answer this question, we will turn to the NHL's own [stats database](https://www.nhl.com/stats/). Annoyingly, we can only download 50 records at a time using their nice web browser interface. So instead, we'll need to use an Application Programming Interface, or API.
 
-First, let's download a table of all Flyers players across the team's history. Rather than scraping the website, I manually accessed the data [here](https://www.hockey-reference.com/teams/PHI/skaters.html#stats).
+Fortunately, some folks have put together nice documentation [here](https://gitlab.com/dword4/nhlapi/-/blob/master/new-api.md) and [here](https://github.com/Zmalski/NHL-API-Reference?tab=readme-ov-file#get-team-roster-by-season) for the NHL API.
+
+To start, we'll use the `requests` and `json` Python libraries. Make sure you have them installed.
+
+Let's do a toy example where we pull the current NHL standings. I'm pulling heavily from [this tutorial](https://www.askpython.com/python/examples/pull-data-from-an-api).
+
+```{python}
+#| eval: false
+import requests
+import json
+test = requests.get('https://api-web.nhle.com/v1/standings/now') # pull data
+test_data = test.text # get just the data
+parse_json = json.loads(test_data) # parse the JSON data into a Python dictionary
+print(json.dumps(parse_json, indent=4)) # print the new dictionary object
+```
+
+:::{.scrolling}
+```{python}
+#| echo: false
+import requests
+import json
+test = requests.get('https://api-web.nhle.com/v1/standings/now') # pull data
+test_data = test.text # get just the data
+parse_json = json.loads(test_data) # parse the JSON data into a Python dictionary
+print(json.dumps(parse_json, indent=4)) # print the new dictionary object
+```
+:::
+
+
+Ok, this is cool! We can see all of the data is in the `standings` item. But it's difficult to scroll through the whole data structure.
+
+Let's see if we can figure out how many wins the New Jersey Devils have this year. We'll go step by step, but you could write most of this code as a single line.
+
+```{python}
+#| eval: false
+standings = parse_json['standings'] # get the standings 
+NJ = next(item for item in standings if item['teamName']['default'] == 'New Jersey Devils') # find the list item with teamName 'New Jersey Devils'
+NJ_wins = NJ['wins'] # find the wins item in the NJ Devils dictionary
+print("The New Jersey Devils have", NJ_wins, "wins") 
+```
+
+:::{.scrolling}
+```{python}
+#| echo: false
+standings = parse_json['standings'] # get the standings 
+NJ = next(item for item in standings if item['teamName']['default'] == 'New Jersey Devils') # find the list item with teamName 'New Jersey Devils'
+NJ_wins = NJ['wins'] # find the wins item in the NJ Devils dictionary
+print("The New Jersey Devils have", NJ_wins, "wins") 
+```
+:::
+
+Nice! So that's the basics of how to navigate these data structures in Python. Let's try something more involved.
+
+Let's pull the current roster for the New Jersey Devils
+
+```{python}
+#| eval: false
+roster = requests.get('https://api-web.nhle.com/v1/roster/NJD/current') # pull current roster
+roster_data = roster.text # get just the data
+roster_dict = json.loads(roster_data) # parse the JSON data into a Python dictionary
+print(json.dumps(roster_dict, indent=4)) # print the new dictionary object
+```
+
+:::{.scrolling}
+```{python}
+#| echo: false
+roster = requests.get('https://api-web.nhle.com/v1/roster/NJD/current') # pull current roster
+roster_data = roster.text # get just the data
+roster_dict = json.loads(roster_data) # parse the JSON data into a Python dictionary
+print(json.dumps(roster_dict, indent=4)) # print the new dictionary object
+```
+:::
+
+Pretty messy. How about we just identify the keys in the dictionary?
+
+```{python}
+#| eval: false
+roster_dict.keys()
+```
+
+:::{.scrolling}
+```{python}
+#| echo: false
+roster_dict.keys()
+```
+:::
+
+Nice, so now let's access the `forwards` element, then try to spit out the first player name.
+
+```{python}
+#| eval: false
+lastName = roster_dict['forwards'][0]['lastName']['default'] # access the 1st (0th) element of the forwards list, then get their last name
+firstName = roster_dict['forwards'][0]['firstName']['default'] # access the 1st (0th) element of the forwards list, then get their first name
+print("Let's meet our first NJ Devils forward: ", firstName, " ", lastName, "!", sep='') # sep='' prints the output without spaces between the elements 
+```
+
+:::{.scrolling}
+```{python}
+#| echo: false
+lastName = roster_dict['forwards'][0]['lastName']['default'] # access the 1st (0th) element of the forwards list, then get their last name
+firstName = roster_dict['forwards'][0]['firstName']['default'] # access the 1st (0th) element of the forwards list, then get their first name
+print("Let's meet our first NJ Devils forward: ", firstName, " ", lastName, "!", sep='') # sep='' prints the output without spaces between the elements 
+```
+:::
+
+Now let's try printing a list of all NJ Devils players on the current roster.
+```{python}
+#| eval: false
+print("Introducing the full NJ Devils lineup!")
+print("")
+print("FORWARDS:")
+for x in roster_dict['forwards']: # loop through all items in the roster_dict forwards list
+  print(x['firstName']['default'], x['lastName']['default'])
+print("")
+print("DEFENSEMEN:")
+for x in roster_dict['defensemen']: # loop through all items in the roster_dict defensemen list
+  print(x['firstName']['default'], x['lastName']['default'])
+print("")
+print("GOALIES:")
+for x in roster_dict['goalies']: # loop through all items in the roster_dict goalies list
+  print(x['firstName']['default'], x['lastName']['default'])
+```
+
+:::{.scrolling}
+```{python}
+#| echo: false
+print("Introducing the full NJ Devils lineup!")
+print("")
+print("FORWARDS:")
+for x in roster_dict['forwards']: # loop through all items in the roster_dict forwards list
+  print(x['firstName']['default'], x['lastName']['default'])
+print("")
+print("DEFENSEMEN:")
+for x in roster_dict['defensemen']: # loop through all items in the roster_dict defensemen list
+  print(x['firstName']['default'], x['lastName']['default'])
+print("")
+print("GOALIES:")
+for x in roster_dict['goalies']: # loop through all items in the roster_dict goalies list
+  print(x['firstName']['default'], x['lastName']['default'])
+```
+:::
+
+After a bit of digging [here](https://github.com/Zmalski/NHL-API-Reference?tab=readme-ov-file#get-team-roster-by-season), it looks like we can access historic team rosters in a similar manner.
+
+```{python}
+#| eval: false
+roster = requests.get('https://api-web.nhle.com/v1/roster/NJD/19931994') # pull roster for 1993-1994 season
+roster_data = roster.text # get just the data
+roster_dict = json.loads(roster_data) # parse the JSON data into a Python dictionary
+
+print("Introducing the 1993-1994 NJ Devils lineup!")
+print("")
+print("FORWARDS:")
+for x in roster_dict['forwards']: # loop through all items in the roster_dict forwards list
+  print(x['firstName']['default'], x['lastName']['default'])
+print("")
+print("DEFENSEMEN:")
+for x in roster_dict['defensemen']: # loop through all items in the roster_dict defensemen list
+  print(x['firstName']['default'], x['lastName']['default'])
+print("")
+print("GOALIES:")
+for x in roster_dict['goalies']: # loop through all items in the roster_dict goalies list
+  print(x['firstName']['default'], x['lastName']['default'])
+```
+
+:::{.scrolling}
+```{python}
+#| echo: false
+roster = requests.get('https://api-web.nhle.com/v1/roster/NJD/19931994') # pull roster for 1993-1994 season
+roster_data = roster.text # get just the data
+roster_dict = json.loads(roster_data) # parse the JSON data into a Python dictionary
+
+print("Introducing the 1993-1994 NJ Devils lineup!")
+print("")
+print("FORWARDS:")
+for x in roster_dict['forwards']: # loop through all items in the roster_dict forwards list
+  print(x['firstName']['default'], x['lastName']['default'])
+print("")
+print("DEFENSEMEN:")
+for x in roster_dict['defensemen']: # loop through all items in the roster_dict defensemen list
+  print(x['firstName']['default'], x['lastName']['default'])
+print("")
+print("GOALIES:")
+for x in roster_dict['goalies']: # loop through all items in the roster_dict goalies list
+  print(x['firstName']['default'], x['lastName']['default'])
+```
+:::
+
+Hey look! There's hall-of-famer Martin Brodeur in net for his rookie season!
+
+(Technically this isn't his first appearance for the Devils. He was called up for a few games in the 1991-1992 season. But it seems the NHL database doesn't consider that enough playing time to list him on the roster)

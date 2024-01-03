@@ -22,6 +22,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -64,6 +98,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 <link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-fixed fullcontent">
@@ -112,6 +147,7 @@ ul.task-list li input[type="checkbox"] {
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
                 <div class="quarto-category">analysis</div>
+                <div class="quarto-category">API</div>
                 <div class="quarto-category">sports</div>
                 <div class="quarto-category">hockey</div>
               </div>
@@ -151,8 +187,3746 @@ ul.task-list li input[type="checkbox"] {
 
 <p>Today we’re going to explore some sports data. While watching my favorite hockey team this year (the Philadeplphia Flyers), I’ve felt like I barely know the players. There was a lot of turnover in the roster in the past couple of years.</p>
 <p>This got me thinking. Which year did the Flyers roster experience the most turnover?</p>
-<p>To answer this question, we will turn to <a href="https://www.hockey-reference.com/">hockey-reference.com/</a>.</p>
-<p>First, let’s download a table of all Flyers players across the team’s history. Rather than scraping the website, I manually accessed the data <a href="https://www.hockey-reference.com/teams/PHI/skaters.html#stats">here</a>.</p>
+<p>To answer this question, we will turn to the NHL’s own <a href="https://www.nhl.com/stats/">stats database</a>. Annoyingly, we can only download 50 records at a time using their nice web browser interface. So instead, we’ll need to use an Application Programming Interface, or API.</p>
+<p>Fortunately, some folks have put together nice documentation <a href="https://gitlab.com/dword4/nhlapi/-/blob/master/new-api.md">here</a> and <a href="https://github.com/Zmalski/NHL-API-Reference?tab=readme-ov-file#get-team-roster-by-season">here</a> for the NHL API.</p>
+<p>To start, we’ll use the <code>requests</code> and <code>json</code> Python libraries. Make sure you have them installed.</p>
+<p>Let’s do a toy example where we pull the current NHL standings. I’m pulling heavily from <a href="https://www.askpython.com/python/examples/pull-data-from-an-api">this tutorial</a>.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>test <span class="op">=</span> requests.get(<span class="st">'https://api-web.nhle.com/v1/standings/now'</span>) <span class="co"># pull data</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>test_data <span class="op">=</span> test.text <span class="co"># get just the data</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>parse_json <span class="op">=</span> json.loads(test_data) <span class="co"># parse the JSON data into a Python dictionary</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(json.dumps(parse_json, indent<span class="op">=</span><span class="dv">4</span>)) <span class="co"># print the new dictionary object</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="scrolling">
+<div class="cell" data-execution_count="2">
+<div class="cell-output cell-output-stdout">
+<pre><code>{
+    "wildCardIndicator": false,
+    "standings": [
+        {
+            "conferenceAbbrev": "E",
+            "conferenceHomeSequence": 2,
+            "conferenceL10Sequence": 3,
+            "conferenceName": "Eastern",
+            "conferenceRoadSequence": 2,
+            "conferenceSequence": 1,
+            "date": "2024-01-03",
+            "divisionAbbrev": "A",
+            "divisionHomeSequence": 1,
+            "divisionL10Sequence": 1,
+            "divisionName": "Atlantic",
+            "divisionRoadSequence": 1,
+            "divisionSequence": 1,
+            "gameTypeId": 2,
+            "gamesPlayed": 36,
+            "goalDifferential": 26,
+            "goalDifferentialPctg": 0.722222,
+            "goalAgainst": 92,
+            "goalFor": 118,
+            "goalsForPctg": 3.277778,
+            "homeGamesPlayed": 16,
+            "homeGoalDifferential": 16,
+            "homeGoalsAgainst": 36,
+            "homeGoalsFor": 52,
+            "homeLosses": 2,
+            "homeOtLosses": 3,
+            "homePoints": 25,
+            "homeRegulationPlusOtWins": 10,
+            "homeRegulationWins": 9,
+            "homeTies": 0,
+            "homeWins": 11,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": 4,
+            "l10GoalsAgainst": 27,
+            "l10GoalsFor": 31,
+            "l10Losses": 2,
+            "l10OtLosses": 3,
+            "l10Points": 13,
+            "l10RegulationPlusOtWins": 4,
+            "l10RegulationWins": 4,
+            "l10Ties": 0,
+            "l10Wins": 5,
+            "leagueHomeSequence": 6,
+            "leagueL10Sequence": 9,
+            "leagueRoadSequence": 3,
+            "leagueSequence": 1,
+            "losses": 7,
+            "otLosses": 6,
+            "placeName": {
+                "default": "Boston"
+            },
+            "pointPctg": 0.722222,
+            "points": 52,
+            "regulationPlusOtWinPctg": 0.583333,
+            "regulationPlusOtWins": 21,
+            "regulationWinPctg": 0.527778,
+            "regulationWins": 19,
+            "roadGamesPlayed": 20,
+            "roadGoalDifferential": 10,
+            "roadGoalsAgainst": 56,
+            "roadGoalsFor": 66,
+            "roadLosses": 5,
+            "roadOtLosses": 3,
+            "roadPoints": 27,
+            "roadRegulationPlusOtWins": 11,
+            "roadRegulationWins": 10,
+            "roadTies": 0,
+            "roadWins": 12,
+            "seasonId": 20232024,
+            "shootoutLosses": 0,
+            "shootoutWins": 2,
+            "streakCode": "W",
+            "streakCount": 4,
+            "teamName": {
+                "default": "Boston Bruins",
+                "fr": "Bruins de Boston"
+            },
+            "teamCommonName": {
+                "default": "Bruins"
+            },
+            "teamAbbrev": {
+                "default": "BOS"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/BOS_light.svg",
+            "ties": 0,
+            "waiversSequence": 32,
+            "wildcardSequence": 0,
+            "winPctg": 0.638889,
+            "wins": 23
+        },
+        {
+            "conferenceAbbrev": "E",
+            "conferenceHomeSequence": 5,
+            "conferenceL10Sequence": 5,
+            "conferenceName": "Eastern",
+            "conferenceRoadSequence": 1,
+            "conferenceSequence": 2,
+            "date": "2024-01-03",
+            "divisionAbbrev": "M",
+            "divisionHomeSequence": 2,
+            "divisionL10Sequence": 3,
+            "divisionName": "Metropolitan",
+            "divisionRoadSequence": 1,
+            "divisionSequence": 1,
+            "gameTypeId": 2,
+            "gamesPlayed": 36,
+            "goalDifferential": 21,
+            "goalDifferentialPctg": 0.583333,
+            "goalAgainst": 101,
+            "goalFor": 122,
+            "goalsForPctg": 3.388889,
+            "homeGamesPlayed": 17,
+            "homeGoalDifferential": 8,
+            "homeGoalsAgainst": 52,
+            "homeGoalsFor": 60,
+            "homeLosses": 5,
+            "homeOtLosses": 0,
+            "homePoints": 24,
+            "homeRegulationPlusOtWins": 11,
+            "homeRegulationWins": 10,
+            "homeTies": 0,
+            "homeWins": 12,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": 6,
+            "l10GoalsAgainst": 30,
+            "l10GoalsFor": 36,
+            "l10Losses": 4,
+            "l10OtLosses": 0,
+            "l10Points": 12,
+            "l10RegulationPlusOtWins": 6,
+            "l10RegulationWins": 4,
+            "l10Ties": 0,
+            "l10Wins": 6,
+            "leagueHomeSequence": 10,
+            "leagueL10Sequence": 14,
+            "leagueRoadSequence": 2,
+            "leagueSequence": 2,
+            "losses": 10,
+            "otLosses": 1,
+            "placeName": {
+                "default": "NY Rangers"
+            },
+            "pointPctg": 0.708333,
+            "points": 51,
+            "regulationPlusOtWinPctg": 0.666667,
+            "regulationPlusOtWins": 24,
+            "regulationWinPctg": 0.555556,
+            "regulationWins": 20,
+            "roadGamesPlayed": 19,
+            "roadGoalDifferential": 13,
+            "roadGoalsAgainst": 49,
+            "roadGoalsFor": 62,
+            "roadLosses": 5,
+            "roadOtLosses": 1,
+            "roadPoints": 27,
+            "roadRegulationPlusOtWins": 13,
+            "roadRegulationWins": 10,
+            "roadTies": 0,
+            "roadWins": 13,
+            "seasonId": 20232024,
+            "shootoutLosses": 1,
+            "shootoutWins": 1,
+            "streakCode": "L",
+            "streakCount": 1,
+            "teamName": {
+                "default": "New York Rangers",
+                "fr": "Rangers de New York"
+            },
+            "teamCommonName": {
+                "default": "Rangers"
+            },
+            "teamAbbrev": {
+                "default": "NYR"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/NYR_light.svg",
+            "ties": 0,
+            "waiversSequence": 31,
+            "wildcardSequence": 0,
+            "winPctg": 0.694444,
+            "wins": 25
+        },
+        {
+            "conferenceAbbrev": "W",
+            "conferenceHomeSequence": 2,
+            "conferenceL10Sequence": 2,
+            "conferenceName": "Western",
+            "conferenceRoadSequence": 4,
+            "conferenceSequence": 1,
+            "date": "2024-01-03",
+            "divisionAbbrev": "P",
+            "divisionHomeSequence": 1,
+            "divisionL10Sequence": 1,
+            "divisionName": "Pacific",
+            "divisionRoadSequence": 2,
+            "divisionSequence": 1,
+            "gameTypeId": 2,
+            "gamesPlayed": 37,
+            "goalDifferential": 46,
+            "goalDifferentialPctg": 1.243243,
+            "goalAgainst": 96,
+            "goalFor": 142,
+            "goalsForPctg": 3.837838,
+            "homeGamesPlayed": 19,
+            "homeGoalDifferential": 33,
+            "homeGoalsAgainst": 43,
+            "homeGoalsFor": 76,
+            "homeLosses": 4,
+            "homeOtLosses": 1,
+            "homePoints": 29,
+            "homeRegulationPlusOtWins": 14,
+            "homeRegulationWins": 13,
+            "homeTies": 0,
+            "homeWins": 14,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": 13,
+            "l10GoalsAgainst": 26,
+            "l10GoalsFor": 39,
+            "l10Losses": 1,
+            "l10OtLosses": 2,
+            "l10Points": 16,
+            "l10RegulationPlusOtWins": 7,
+            "l10RegulationWins": 7,
+            "l10Ties": 0,
+            "l10Wins": 7,
+            "leagueHomeSequence": 2,
+            "leagueL10Sequence": 2,
+            "leagueRoadSequence": 11,
+            "leagueSequence": 3,
+            "losses": 10,
+            "otLosses": 3,
+            "placeName": {
+                "default": "Vancouver"
+            },
+            "pointPctg": 0.689189,
+            "points": 51,
+            "regulationPlusOtWinPctg": 0.648649,
+            "regulationPlusOtWins": 24,
+            "regulationWinPctg": 0.621622,
+            "regulationWins": 23,
+            "roadGamesPlayed": 18,
+            "roadGoalDifferential": 13,
+            "roadGoalsAgainst": 53,
+            "roadGoalsFor": 66,
+            "roadLosses": 6,
+            "roadOtLosses": 2,
+            "roadPoints": 22,
+            "roadRegulationPlusOtWins": 10,
+            "roadRegulationWins": 10,
+            "roadTies": 0,
+            "roadWins": 10,
+            "seasonId": 20232024,
+            "shootoutLosses": 1,
+            "shootoutWins": 0,
+            "streakCode": "W",
+            "streakCount": 1,
+            "teamName": {
+                "default": "Vancouver Canucks",
+                "fr": "Canucks de Vancouver"
+            },
+            "teamCommonName": {
+                "default": "Canucks"
+            },
+            "teamAbbrev": {
+                "default": "VAN"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/VAN_light.svg",
+            "ties": 0,
+            "waiversSequence": 29,
+            "wildcardSequence": 0,
+            "winPctg": 0.648649,
+            "wins": 24
+        },
+        {
+            "conferenceAbbrev": "W",
+            "conferenceHomeSequence": 1,
+            "conferenceL10Sequence": 4,
+            "conferenceName": "Western",
+            "conferenceRoadSequence": 8,
+            "conferenceSequence": 2,
+            "date": "2024-01-03",
+            "divisionAbbrev": "C",
+            "divisionHomeSequence": 1,
+            "divisionL10Sequence": 2,
+            "divisionName": "Central",
+            "divisionRoadSequence": 4,
+            "divisionSequence": 1,
+            "gameTypeId": 2,
+            "gamesPlayed": 38,
+            "goalDifferential": 24,
+            "goalDifferentialPctg": 0.631579,
+            "goalAgainst": 115,
+            "goalFor": 139,
+            "goalsForPctg": 3.657895,
+            "homeGamesPlayed": 20,
+            "homeGoalDifferential": 32,
+            "homeGoalsAgainst": 55,
+            "homeGoalsFor": 87,
+            "homeLosses": 4,
+            "homeOtLosses": 0,
+            "homePoints": 32,
+            "homeRegulationPlusOtWins": 16,
+            "homeRegulationWins": 15,
+            "homeTies": 0,
+            "homeWins": 16,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": 11,
+            "l10GoalsAgainst": 28,
+            "l10GoalsFor": 39,
+            "l10Losses": 2,
+            "l10OtLosses": 1,
+            "l10Points": 15,
+            "l10RegulationPlusOtWins": 7,
+            "l10RegulationWins": 6,
+            "l10Ties": 0,
+            "l10Wins": 7,
+            "leagueHomeSequence": 1,
+            "leagueL10Sequence": 4,
+            "leagueRoadSequence": 17,
+            "leagueSequence": 4,
+            "losses": 11,
+            "otLosses": 3,
+            "placeName": {
+                "default": "Colorado"
+            },
+            "pointPctg": 0.671053,
+            "points": 51,
+            "regulationPlusOtWinPctg": 0.605263,
+            "regulationPlusOtWins": 23,
+            "regulationWinPctg": 0.578947,
+            "regulationWins": 22,
+            "roadGamesPlayed": 18,
+            "roadGoalDifferential": -8,
+            "roadGoalsAgainst": 60,
+            "roadGoalsFor": 52,
+            "roadLosses": 7,
+            "roadOtLosses": 3,
+            "roadPoints": 19,
+            "roadRegulationPlusOtWins": 7,
+            "roadRegulationWins": 7,
+            "roadTies": 0,
+            "roadWins": 8,
+            "seasonId": 20232024,
+            "shootoutLosses": 1,
+            "shootoutWins": 1,
+            "streakCode": "W",
+            "streakCount": 3,
+            "teamName": {
+                "default": "Colorado Avalanche",
+                "fr": "Avalanche du Colorado"
+            },
+            "teamCommonName": {
+                "default": "Avalanche"
+            },
+            "teamAbbrev": {
+                "default": "COL"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/COL_light.svg",
+            "ties": 0,
+            "waiversSequence": 28,
+            "wildcardSequence": 0,
+            "winPctg": 0.631579,
+            "wins": 24
+        },
+        {
+            "conferenceAbbrev": "W",
+            "conferenceHomeSequence": 4,
+            "conferenceL10Sequence": 1,
+            "conferenceName": "Western",
+            "conferenceRoadSequence": 3,
+            "conferenceSequence": 3,
+            "date": "2024-01-03",
+            "divisionAbbrev": "C",
+            "divisionHomeSequence": 2,
+            "divisionL10Sequence": 1,
+            "divisionName": "Central",
+            "divisionRoadSequence": 2,
+            "divisionSequence": 2,
+            "gameTypeId": 2,
+            "gamesPlayed": 36,
+            "goalDifferential": 31,
+            "goalDifferentialPctg": 0.861111,
+            "goalAgainst": 90,
+            "goalFor": 121,
+            "goalsForPctg": 3.361111,
+            "homeGamesPlayed": 20,
+            "homeGoalDifferential": 19,
+            "homeGoalsAgainst": 51,
+            "homeGoalsFor": 70,
+            "homeLosses": 5,
+            "homeOtLosses": 2,
+            "homePoints": 28,
+            "homeRegulationPlusOtWins": 13,
+            "homeRegulationWins": 13,
+            "homeTies": 0,
+            "homeWins": 13,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": 16,
+            "l10GoalsAgainst": 20,
+            "l10GoalsFor": 36,
+            "l10Losses": 1,
+            "l10OtLosses": 2,
+            "l10Points": 16,
+            "l10RegulationPlusOtWins": 7,
+            "l10RegulationWins": 7,
+            "l10Ties": 0,
+            "l10Wins": 7,
+            "leagueHomeSequence": 4,
+            "leagueL10Sequence": 1,
+            "leagueRoadSequence": 9,
+            "leagueSequence": 5,
+            "losses": 9,
+            "otLosses": 4,
+            "placeName": {
+                "default": "Winnipeg"
+            },
+            "pointPctg": 0.694444,
+            "points": 50,
+            "regulationPlusOtWinPctg": 0.638889,
+            "regulationPlusOtWins": 23,
+            "regulationWinPctg": 0.583333,
+            "regulationWins": 21,
+            "roadGamesPlayed": 16,
+            "roadGoalDifferential": 12,
+            "roadGoalsAgainst": 39,
+            "roadGoalsFor": 51,
+            "roadLosses": 4,
+            "roadOtLosses": 2,
+            "roadPoints": 22,
+            "roadRegulationPlusOtWins": 10,
+            "roadRegulationWins": 8,
+            "roadTies": 0,
+            "roadWins": 10,
+            "seasonId": 20232024,
+            "shootoutLosses": 1,
+            "shootoutWins": 0,
+            "streakCode": "W",
+            "streakCount": 3,
+            "teamName": {
+                "default": "Winnipeg Jets",
+                "fr": "Jets de Winnipeg"
+            },
+            "teamCommonName": {
+                "default": "Jets"
+            },
+            "teamAbbrev": {
+                "default": "WPG"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/WPG_light.svg",
+            "ties": 0,
+            "waiversSequence": 30,
+            "wildcardSequence": 0,
+            "winPctg": 0.638889,
+            "wins": 23
+        },
+        {
+            "conferenceAbbrev": "W",
+            "conferenceHomeSequence": 3,
+            "conferenceL10Sequence": 13,
+            "conferenceName": "Western",
+            "conferenceRoadSequence": 5,
+            "conferenceSequence": 4,
+            "date": "2024-01-03",
+            "divisionAbbrev": "P",
+            "divisionHomeSequence": 2,
+            "divisionL10Sequence": 6,
+            "divisionName": "Pacific",
+            "divisionRoadSequence": 3,
+            "divisionSequence": 2,
+            "gameTypeId": 2,
+            "gamesPlayed": 38,
+            "goalDifferential": 21,
+            "goalDifferentialPctg": 0.552632,
+            "goalAgainst": 106,
+            "goalFor": 127,
+            "goalsForPctg": 3.342105,
+            "homeGamesPlayed": 18,
+            "homeGoalDifferential": 23,
+            "homeGoalsAgainst": 41,
+            "homeGoalsFor": 64,
+            "homeLosses": 3,
+            "homeOtLosses": 2,
+            "homePoints": 28,
+            "homeRegulationPlusOtWins": 10,
+            "homeRegulationWins": 9,
+            "homeTies": 0,
+            "homeWins": 13,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -9,
+            "l10GoalsAgainst": 41,
+            "l10GoalsFor": 32,
+            "l10Losses": 6,
+            "l10OtLosses": 0,
+            "l10Points": 8,
+            "l10RegulationPlusOtWins": 3,
+            "l10RegulationWins": 2,
+            "l10Ties": 0,
+            "l10Wins": 4,
+            "leagueHomeSequence": 3,
+            "leagueL10Sequence": 27,
+            "leagueRoadSequence": 13,
+            "leagueSequence": 6,
+            "losses": 11,
+            "otLosses": 5,
+            "placeName": {
+                "default": "Vegas"
+            },
+            "pointPctg": 0.644737,
+            "points": 49,
+            "regulationPlusOtWinPctg": 0.473684,
+            "regulationPlusOtWins": 18,
+            "regulationWinPctg": 0.421053,
+            "regulationWins": 16,
+            "roadGamesPlayed": 20,
+            "roadGoalDifferential": -2,
+            "roadGoalsAgainst": 65,
+            "roadGoalsFor": 63,
+            "roadLosses": 8,
+            "roadOtLosses": 3,
+            "roadPoints": 21,
+            "roadRegulationPlusOtWins": 8,
+            "roadRegulationWins": 7,
+            "roadTies": 0,
+            "roadWins": 9,
+            "seasonId": 20232024,
+            "shootoutLosses": 1,
+            "shootoutWins": 4,
+            "streakCode": "L",
+            "streakCount": 1,
+            "teamName": {
+                "default": "Vegas Golden Knights",
+                "fr": "Golden Knights de Vegas"
+            },
+            "teamCommonName": {
+                "default": "Golden Knights"
+            },
+            "teamAbbrev": {
+                "default": "VGK"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/VGK_light.svg",
+            "ties": 0,
+            "waiversSequence": 24,
+            "wildcardSequence": 0,
+            "winPctg": 0.578947,
+            "wins": 22
+        },
+        {
+            "conferenceAbbrev": "W",
+            "conferenceHomeSequence": 5,
+            "conferenceL10Sequence": 5,
+            "conferenceName": "Western",
+            "conferenceRoadSequence": 2,
+            "conferenceSequence": 5,
+            "date": "2024-01-03",
+            "divisionAbbrev": "C",
+            "divisionHomeSequence": 3,
+            "divisionL10Sequence": 3,
+            "divisionName": "Central",
+            "divisionRoadSequence": 1,
+            "divisionSequence": 3,
+            "gameTypeId": 2,
+            "gamesPlayed": 36,
+            "goalDifferential": 20,
+            "goalDifferentialPctg": 0.555556,
+            "goalAgainst": 111,
+            "goalFor": 131,
+            "goalsForPctg": 3.638889,
+            "homeGamesPlayed": 19,
+            "homeGoalDifferential": 12,
+            "homeGoalsAgainst": 65,
+            "homeGoalsFor": 77,
+            "homeLosses": 6,
+            "homeOtLosses": 1,
+            "homePoints": 25,
+            "homeRegulationPlusOtWins": 11,
+            "homeRegulationWins": 6,
+            "homeTies": 0,
+            "homeWins": 12,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": 12,
+            "l10GoalsAgainst": 30,
+            "l10GoalsFor": 42,
+            "l10Losses": 2,
+            "l10OtLosses": 1,
+            "l10Points": 15,
+            "l10RegulationPlusOtWins": 7,
+            "l10RegulationWins": 4,
+            "l10Ties": 0,
+            "l10Wins": 7,
+            "leagueHomeSequence": 8,
+            "leagueL10Sequence": 7,
+            "leagueRoadSequence": 6,
+            "leagueSequence": 7,
+            "losses": 10,
+            "otLosses": 4,
+            "placeName": {
+                "default": "Dallas"
+            },
+            "pointPctg": 0.666667,
+            "points": 48,
+            "regulationPlusOtWinPctg": 0.555556,
+            "regulationPlusOtWins": 20,
+            "regulationWinPctg": 0.416667,
+            "regulationWins": 15,
+            "roadGamesPlayed": 17,
+            "roadGoalDifferential": 8,
+            "roadGoalsAgainst": 46,
+            "roadGoalsFor": 54,
+            "roadLosses": 4,
+            "roadOtLosses": 3,
+            "roadPoints": 23,
+            "roadRegulationPlusOtWins": 9,
+            "roadRegulationWins": 9,
+            "roadTies": 0,
+            "roadWins": 10,
+            "seasonId": 20232024,
+            "shootoutLosses": 1,
+            "shootoutWins": 2,
+            "streakCode": "L",
+            "streakCount": 1,
+            "teamName": {
+                "default": "Dallas Stars",
+                "fr": "Stars de Dallas"
+            },
+            "teamCommonName": {
+                "default": "Stars"
+            },
+            "teamAbbrev": {
+                "default": "DAL"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/DAL_light.svg",
+            "ties": 0,
+            "waiversSequence": 27,
+            "wildcardSequence": 0,
+            "winPctg": 0.611111,
+            "wins": 22
+        },
+        {
+            "conferenceAbbrev": "E",
+            "conferenceHomeSequence": 4,
+            "conferenceL10Sequence": 4,
+            "conferenceName": "Eastern",
+            "conferenceRoadSequence": 4,
+            "conferenceSequence": 3,
+            "date": "2024-01-03",
+            "divisionAbbrev": "A",
+            "divisionHomeSequence": 3,
+            "divisionL10Sequence": 2,
+            "divisionName": "Atlantic",
+            "divisionRoadSequence": 2,
+            "divisionSequence": 2,
+            "gameTypeId": 2,
+            "gamesPlayed": 37,
+            "goalDifferential": 17,
+            "goalDifferentialPctg": 0.459459,
+            "goalAgainst": 94,
+            "goalFor": 111,
+            "goalsForPctg": 3.0,
+            "homeGamesPlayed": 17,
+            "homeGoalDifferential": 10,
+            "homeGoalsAgainst": 46,
+            "homeGoalsFor": 56,
+            "homeLosses": 5,
+            "homeOtLosses": 0,
+            "homePoints": 24,
+            "homeRegulationPlusOtWins": 12,
+            "homeRegulationWins": 11,
+            "homeTies": 0,
+            "homeWins": 12,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": 1,
+            "l10GoalsAgainst": 25,
+            "l10GoalsFor": 26,
+            "l10Losses": 4,
+            "l10OtLosses": 0,
+            "l10Points": 12,
+            "l10RegulationPlusOtWins": 6,
+            "l10RegulationWins": 6,
+            "l10Ties": 0,
+            "l10Wins": 6,
+            "leagueHomeSequence": 9,
+            "leagueL10Sequence": 11,
+            "leagueRoadSequence": 5,
+            "leagueSequence": 8,
+            "losses": 12,
+            "otLosses": 2,
+            "placeName": {
+                "default": "Florida",
+                "fr": "Floride"
+            },
+            "pointPctg": 0.648649,
+            "points": 48,
+            "regulationPlusOtWinPctg": 0.621622,
+            "regulationPlusOtWins": 23,
+            "regulationWinPctg": 0.567568,
+            "regulationWins": 21,
+            "roadGamesPlayed": 20,
+            "roadGoalDifferential": 7,
+            "roadGoalsAgainst": 48,
+            "roadGoalsFor": 55,
+            "roadLosses": 7,
+            "roadOtLosses": 2,
+            "roadPoints": 24,
+            "roadRegulationPlusOtWins": 11,
+            "roadRegulationWins": 10,
+            "roadTies": 0,
+            "roadWins": 11,
+            "seasonId": 20232024,
+            "shootoutLosses": 1,
+            "shootoutWins": 0,
+            "streakCode": "W",
+            "streakCount": 5,
+            "teamName": {
+                "default": "Florida Panthers",
+                "fr": "Panthers de la Floride"
+            },
+            "teamCommonName": {
+                "default": "Panthers"
+            },
+            "teamAbbrev": {
+                "default": "FLA"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/FLA_light.svg",
+            "ties": 0,
+            "waiversSequence": 25,
+            "wildcardSequence": 0,
+            "winPctg": 0.621622,
+            "wins": 23
+        },
+        {
+            "conferenceAbbrev": "E",
+            "conferenceHomeSequence": 6,
+            "conferenceL10Sequence": 1,
+            "conferenceName": "Eastern",
+            "conferenceRoadSequence": 6,
+            "conferenceSequence": 4,
+            "date": "2024-01-03",
+            "divisionAbbrev": "M",
+            "divisionHomeSequence": 3,
+            "divisionL10Sequence": 1,
+            "divisionName": "Metropolitan",
+            "divisionRoadSequence": 3,
+            "divisionSequence": 2,
+            "gameTypeId": 2,
+            "gamesPlayed": 38,
+            "goalDifferential": 12,
+            "goalDifferentialPctg": 0.315789,
+            "goalAgainst": 118,
+            "goalFor": 130,
+            "goalsForPctg": 3.421053,
+            "homeGamesPlayed": 16,
+            "homeGoalDifferential": 10,
+            "homeGoalsAgainst": 51,
+            "homeGoalsFor": 61,
+            "homeLosses": 3,
+            "homeOtLosses": 3,
+            "homePoints": 23,
+            "homeRegulationPlusOtWins": 10,
+            "homeRegulationWins": 8,
+            "homeTies": 0,
+            "homeWins": 10,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": 11,
+            "l10GoalsAgainst": 27,
+            "l10GoalsFor": 38,
+            "l10Losses": 1,
+            "l10OtLosses": 3,
+            "l10Points": 15,
+            "l10RegulationPlusOtWins": 6,
+            "l10RegulationWins": 6,
+            "l10Ties": 0,
+            "l10Wins": 6,
+            "leagueHomeSequence": 13,
+            "leagueL10Sequence": 5,
+            "leagueRoadSequence": 8,
+            "leagueSequence": 9,
+            "losses": 13,
+            "otLosses": 4,
+            "placeName": {
+                "default": "Carolina",
+                "fr": "Caroline"
+            },
+            "pointPctg": 0.605263,
+            "points": 46,
+            "regulationPlusOtWinPctg": 0.526316,
+            "regulationPlusOtWins": 20,
+            "regulationWinPctg": 0.447368,
+            "regulationWins": 17,
+            "roadGamesPlayed": 22,
+            "roadGoalDifferential": 2,
+            "roadGoalsAgainst": 67,
+            "roadGoalsFor": 69,
+            "roadLosses": 10,
+            "roadOtLosses": 1,
+            "roadPoints": 23,
+            "roadRegulationPlusOtWins": 10,
+            "roadRegulationWins": 9,
+            "roadTies": 0,
+            "roadWins": 11,
+            "seasonId": 20232024,
+            "shootoutLosses": 2,
+            "shootoutWins": 1,
+            "streakCode": "W",
+            "streakCount": 4,
+            "teamName": {
+                "default": "Carolina Hurricanes",
+                "fr": "Hurricanes de la Caroline"
+            },
+            "teamCommonName": {
+                "default": "Hurricanes"
+            },
+            "teamAbbrev": {
+                "default": "CAR"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/CAR_light.svg",
+            "ties": 0,
+            "waiversSequence": 22,
+            "wildcardSequence": 0,
+            "winPctg": 0.552632,
+            "wins": 21
+        },
+        {
+            "conferenceAbbrev": "W",
+            "conferenceHomeSequence": 13,
+            "conferenceL10Sequence": 12,
+            "conferenceName": "Western",
+            "conferenceRoadSequence": 1,
+            "conferenceSequence": 6,
+            "date": "2024-01-03",
+            "divisionAbbrev": "P",
+            "divisionHomeSequence": 6,
+            "divisionL10Sequence": 5,
+            "divisionName": "Pacific",
+            "divisionRoadSequence": 1,
+            "divisionSequence": 3,
+            "gameTypeId": 2,
+            "gamesPlayed": 34,
+            "goalDifferential": 33,
+            "goalDifferentialPctg": 0.970588,
+            "goalAgainst": 83,
+            "goalFor": 116,
+            "goalsForPctg": 3.411765,
+            "homeGamesPlayed": 18,
+            "homeGoalDifferential": 2,
+            "homeGoalsAgainst": 52,
+            "homeGoalsFor": 54,
+            "homeLosses": 7,
+            "homeOtLosses": 4,
+            "homePoints": 18,
+            "homeRegulationPlusOtWins": 7,
+            "homeRegulationWins": 7,
+            "homeTies": 0,
+            "homeWins": 7,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -2,
+            "l10GoalsAgainst": 27,
+            "l10GoalsFor": 25,
+            "l10Losses": 5,
+            "l10OtLosses": 1,
+            "l10Points": 9,
+            "l10RegulationPlusOtWins": 3,
+            "l10RegulationWins": 3,
+            "l10Ties": 0,
+            "l10Wins": 4,
+            "leagueHomeSequence": 25,
+            "leagueL10Sequence": 25,
+            "leagueRoadSequence": 1,
+            "leagueSequence": 10,
+            "losses": 9,
+            "otLosses": 5,
+            "placeName": {
+                "default": "Los Angeles"
+            },
+            "pointPctg": 0.661765,
+            "points": 45,
+            "regulationPlusOtWinPctg": 0.558824,
+            "regulationPlusOtWins": 19,
+            "regulationWinPctg": 0.529412,
+            "regulationWins": 18,
+            "roadGamesPlayed": 16,
+            "roadGoalDifferential": 31,
+            "roadGoalsAgainst": 31,
+            "roadGoalsFor": 62,
+            "roadLosses": 2,
+            "roadOtLosses": 1,
+            "roadPoints": 27,
+            "roadRegulationPlusOtWins": 12,
+            "roadRegulationWins": 11,
+            "roadTies": 0,
+            "roadWins": 13,
+            "seasonId": 20232024,
+            "shootoutLosses": 3,
+            "shootoutWins": 1,
+            "streakCode": "L",
+            "streakCount": 1,
+            "teamName": {
+                "default": "Los Angeles Kings",
+                "fr": "Kings de Los Angeles"
+            },
+            "teamCommonName": {
+                "default": "Kings"
+            },
+            "teamAbbrev": {
+                "default": "LAK"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/LAK_light.svg",
+            "ties": 0,
+            "waiversSequence": 26,
+            "wildcardSequence": 0,
+            "winPctg": 0.588235,
+            "wins": 20
+        },
+        {
+            "conferenceAbbrev": "E",
+            "conferenceHomeSequence": 1,
+            "conferenceL10Sequence": 6,
+            "conferenceName": "Eastern",
+            "conferenceRoadSequence": 11,
+            "conferenceSequence": 5,
+            "date": "2024-01-03",
+            "divisionAbbrev": "M",
+            "divisionHomeSequence": 1,
+            "divisionL10Sequence": 4,
+            "divisionName": "Metropolitan",
+            "divisionRoadSequence": 7,
+            "divisionSequence": 3,
+            "gameTypeId": 2,
+            "gamesPlayed": 37,
+            "goalDifferential": -10,
+            "goalDifferentialPctg": -0.27027,
+            "goalAgainst": 124,
+            "goalFor": 114,
+            "goalsForPctg": 3.081081,
+            "homeGamesPlayed": 20,
+            "homeGoalDifferential": -4,
+            "homeGoalsAgainst": 65,
+            "homeGoalsFor": 61,
+            "homeLosses": 4,
+            "homeOtLosses": 6,
+            "homePoints": 26,
+            "homeRegulationPlusOtWins": 10,
+            "homeRegulationWins": 8,
+            "homeTies": 0,
+            "homeWins": 10,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -6,
+            "l10GoalsAgainst": 37,
+            "l10GoalsFor": 31,
+            "l10Losses": 3,
+            "l10OtLosses": 3,
+            "l10Points": 11,
+            "l10RegulationPlusOtWins": 4,
+            "l10RegulationWins": 4,
+            "l10Ties": 0,
+            "l10Wins": 4,
+            "leagueHomeSequence": 5,
+            "leagueL10Sequence": 16,
+            "leagueRoadSequence": 19,
+            "leagueSequence": 11,
+            "losses": 10,
+            "otLosses": 10,
+            "placeName": {
+                "default": "NY Islanders"
+            },
+            "pointPctg": 0.594595,
+            "points": 44,
+            "regulationPlusOtWinPctg": 0.432432,
+            "regulationPlusOtWins": 16,
+            "regulationWinPctg": 0.351351,
+            "regulationWins": 13,
+            "roadGamesPlayed": 17,
+            "roadGoalDifferential": -6,
+            "roadGoalsAgainst": 59,
+            "roadGoalsFor": 53,
+            "roadLosses": 6,
+            "roadOtLosses": 4,
+            "roadPoints": 18,
+            "roadRegulationPlusOtWins": 6,
+            "roadRegulationWins": 5,
+            "roadTies": 0,
+            "roadWins": 7,
+            "seasonId": 20232024,
+            "shootoutLosses": 3,
+            "shootoutWins": 1,
+            "streakCode": "OT",
+            "streakCount": 1,
+            "teamName": {
+                "default": "New York Islanders",
+                "fr": "Islanders de New York"
+            },
+            "teamCommonName": {
+                "default": "Islanders"
+            },
+            "teamAbbrev": {
+                "default": "NYI"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/NYI_light.svg",
+            "ties": 0,
+            "waiversSequence": 20,
+            "wildcardSequence": 0,
+            "winPctg": 0.459459,
+            "wins": 17
+        },
+        {
+            "conferenceAbbrev": "E",
+            "conferenceHomeSequence": 10,
+            "conferenceL10Sequence": 11,
+            "conferenceName": "Eastern",
+            "conferenceRoadSequence": 5,
+            "conferenceSequence": 6,
+            "date": "2024-01-03",
+            "divisionAbbrev": "A",
+            "divisionHomeSequence": 5,
+            "divisionL10Sequence": 4,
+            "divisionName": "Atlantic",
+            "divisionRoadSequence": 3,
+            "divisionSequence": 3,
+            "gameTypeId": 2,
+            "gamesPlayed": 35,
+            "goalDifferential": 9,
+            "goalDifferentialPctg": 0.257143,
+            "goalAgainst": 118,
+            "goalFor": 127,
+            "goalsForPctg": 3.628571,
+            "homeGamesPlayed": 18,
+            "homeGoalDifferential": 3,
+            "homeGoalsAgainst": 66,
+            "homeGoalsFor": 69,
+            "homeLosses": 7,
+            "homeOtLosses": 2,
+            "homePoints": 20,
+            "homeRegulationPlusOtWins": 5,
+            "homeRegulationWins": 4,
+            "homeTies": 0,
+            "homeWins": 9,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": 3,
+            "l10GoalsAgainst": 37,
+            "l10GoalsFor": 40,
+            "l10Losses": 4,
+            "l10OtLosses": 2,
+            "l10Points": 10,
+            "l10RegulationPlusOtWins": 4,
+            "l10RegulationWins": 4,
+            "l10Ties": 0,
+            "l10Wins": 4,
+            "leagueHomeSequence": 20,
+            "leagueL10Sequence": 22,
+            "leagueRoadSequence": 7,
+            "leagueSequence": 12,
+            "losses": 10,
+            "otLosses": 7,
+            "placeName": {
+                "default": "Toronto"
+            },
+            "pointPctg": 0.614286,
+            "points": 43,
+            "regulationPlusOtWinPctg": 0.4,
+            "regulationPlusOtWins": 14,
+            "regulationWinPctg": 0.314286,
+            "regulationWins": 11,
+            "roadGamesPlayed": 17,
+            "roadGoalDifferential": 6,
+            "roadGoalsAgainst": 52,
+            "roadGoalsFor": 58,
+            "roadLosses": 3,
+            "roadOtLosses": 5,
+            "roadPoints": 23,
+            "roadRegulationPlusOtWins": 9,
+            "roadRegulationWins": 7,
+            "roadTies": 0,
+            "roadWins": 9,
+            "seasonId": 20232024,
+            "shootoutLosses": 1,
+            "shootoutWins": 4,
+            "streakCode": "W",
+            "streakCount": 1,
+            "teamName": {
+                "default": "Toronto Maple Leafs",
+                "fr": "Maple Leafs de Toronto"
+            },
+            "teamCommonName": {
+                "default": "Maple Leafs"
+            },
+            "teamAbbrev": {
+                "default": "TOR"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/TOR_light.svg",
+            "ties": 0,
+            "waiversSequence": 23,
+            "wildcardSequence": 0,
+            "winPctg": 0.514286,
+            "wins": 18
+        },
+        {
+            "conferenceAbbrev": "E",
+            "conferenceHomeSequence": 14,
+            "conferenceL10Sequence": 8,
+            "conferenceName": "Eastern",
+            "conferenceRoadSequence": 3,
+            "conferenceSequence": 7,
+            "date": "2024-01-03",
+            "divisionAbbrev": "M",
+            "divisionHomeSequence": 8,
+            "divisionL10Sequence": 6,
+            "divisionName": "Metropolitan",
+            "divisionRoadSequence": 2,
+            "divisionSequence": 4,
+            "gameTypeId": 2,
+            "gamesPlayed": 37,
+            "goalDifferential": 7,
+            "goalDifferentialPctg": 0.189189,
+            "goalAgainst": 104,
+            "goalFor": 111,
+            "goalsForPctg": 3.0,
+            "homeGamesPlayed": 16,
+            "homeGoalDifferential": -4,
+            "homeGoalsAgainst": 47,
+            "homeGoalsFor": 43,
+            "homeLosses": 7,
+            "homeOtLosses": 1,
+            "homePoints": 17,
+            "homeRegulationPlusOtWins": 7,
+            "homeRegulationWins": 5,
+            "homeTies": 0,
+            "homeWins": 8,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -3,
+            "l10GoalsAgainst": 31,
+            "l10GoalsFor": 28,
+            "l10Losses": 3,
+            "l10OtLosses": 3,
+            "l10Points": 11,
+            "l10RegulationPlusOtWins": 3,
+            "l10RegulationWins": 2,
+            "l10Ties": 0,
+            "l10Wins": 4,
+            "leagueHomeSequence": 27,
+            "leagueL10Sequence": 18,
+            "leagueRoadSequence": 4,
+            "leagueSequence": 13,
+            "losses": 13,
+            "otLosses": 5,
+            "placeName": {
+                "default": "Philadelphia",
+                "fr": "Philadelphie"
+            },
+            "pointPctg": 0.581081,
+            "points": 43,
+            "regulationPlusOtWinPctg": 0.432432,
+            "regulationPlusOtWins": 16,
+            "regulationWinPctg": 0.351351,
+            "regulationWins": 13,
+            "roadGamesPlayed": 21,
+            "roadGoalDifferential": 11,
+            "roadGoalsAgainst": 57,
+            "roadGoalsFor": 68,
+            "roadLosses": 6,
+            "roadOtLosses": 4,
+            "roadPoints": 26,
+            "roadRegulationPlusOtWins": 9,
+            "roadRegulationWins": 8,
+            "roadTies": 0,
+            "roadWins": 11,
+            "seasonId": 20232024,
+            "shootoutLosses": 1,
+            "shootoutWins": 3,
+            "streakCode": "L",
+            "streakCount": 2,
+            "teamName": {
+                "default": "Philadelphia Flyers",
+                "fr": "Flyers de Philadelphie"
+            },
+            "teamCommonName": {
+                "default": "Flyers"
+            },
+            "teamAbbrev": {
+                "default": "PHI"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/PHI_light.svg",
+            "ties": 0,
+            "waiversSequence": 19,
+            "wildcardSequence": 1,
+            "winPctg": 0.513514,
+            "wins": 19
+        },
+        {
+            "conferenceAbbrev": "W",
+            "conferenceHomeSequence": 7,
+            "conferenceL10Sequence": 7,
+            "conferenceName": "Western",
+            "conferenceRoadSequence": 7,
+            "conferenceSequence": 7,
+            "date": "2024-01-03",
+            "divisionAbbrev": "C",
+            "divisionHomeSequence": 5,
+            "divisionL10Sequence": 4,
+            "divisionName": "Central",
+            "divisionRoadSequence": 3,
+            "divisionSequence": 4,
+            "gameTypeId": 2,
+            "gamesPlayed": 38,
+            "goalDifferential": 3,
+            "goalDifferentialPctg": 0.078947,
+            "goalAgainst": 116,
+            "goalFor": 119,
+            "goalsForPctg": 3.131579,
+            "homeGamesPlayed": 21,
+            "homeGoalDifferential": 3,
+            "homeGoalsAgainst": 60,
+            "homeGoalsFor": 63,
+            "homeLosses": 9,
+            "homeOtLosses": 0,
+            "homePoints": 24,
+            "homeRegulationPlusOtWins": 12,
+            "homeRegulationWins": 9,
+            "homeTies": 0,
+            "homeWins": 12,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": 2,
+            "l10GoalsAgainst": 30,
+            "l10GoalsFor": 32,
+            "l10Losses": 3,
+            "l10OtLosses": 1,
+            "l10Points": 13,
+            "l10RegulationPlusOtWins": 5,
+            "l10RegulationWins": 3,
+            "l10Ties": 0,
+            "l10Wins": 6,
+            "leagueHomeSequence": 12,
+            "leagueL10Sequence": 10,
+            "leagueRoadSequence": 16,
+            "leagueSequence": 14,
+            "losses": 16,
+            "otLosses": 1,
+            "placeName": {
+                "default": "Nashville"
+            },
+            "pointPctg": 0.565789,
+            "points": 43,
+            "regulationPlusOtWinPctg": 0.5,
+            "regulationPlusOtWins": 19,
+            "regulationWinPctg": 0.394737,
+            "regulationWins": 15,
+            "roadGamesPlayed": 17,
+            "roadGoalDifferential": 0,
+            "roadGoalsAgainst": 56,
+            "roadGoalsFor": 56,
+            "roadLosses": 7,
+            "roadOtLosses": 1,
+            "roadPoints": 19,
+            "roadRegulationPlusOtWins": 7,
+            "roadRegulationWins": 6,
+            "roadTies": 0,
+            "roadWins": 9,
+            "seasonId": 20232024,
+            "shootoutLosses": 0,
+            "shootoutWins": 2,
+            "streakCode": "W",
+            "streakCount": 2,
+            "teamName": {
+                "default": "Nashville Predators",
+                "fr": "Predators de Nashville"
+            },
+            "teamCommonName": {
+                "default": "Predators"
+            },
+            "teamAbbrev": {
+                "default": "NSH"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/NSH_light.svg",
+            "ties": 0,
+            "waiversSequence": 17,
+            "wildcardSequence": 1,
+            "winPctg": 0.552632,
+            "wins": 21
+        },
+        {
+            "conferenceAbbrev": "E",
+            "conferenceHomeSequence": 8,
+            "conferenceL10Sequence": 9,
+            "conferenceName": "Eastern",
+            "conferenceRoadSequence": 9,
+            "conferenceSequence": 8,
+            "date": "2024-01-03",
+            "divisionAbbrev": "M",
+            "divisionHomeSequence": 4,
+            "divisionL10Sequence": 7,
+            "divisionName": "Metropolitan",
+            "divisionRoadSequence": 5,
+            "divisionSequence": 5,
+            "gameTypeId": 2,
+            "gamesPlayed": 35,
+            "goalDifferential": -17,
+            "goalDifferentialPctg": -0.485714,
+            "goalAgainst": 102,
+            "goalFor": 85,
+            "goalsForPctg": 2.428571,
+            "homeGamesPlayed": 17,
+            "homeGoalDifferential": -4,
+            "homeGoalsAgainst": 44,
+            "homeGoalsFor": 40,
+            "homeLosses": 4,
+            "homeOtLosses": 4,
+            "homePoints": 22,
+            "homeRegulationPlusOtWins": 7,
+            "homeRegulationWins": 5,
+            "homeTies": 0,
+            "homeWins": 9,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -9,
+            "l10GoalsAgainst": 30,
+            "l10GoalsFor": 21,
+            "l10Losses": 3,
+            "l10OtLosses": 3,
+            "l10Points": 11,
+            "l10RegulationPlusOtWins": 3,
+            "l10RegulationWins": 1,
+            "l10Ties": 0,
+            "l10Wins": 4,
+            "leagueHomeSequence": 16,
+            "leagueL10Sequence": 19,
+            "leagueRoadSequence": 14,
+            "leagueSequence": 15,
+            "losses": 11,
+            "otLosses": 6,
+            "placeName": {
+                "default": "Washington"
+            },
+            "pointPctg": 0.6,
+            "points": 42,
+            "regulationPlusOtWinPctg": 0.428571,
+            "regulationPlusOtWins": 15,
+            "regulationWinPctg": 0.342857,
+            "regulationWins": 12,
+            "roadGamesPlayed": 18,
+            "roadGoalDifferential": -13,
+            "roadGoalsAgainst": 58,
+            "roadGoalsFor": 45,
+            "roadLosses": 7,
+            "roadOtLosses": 2,
+            "roadPoints": 20,
+            "roadRegulationPlusOtWins": 8,
+            "roadRegulationWins": 7,
+            "roadTies": 0,
+            "roadWins": 9,
+            "seasonId": 20232024,
+            "shootoutLosses": 4,
+            "shootoutWins": 3,
+            "streakCode": "W",
+            "streakCount": 1,
+            "teamName": {
+                "default": "Washington Capitals",
+                "fr": "Capitals de Washington"
+            },
+            "teamCommonName": {
+                "default": "Capitals"
+            },
+            "teamAbbrev": {
+                "default": "WSH"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/WSH_light.svg",
+            "ties": 0,
+            "waiversSequence": 21,
+            "wildcardSequence": 2,
+            "winPctg": 0.514286,
+            "wins": 18
+        },
+        {
+            "conferenceAbbrev": "E",
+            "conferenceHomeSequence": 3,
+            "conferenceL10Sequence": 10,
+            "conferenceName": "Eastern",
+            "conferenceRoadSequence": 14,
+            "conferenceSequence": 9,
+            "date": "2024-01-03",
+            "divisionAbbrev": "A",
+            "divisionHomeSequence": 2,
+            "divisionL10Sequence": 3,
+            "divisionName": "Atlantic",
+            "divisionRoadSequence": 7,
+            "divisionSequence": 4,
+            "gameTypeId": 2,
+            "gamesPlayed": 39,
+            "goalDifferential": -8,
+            "goalDifferentialPctg": -0.205128,
+            "goalAgainst": 135,
+            "goalFor": 127,
+            "goalsForPctg": 3.25641,
+            "homeGamesPlayed": 19,
+            "homeGoalDifferential": 12,
+            "homeGoalsAgainst": 55,
+            "homeGoalsFor": 67,
+            "homeLosses": 5,
+            "homeOtLosses": 3,
+            "homePoints": 25,
+            "homeRegulationPlusOtWins": 11,
+            "homeRegulationWins": 10,
+            "homeTies": 0,
+            "homeWins": 11,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -1,
+            "l10GoalsAgainst": 33,
+            "l10GoalsFor": 32,
+            "l10Losses": 5,
+            "l10OtLosses": 0,
+            "l10Points": 10,
+            "l10RegulationPlusOtWins": 4,
+            "l10RegulationWins": 4,
+            "l10Ties": 0,
+            "l10Wins": 5,
+            "leagueHomeSequence": 7,
+            "leagueL10Sequence": 21,
+            "leagueRoadSequence": 25,
+            "leagueSequence": 16,
+            "losses": 16,
+            "otLosses": 5,
+            "placeName": {
+                "default": "Tampa Bay"
+            },
+            "pointPctg": 0.525641,
+            "points": 41,
+            "regulationPlusOtWinPctg": 0.435897,
+            "regulationPlusOtWins": 17,
+            "regulationWinPctg": 0.384615,
+            "regulationWins": 15,
+            "roadGamesPlayed": 20,
+            "roadGoalDifferential": -20,
+            "roadGoalsAgainst": 80,
+            "roadGoalsFor": 60,
+            "roadLosses": 11,
+            "roadOtLosses": 2,
+            "roadPoints": 16,
+            "roadRegulationPlusOtWins": 6,
+            "roadRegulationWins": 5,
+            "roadTies": 0,
+            "roadWins": 7,
+            "seasonId": 20232024,
+            "shootoutLosses": 0,
+            "shootoutWins": 1,
+            "streakCode": "L",
+            "streakCount": 1,
+            "teamName": {
+                "default": "Tampa Bay Lightning",
+                "fr": "Lightning de Tampa Bay"
+            },
+            "teamCommonName": {
+                "default": "Lightning"
+            },
+            "teamAbbrev": {
+                "default": "TBL"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/TBL_light.svg",
+            "ties": 0,
+            "waiversSequence": 12,
+            "wildcardSequence": 3,
+            "winPctg": 0.461538,
+            "wins": 18
+        },
+        {
+            "conferenceAbbrev": "E",
+            "conferenceHomeSequence": 13,
+            "conferenceL10Sequence": 7,
+            "conferenceName": "Eastern",
+            "conferenceRoadSequence": 7,
+            "conferenceSequence": 10,
+            "date": "2024-01-03",
+            "divisionAbbrev": "M",
+            "divisionHomeSequence": 7,
+            "divisionL10Sequence": 5,
+            "divisionName": "Metropolitan",
+            "divisionRoadSequence": 4,
+            "divisionSequence": 6,
+            "gameTypeId": 2,
+            "gamesPlayed": 35,
+            "goalDifferential": -4,
+            "goalDifferentialPctg": -0.114286,
+            "goalAgainst": 125,
+            "goalFor": 121,
+            "goalsForPctg": 3.457143,
+            "homeGamesPlayed": 18,
+            "homeGoalDifferential": -8,
+            "homeGoalsAgainst": 67,
+            "homeGoalsFor": 59,
+            "homeLosses": 8,
+            "homeOtLosses": 2,
+            "homePoints": 18,
+            "homeRegulationPlusOtWins": 8,
+            "homeRegulationWins": 6,
+            "homeTies": 0,
+            "homeWins": 8,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -4,
+            "l10GoalsAgainst": 34,
+            "l10GoalsFor": 30,
+            "l10Losses": 4,
+            "l10OtLosses": 1,
+            "l10Points": 11,
+            "l10RegulationPlusOtWins": 5,
+            "l10RegulationWins": 3,
+            "l10Ties": 0,
+            "l10Wins": 5,
+            "leagueHomeSequence": 26,
+            "leagueL10Sequence": 17,
+            "leagueRoadSequence": 10,
+            "leagueSequence": 17,
+            "losses": 14,
+            "otLosses": 2,
+            "placeName": {
+                "default": "New Jersey"
+            },
+            "pointPctg": 0.571429,
+            "points": 40,
+            "regulationPlusOtWinPctg": 0.542857,
+            "regulationPlusOtWins": 19,
+            "regulationWinPctg": 0.428571,
+            "regulationWins": 15,
+            "roadGamesPlayed": 17,
+            "roadGoalDifferential": 4,
+            "roadGoalsAgainst": 58,
+            "roadGoalsFor": 62,
+            "roadLosses": 6,
+            "roadOtLosses": 0,
+            "roadPoints": 22,
+            "roadRegulationPlusOtWins": 11,
+            "roadRegulationWins": 9,
+            "roadTies": 0,
+            "roadWins": 11,
+            "seasonId": 20232024,
+            "shootoutLosses": 1,
+            "shootoutWins": 0,
+            "streakCode": "L",
+            "streakCount": 1,
+            "teamName": {
+                "default": "New Jersey Devils",
+                "fr": "Devils du New Jersey"
+            },
+            "teamCommonName": {
+                "default": "Devils"
+            },
+            "teamAbbrev": {
+                "default": "NJD"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/NJD_light.svg",
+            "ties": 0,
+            "waiversSequence": 18,
+            "wildcardSequence": 4,
+            "winPctg": 0.542857,
+            "wins": 19
+        },
+        {
+            "conferenceAbbrev": "W",
+            "conferenceHomeSequence": 6,
+            "conferenceL10Sequence": 8,
+            "conferenceName": "Western",
+            "conferenceRoadSequence": 11,
+            "conferenceSequence": 8,
+            "date": "2024-01-03",
+            "divisionAbbrev": "C",
+            "divisionHomeSequence": 4,
+            "divisionL10Sequence": 5,
+            "divisionName": "Central",
+            "divisionRoadSequence": 5,
+            "divisionSequence": 5,
+            "gameTypeId": 2,
+            "gamesPlayed": 36,
+            "goalDifferential": 8,
+            "goalDifferentialPctg": 0.222222,
+            "goalAgainst": 103,
+            "goalFor": 111,
+            "goalsForPctg": 3.083333,
+            "homeGamesPlayed": 18,
+            "homeGoalDifferential": 14,
+            "homeGoalsAgainst": 47,
+            "homeGoalsFor": 61,
+            "homeLosses": 6,
+            "homeOtLosses": 0,
+            "homePoints": 24,
+            "homeRegulationPlusOtWins": 11,
+            "homeRegulationWins": 9,
+            "homeTies": 0,
+            "homeWins": 12,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -1,
+            "l10GoalsAgainst": 26,
+            "l10GoalsFor": 25,
+            "l10Losses": 4,
+            "l10OtLosses": 0,
+            "l10Points": 12,
+            "l10RegulationPlusOtWins": 6,
+            "l10RegulationWins": 5,
+            "l10Ties": 0,
+            "l10Wins": 6,
+            "leagueHomeSequence": 11,
+            "leagueL10Sequence": 12,
+            "leagueRoadSequence": 24,
+            "leagueSequence": 18,
+            "losses": 15,
+            "otLosses": 2,
+            "placeName": {
+                "default": "Arizona"
+            },
+            "pointPctg": 0.555556,
+            "points": 40,
+            "regulationPlusOtWinPctg": 0.472222,
+            "regulationPlusOtWins": 17,
+            "regulationWinPctg": 0.416667,
+            "regulationWins": 15,
+            "roadGamesPlayed": 18,
+            "roadGoalDifferential": -6,
+            "roadGoalsAgainst": 56,
+            "roadGoalsFor": 50,
+            "roadLosses": 9,
+            "roadOtLosses": 2,
+            "roadPoints": 16,
+            "roadRegulationPlusOtWins": 6,
+            "roadRegulationWins": 6,
+            "roadTies": 0,
+            "roadWins": 7,
+            "seasonId": 20232024,
+            "shootoutLosses": 0,
+            "shootoutWins": 2,
+            "streakCode": "L",
+            "streakCount": 1,
+            "teamName": {
+                "default": "Arizona Coyotes",
+                "fr": "Coyotes de l'Arizona"
+            },
+            "teamCommonName": {
+                "default": "Coyotes"
+            },
+            "teamAbbrev": {
+                "default": "ARI"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/ARI_light.svg",
+            "ties": 0,
+            "waiversSequence": 15,
+            "wildcardSequence": 2,
+            "winPctg": 0.527778,
+            "wins": 19
+        },
+        {
+            "conferenceAbbrev": "E",
+            "conferenceHomeSequence": 9,
+            "conferenceL10Sequence": 2,
+            "conferenceName": "Eastern",
+            "conferenceRoadSequence": 10,
+            "conferenceSequence": 11,
+            "date": "2024-01-03",
+            "divisionAbbrev": "M",
+            "divisionHomeSequence": 5,
+            "divisionL10Sequence": 2,
+            "divisionName": "Metropolitan",
+            "divisionRoadSequence": 6,
+            "divisionSequence": 7,
+            "gameTypeId": 2,
+            "gamesPlayed": 36,
+            "goalDifferential": 13,
+            "goalDifferentialPctg": 0.361111,
+            "goalAgainst": 97,
+            "goalFor": 110,
+            "goalsForPctg": 3.055556,
+            "homeGamesPlayed": 18,
+            "homeGoalDifferential": 8,
+            "homeGoalsAgainst": 44,
+            "homeGoalsFor": 52,
+            "homeLosses": 7,
+            "homeOtLosses": 1,
+            "homePoints": 21,
+            "homeRegulationPlusOtWins": 9,
+            "homeRegulationWins": 9,
+            "homeTies": 0,
+            "homeWins": 10,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": 7,
+            "l10GoalsAgainst": 28,
+            "l10GoalsFor": 35,
+            "l10Losses": 2,
+            "l10OtLosses": 1,
+            "l10Points": 15,
+            "l10RegulationPlusOtWins": 5,
+            "l10RegulationWins": 5,
+            "l10Ties": 0,
+            "l10Wins": 7,
+            "leagueHomeSequence": 19,
+            "leagueL10Sequence": 6,
+            "leagueRoadSequence": 18,
+            "leagueSequence": 19,
+            "losses": 14,
+            "otLosses": 4,
+            "placeName": {
+                "default": "Pittsburgh"
+            },
+            "pointPctg": 0.555556,
+            "points": 40,
+            "regulationPlusOtWinPctg": 0.444444,
+            "regulationPlusOtWins": 16,
+            "regulationWinPctg": 0.416667,
+            "regulationWins": 15,
+            "roadGamesPlayed": 18,
+            "roadGoalDifferential": 5,
+            "roadGoalsAgainst": 53,
+            "roadGoalsFor": 58,
+            "roadLosses": 7,
+            "roadOtLosses": 3,
+            "roadPoints": 19,
+            "roadRegulationPlusOtWins": 7,
+            "roadRegulationWins": 6,
+            "roadTies": 0,
+            "roadWins": 8,
+            "seasonId": 20232024,
+            "shootoutLosses": 1,
+            "shootoutWins": 2,
+            "streakCode": "L",
+            "streakCount": 1,
+            "teamName": {
+                "default": "Pittsburgh Penguins",
+                "fr": "Penguins de Pittsburgh"
+            },
+            "teamCommonName": {
+                "default": "Penguins"
+            },
+            "teamAbbrev": {
+                "default": "PIT"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/PIT_light.svg",
+            "ties": 0,
+            "waiversSequence": 14,
+            "wildcardSequence": 5,
+            "winPctg": 0.5,
+            "wins": 18
+        },
+        {
+            "conferenceAbbrev": "E",
+            "conferenceHomeSequence": 7,
+            "conferenceL10Sequence": 16,
+            "conferenceName": "Eastern",
+            "conferenceRoadSequence": 12,
+            "conferenceSequence": 12,
+            "date": "2024-01-03",
+            "divisionAbbrev": "A",
+            "divisionHomeSequence": 4,
+            "divisionL10Sequence": 8,
+            "divisionName": "Atlantic",
+            "divisionRoadSequence": 5,
+            "divisionSequence": 5,
+            "gameTypeId": 2,
+            "gamesPlayed": 38,
+            "goalDifferential": 6,
+            "goalDifferentialPctg": 0.157895,
+            "goalAgainst": 131,
+            "goalFor": 137,
+            "goalsForPctg": 3.605263,
+            "homeGamesPlayed": 20,
+            "homeGoalDifferential": 7,
+            "homeGoalsAgainst": 68,
+            "homeGoalsFor": 75,
+            "homeLosses": 7,
+            "homeOtLosses": 3,
+            "homePoints": 23,
+            "homeRegulationPlusOtWins": 9,
+            "homeRegulationWins": 8,
+            "homeTies": 0,
+            "homeWins": 10,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -8,
+            "l10GoalsAgainst": 39,
+            "l10GoalsFor": 31,
+            "l10Losses": 7,
+            "l10OtLosses": 0,
+            "l10Points": 6,
+            "l10RegulationPlusOtWins": 2,
+            "l10RegulationWins": 1,
+            "l10Ties": 0,
+            "l10Wins": 3,
+            "leagueHomeSequence": 14,
+            "leagueL10Sequence": 30,
+            "leagueRoadSequence": 22,
+            "leagueSequence": 20,
+            "losses": 16,
+            "otLosses": 4,
+            "placeName": {
+                "default": "Detroit"
+            },
+            "pointPctg": 0.526316,
+            "points": 40,
+            "regulationPlusOtWinPctg": 0.447368,
+            "regulationPlusOtWins": 17,
+            "regulationWinPctg": 0.368421,
+            "regulationWins": 14,
+            "roadGamesPlayed": 18,
+            "roadGoalDifferential": -1,
+            "roadGoalsAgainst": 63,
+            "roadGoalsFor": 62,
+            "roadLosses": 9,
+            "roadOtLosses": 1,
+            "roadPoints": 17,
+            "roadRegulationPlusOtWins": 8,
+            "roadRegulationWins": 6,
+            "roadTies": 0,
+            "roadWins": 8,
+            "seasonId": 20232024,
+            "shootoutLosses": 0,
+            "shootoutWins": 1,
+            "streakCode": "W",
+            "streakCount": 1,
+            "teamName": {
+                "default": "Detroit Red Wings",
+                "fr": "Red Wings de Detroit"
+            },
+            "teamCommonName": {
+                "default": "Red Wings"
+            },
+            "teamAbbrev": {
+                "default": "DET"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/DET_light.svg",
+            "ties": 0,
+            "waiversSequence": 13,
+            "wildcardSequence": 6,
+            "winPctg": 0.473684,
+            "wins": 18
+        },
+        {
+            "conferenceAbbrev": "W",
+            "conferenceHomeSequence": 10,
+            "conferenceL10Sequence": 6,
+            "conferenceName": "Western",
+            "conferenceRoadSequence": 9,
+            "conferenceSequence": 9,
+            "date": "2024-01-03",
+            "divisionAbbrev": "P",
+            "divisionHomeSequence": 3,
+            "divisionL10Sequence": 3,
+            "divisionName": "Pacific",
+            "divisionRoadSequence": 5,
+            "divisionSequence": 4,
+            "gameTypeId": 2,
+            "gamesPlayed": 35,
+            "goalDifferential": 16,
+            "goalDifferentialPctg": 0.457143,
+            "goalAgainst": 112,
+            "goalFor": 128,
+            "goalsForPctg": 3.657143,
+            "homeGamesPlayed": 17,
+            "homeGoalDifferential": 13,
+            "homeGoalsAgainst": 51,
+            "homeGoalsFor": 64,
+            "homeLosses": 6,
+            "homeOtLosses": 1,
+            "homePoints": 21,
+            "homeRegulationPlusOtWins": 9,
+            "homeRegulationWins": 8,
+            "homeTies": 0,
+            "homeWins": 10,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": 12,
+            "l10GoalsAgainst": 28,
+            "l10GoalsFor": 40,
+            "l10Losses": 3,
+            "l10OtLosses": 0,
+            "l10Points": 14,
+            "l10RegulationPlusOtWins": 6,
+            "l10RegulationWins": 6,
+            "l10Ties": 0,
+            "l10Wins": 7,
+            "leagueHomeSequence": 18,
+            "leagueL10Sequence": 8,
+            "leagueRoadSequence": 20,
+            "leagueSequence": 21,
+            "losses": 15,
+            "otLosses": 1,
+            "placeName": {
+                "default": "Edmonton"
+            },
+            "pointPctg": 0.557143,
+            "points": 39,
+            "regulationPlusOtWinPctg": 0.485714,
+            "regulationPlusOtWins": 17,
+            "regulationWinPctg": 0.457143,
+            "regulationWins": 16,
+            "roadGamesPlayed": 18,
+            "roadGoalDifferential": 3,
+            "roadGoalsAgainst": 61,
+            "roadGoalsFor": 64,
+            "roadLosses": 9,
+            "roadOtLosses": 0,
+            "roadPoints": 18,
+            "roadRegulationPlusOtWins": 8,
+            "roadRegulationWins": 8,
+            "roadTies": 0,
+            "roadWins": 9,
+            "seasonId": 20232024,
+            "shootoutLosses": 0,
+            "shootoutWins": 2,
+            "streakCode": "W",
+            "streakCount": 6,
+            "teamName": {
+                "default": "Edmonton Oilers",
+                "fr": "Oilers d'Edmonton"
+            },
+            "teamCommonName": {
+                "default": "Oilers"
+            },
+            "teamAbbrev": {
+                "default": "EDM"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/EDM_light.svg",
+            "ties": 0,
+            "waiversSequence": 16,
+            "wildcardSequence": 3,
+            "winPctg": 0.542857,
+            "wins": 19
+        },
+        {
+            "conferenceAbbrev": "W",
+            "conferenceHomeSequence": 12,
+            "conferenceL10Sequence": 3,
+            "conferenceName": "Western",
+            "conferenceRoadSequence": 6,
+            "conferenceSequence": 10,
+            "date": "2024-01-03",
+            "divisionAbbrev": "P",
+            "divisionHomeSequence": 5,
+            "divisionL10Sequence": 2,
+            "divisionName": "Pacific",
+            "divisionRoadSequence": 4,
+            "divisionSequence": 5,
+            "gameTypeId": 2,
+            "gamesPlayed": 38,
+            "goalDifferential": -12,
+            "goalDifferentialPctg": -0.315789,
+            "goalAgainst": 114,
+            "goalFor": 102,
+            "goalsForPctg": 2.684211,
+            "homeGamesPlayed": 19,
+            "homeGoalDifferential": -1,
+            "homeGoalsAgainst": 56,
+            "homeGoalsFor": 55,
+            "homeLosses": 8,
+            "homeOtLosses": 3,
+            "homePoints": 19,
+            "homeRegulationPlusOtWins": 7,
+            "homeRegulationWins": 6,
+            "homeTies": 0,
+            "homeWins": 8,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": 12,
+            "l10GoalsAgainst": 16,
+            "l10GoalsFor": 28,
+            "l10Losses": 1,
+            "l10OtLosses": 2,
+            "l10Points": 16,
+            "l10RegulationPlusOtWins": 7,
+            "l10RegulationWins": 6,
+            "l10Ties": 0,
+            "l10Wins": 7,
+            "leagueHomeSequence": 23,
+            "leagueL10Sequence": 3,
+            "leagueRoadSequence": 15,
+            "leagueSequence": 22,
+            "losses": 14,
+            "otLosses": 9,
+            "placeName": {
+                "default": "Seattle"
+            },
+            "pointPctg": 0.513158,
+            "points": 39,
+            "regulationPlusOtWinPctg": 0.368421,
+            "regulationPlusOtWins": 14,
+            "regulationWinPctg": 0.289474,
+            "regulationWins": 11,
+            "roadGamesPlayed": 19,
+            "roadGoalDifferential": -11,
+            "roadGoalsAgainst": 58,
+            "roadGoalsFor": 47,
+            "roadLosses": 6,
+            "roadOtLosses": 6,
+            "roadPoints": 20,
+            "roadRegulationPlusOtWins": 7,
+            "roadRegulationWins": 5,
+            "roadTies": 0,
+            "roadWins": 7,
+            "seasonId": 20232024,
+            "shootoutLosses": 4,
+            "shootoutWins": 1,
+            "streakCode": "W",
+            "streakCount": 5,
+            "teamName": {
+                "default": "Seattle Kraken",
+                "fr": "Kraken de Seattle"
+            },
+            "teamCommonName": {
+                "default": "Kraken"
+            },
+            "teamAbbrev": {
+                "default": "SEA"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/SEA_light.svg",
+            "ties": 0,
+            "waiversSequence": 10,
+            "wildcardSequence": 4,
+            "winPctg": 0.394737,
+            "wins": 15
+        },
+        {
+            "conferenceAbbrev": "W",
+            "conferenceHomeSequence": 8,
+            "conferenceL10Sequence": 11,
+            "conferenceName": "Western",
+            "conferenceRoadSequence": 12,
+            "conferenceSequence": 11,
+            "date": "2024-01-03",
+            "divisionAbbrev": "C",
+            "divisionHomeSequence": 6,
+            "divisionL10Sequence": 7,
+            "divisionName": "Central",
+            "divisionRoadSequence": 6,
+            "divisionSequence": 6,
+            "gameTypeId": 2,
+            "gamesPlayed": 36,
+            "goalDifferential": -13,
+            "goalDifferentialPctg": -0.361111,
+            "goalAgainst": 118,
+            "goalFor": 105,
+            "goalsForPctg": 2.916667,
+            "homeGamesPlayed": 17,
+            "homeGoalDifferential": 5,
+            "homeGoalsAgainst": 56,
+            "homeGoalsFor": 61,
+            "homeLosses": 6,
+            "homeOtLosses": 0,
+            "homePoints": 22,
+            "homeRegulationPlusOtWins": 10,
+            "homeRegulationWins": 9,
+            "homeTies": 0,
+            "homeWins": 11,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -3,
+            "l10GoalsAgainst": 33,
+            "l10GoalsFor": 30,
+            "l10Losses": 5,
+            "l10OtLosses": 0,
+            "l10Points": 10,
+            "l10RegulationPlusOtWins": 5,
+            "l10RegulationWins": 4,
+            "l10Ties": 0,
+            "l10Wins": 5,
+            "leagueHomeSequence": 15,
+            "leagueL10Sequence": 20,
+            "leagueRoadSequence": 26,
+            "leagueSequence": 23,
+            "losses": 17,
+            "otLosses": 1,
+            "placeName": {
+                "default": "St Louis"
+            },
+            "pointPctg": 0.513889,
+            "points": 37,
+            "regulationPlusOtWinPctg": 0.472222,
+            "regulationPlusOtWins": 17,
+            "regulationWinPctg": 0.416667,
+            "regulationWins": 15,
+            "roadGamesPlayed": 19,
+            "roadGoalDifferential": -18,
+            "roadGoalsAgainst": 62,
+            "roadGoalsFor": 44,
+            "roadLosses": 11,
+            "roadOtLosses": 1,
+            "roadPoints": 15,
+            "roadRegulationPlusOtWins": 7,
+            "roadRegulationWins": 6,
+            "roadTies": 0,
+            "roadWins": 7,
+            "seasonId": 20232024,
+            "shootoutLosses": 1,
+            "shootoutWins": 1,
+            "streakCode": "L",
+            "streakCount": 2,
+            "teamName": {
+                "default": "St. Louis Blues",
+                "fr": "Blues de St. Louis"
+            },
+            "teamCommonName": {
+                "default": "Blues"
+            },
+            "teamAbbrev": {
+                "default": "STL"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/STL_light.svg",
+            "ties": 0,
+            "waiversSequence": 11,
+            "wildcardSequence": 5,
+            "winPctg": 0.5,
+            "wins": 18
+        },
+        {
+            "conferenceAbbrev": "W",
+            "conferenceHomeSequence": 11,
+            "conferenceL10Sequence": 9,
+            "conferenceName": "Western",
+            "conferenceRoadSequence": 10,
+            "conferenceSequence": 12,
+            "date": "2024-01-03",
+            "divisionAbbrev": "P",
+            "divisionHomeSequence": 4,
+            "divisionL10Sequence": 4,
+            "divisionName": "Pacific",
+            "divisionRoadSequence": 6,
+            "divisionSequence": 6,
+            "gameTypeId": 2,
+            "gamesPlayed": 37,
+            "goalDifferential": -11,
+            "goalDifferentialPctg": -0.297297,
+            "goalAgainst": 121,
+            "goalFor": 110,
+            "goalsForPctg": 2.972973,
+            "homeGamesPlayed": 17,
+            "homeGoalDifferential": 1,
+            "homeGoalsAgainst": 49,
+            "homeGoalsFor": 50,
+            "homeLosses": 7,
+            "homeOtLosses": 1,
+            "homePoints": 19,
+            "homeRegulationPlusOtWins": 9,
+            "homeRegulationWins": 7,
+            "homeTies": 0,
+            "homeWins": 9,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": 4,
+            "l10GoalsAgainst": 28,
+            "l10GoalsFor": 32,
+            "l10Losses": 3,
+            "l10OtLosses": 2,
+            "l10Points": 12,
+            "l10RegulationPlusOtWins": 5,
+            "l10RegulationWins": 5,
+            "l10Ties": 0,
+            "l10Wins": 5,
+            "leagueHomeSequence": 22,
+            "leagueL10Sequence": 13,
+            "leagueRoadSequence": 21,
+            "leagueSequence": 24,
+            "losses": 16,
+            "otLosses": 5,
+            "placeName": {
+                "default": "Calgary"
+            },
+            "pointPctg": 0.5,
+            "points": 37,
+            "regulationPlusOtWinPctg": 0.432432,
+            "regulationPlusOtWins": 16,
+            "regulationWinPctg": 0.351351,
+            "regulationWins": 13,
+            "roadGamesPlayed": 20,
+            "roadGoalDifferential": -12,
+            "roadGoalsAgainst": 72,
+            "roadGoalsFor": 60,
+            "roadLosses": 9,
+            "roadOtLosses": 4,
+            "roadPoints": 18,
+            "roadRegulationPlusOtWins": 7,
+            "roadRegulationWins": 6,
+            "roadTies": 0,
+            "roadWins": 7,
+            "seasonId": 20232024,
+            "shootoutLosses": 4,
+            "shootoutWins": 0,
+            "streakCode": "W",
+            "streakCount": 2,
+            "teamName": {
+                "default": "Calgary Flames",
+                "fr": "Flames de Calgary"
+            },
+            "teamCommonName": {
+                "default": "Flames"
+            },
+            "teamAbbrev": {
+                "default": "CGY"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/CGY_light.svg",
+            "ties": 0,
+            "waiversSequence": 9,
+            "wildcardSequence": 6,
+            "winPctg": 0.432432,
+            "wins": 16
+        },
+        {
+            "conferenceAbbrev": "E",
+            "conferenceHomeSequence": 16,
+            "conferenceL10Sequence": 12,
+            "conferenceName": "Eastern",
+            "conferenceRoadSequence": 8,
+            "conferenceSequence": 13,
+            "date": "2024-01-03",
+            "divisionAbbrev": "A",
+            "divisionHomeSequence": 8,
+            "divisionL10Sequence": 5,
+            "divisionName": "Atlantic",
+            "divisionRoadSequence": 4,
+            "divisionSequence": 6,
+            "gameTypeId": 2,
+            "gamesPlayed": 37,
+            "goalDifferential": -22,
+            "goalDifferentialPctg": -0.594595,
+            "goalAgainst": 128,
+            "goalFor": 106,
+            "goalsForPctg": 2.864865,
+            "homeGamesPlayed": 18,
+            "homeGoalDifferential": -15,
+            "homeGoalsAgainst": 65,
+            "homeGoalsFor": 50,
+            "homeLosses": 9,
+            "homeOtLosses": 2,
+            "homePoints": 16,
+            "homeRegulationPlusOtWins": 6,
+            "homeRegulationWins": 3,
+            "homeTies": 0,
+            "homeWins": 7,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -2,
+            "l10GoalsAgainst": 33,
+            "l10GoalsFor": 31,
+            "l10Losses": 4,
+            "l10OtLosses": 2,
+            "l10Points": 10,
+            "l10RegulationPlusOtWins": 4,
+            "l10RegulationWins": 3,
+            "l10Ties": 0,
+            "l10Wins": 4,
+            "leagueHomeSequence": 29,
+            "leagueL10Sequence": 23,
+            "leagueRoadSequence": 12,
+            "leagueSequence": 25,
+            "losses": 16,
+            "otLosses": 5,
+            "placeName": {
+                "default": "Montr\u00e9al"
+            },
+            "pointPctg": 0.5,
+            "points": 37,
+            "regulationPlusOtWinPctg": 0.351351,
+            "regulationPlusOtWins": 13,
+            "regulationWinPctg": 0.216216,
+            "regulationWins": 8,
+            "roadGamesPlayed": 19,
+            "roadGoalDifferential": -7,
+            "roadGoalsAgainst": 63,
+            "roadGoalsFor": 56,
+            "roadLosses": 7,
+            "roadOtLosses": 3,
+            "roadPoints": 21,
+            "roadRegulationPlusOtWins": 7,
+            "roadRegulationWins": 5,
+            "roadTies": 0,
+            "roadWins": 9,
+            "seasonId": 20232024,
+            "shootoutLosses": 3,
+            "shootoutWins": 3,
+            "streakCode": "W",
+            "streakCount": 1,
+            "teamName": {
+                "default": "Montr\u00e9al Canadiens",
+                "fr": "Canadiens de Montr\u00e9al"
+            },
+            "teamCommonName": {
+                "default": "Canadiens"
+            },
+            "teamAbbrev": {
+                "default": "MTL"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/MTL_light.svg",
+            "ties": 0,
+            "waiversSequence": 7,
+            "wildcardSequence": 7,
+            "winPctg": 0.432432,
+            "wins": 16
+        },
+        {
+            "conferenceAbbrev": "W",
+            "conferenceHomeSequence": 9,
+            "conferenceL10Sequence": 10,
+            "conferenceName": "Western",
+            "conferenceRoadSequence": 14,
+            "conferenceSequence": 13,
+            "date": "2024-01-03",
+            "divisionAbbrev": "C",
+            "divisionHomeSequence": 7,
+            "divisionL10Sequence": 6,
+            "divisionName": "Central",
+            "divisionRoadSequence": 7,
+            "divisionSequence": 7,
+            "gameTypeId": 2,
+            "gamesPlayed": 36,
+            "goalDifferential": -5,
+            "goalDifferentialPctg": -0.138889,
+            "goalAgainst": 116,
+            "goalFor": 111,
+            "goalsForPctg": 3.083333,
+            "homeGamesPlayed": 18,
+            "homeGoalDifferential": 1,
+            "homeGoalsAgainst": 59,
+            "homeGoalsFor": 60,
+            "homeLosses": 6,
+            "homeOtLosses": 2,
+            "homePoints": 22,
+            "homeRegulationPlusOtWins": 7,
+            "homeRegulationWins": 6,
+            "homeTies": 0,
+            "homeWins": 10,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": 2,
+            "l10GoalsAgainst": 28,
+            "l10GoalsFor": 30,
+            "l10Losses": 4,
+            "l10OtLosses": 0,
+            "l10Points": 12,
+            "l10RegulationPlusOtWins": 4,
+            "l10RegulationWins": 2,
+            "l10Ties": 0,
+            "l10Wins": 6,
+            "leagueHomeSequence": 17,
+            "leagueL10Sequence": 15,
+            "leagueRoadSequence": 28,
+            "leagueSequence": 26,
+            "losses": 16,
+            "otLosses": 4,
+            "placeName": {
+                "default": "Minnesota"
+            },
+            "pointPctg": 0.5,
+            "points": 36,
+            "regulationPlusOtWinPctg": 0.361111,
+            "regulationPlusOtWins": 13,
+            "regulationWinPctg": 0.305556,
+            "regulationWins": 11,
+            "roadGamesPlayed": 18,
+            "roadGoalDifferential": -6,
+            "roadGoalsAgainst": 57,
+            "roadGoalsFor": 51,
+            "roadLosses": 10,
+            "roadOtLosses": 2,
+            "roadPoints": 14,
+            "roadRegulationPlusOtWins": 6,
+            "roadRegulationWins": 5,
+            "roadTies": 0,
+            "roadWins": 6,
+            "seasonId": 20232024,
+            "shootoutLosses": 2,
+            "shootoutWins": 3,
+            "streakCode": "L",
+            "streakCount": 3,
+            "teamName": {
+                "default": "Minnesota Wild",
+                "fr": "Wild du Minnesota"
+            },
+            "teamCommonName": {
+                "default": "Wild"
+            },
+            "teamAbbrev": {
+                "default": "MIN"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/MIN_light.svg",
+            "ties": 0,
+            "waiversSequence": 8,
+            "wildcardSequence": 7,
+            "winPctg": 0.444444,
+            "wins": 16
+        },
+        {
+            "conferenceAbbrev": "E",
+            "conferenceHomeSequence": 15,
+            "conferenceL10Sequence": 13,
+            "conferenceName": "Eastern",
+            "conferenceRoadSequence": 13,
+            "conferenceSequence": 14,
+            "date": "2024-01-03",
+            "divisionAbbrev": "A",
+            "divisionHomeSequence": 7,
+            "divisionL10Sequence": 6,
+            "divisionName": "Atlantic",
+            "divisionRoadSequence": 6,
+            "divisionSequence": 7,
+            "gameTypeId": 2,
+            "gamesPlayed": 38,
+            "goalDifferential": -21,
+            "goalDifferentialPctg": -0.552632,
+            "goalAgainst": 132,
+            "goalFor": 111,
+            "goalsForPctg": 2.921053,
+            "homeGamesPlayed": 18,
+            "homeGoalDifferential": -7,
+            "homeGoalsAgainst": 59,
+            "homeGoalsFor": 52,
+            "homeLosses": 9,
+            "homeOtLosses": 1,
+            "homePoints": 17,
+            "homeRegulationPlusOtWins": 8,
+            "homeRegulationWins": 6,
+            "homeTies": 0,
+            "homeWins": 8,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -6,
+            "l10GoalsAgainst": 38,
+            "l10GoalsFor": 32,
+            "l10Losses": 5,
+            "l10OtLosses": 1,
+            "l10Points": 9,
+            "l10RegulationPlusOtWins": 4,
+            "l10RegulationWins": 3,
+            "l10Ties": 0,
+            "l10Wins": 4,
+            "leagueHomeSequence": 28,
+            "leagueL10Sequence": 24,
+            "leagueRoadSequence": 23,
+            "leagueSequence": 27,
+            "losses": 19,
+            "otLosses": 4,
+            "placeName": {
+                "default": "Buffalo"
+            },
+            "pointPctg": 0.447368,
+            "points": 34,
+            "regulationPlusOtWinPctg": 0.394737,
+            "regulationPlusOtWins": 15,
+            "regulationWinPctg": 0.342105,
+            "regulationWins": 13,
+            "roadGamesPlayed": 20,
+            "roadGoalDifferential": -14,
+            "roadGoalsAgainst": 73,
+            "roadGoalsFor": 59,
+            "roadLosses": 10,
+            "roadOtLosses": 3,
+            "roadPoints": 17,
+            "roadRegulationPlusOtWins": 7,
+            "roadRegulationWins": 7,
+            "roadTies": 0,
+            "roadWins": 7,
+            "seasonId": 20232024,
+            "shootoutLosses": 1,
+            "shootoutWins": 0,
+            "streakCode": "L",
+            "streakCount": 1,
+            "teamName": {
+                "default": "Buffalo Sabres",
+                "fr": "Sabres de Buffalo"
+            },
+            "teamCommonName": {
+                "default": "Sabres"
+            },
+            "teamAbbrev": {
+                "default": "BUF"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/BUF_light.svg",
+            "ties": 0,
+            "waiversSequence": 6,
+            "wildcardSequence": 8,
+            "winPctg": 0.394737,
+            "wins": 15
+        },
+        {
+            "conferenceAbbrev": "E",
+            "conferenceHomeSequence": 12,
+            "conferenceL10Sequence": 14,
+            "conferenceName": "Eastern",
+            "conferenceRoadSequence": 15,
+            "conferenceSequence": 15,
+            "date": "2024-01-03",
+            "divisionAbbrev": "M",
+            "divisionHomeSequence": 6,
+            "divisionL10Sequence": 8,
+            "divisionName": "Metropolitan",
+            "divisionRoadSequence": 8,
+            "divisionSequence": 8,
+            "gameTypeId": 2,
+            "gamesPlayed": 39,
+            "goalDifferential": -24,
+            "goalDifferentialPctg": -0.615385,
+            "goalAgainst": 144,
+            "goalFor": 120,
+            "goalsForPctg": 3.076923,
+            "homeGamesPlayed": 22,
+            "homeGoalDifferential": -12,
+            "homeGoalsAgainst": 76,
+            "homeGoalsFor": 64,
+            "homeLosses": 11,
+            "homeOtLosses": 3,
+            "homePoints": 19,
+            "homeRegulationPlusOtWins": 8,
+            "homeRegulationWins": 7,
+            "homeTies": 0,
+            "homeWins": 8,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -8,
+            "l10GoalsAgainst": 43,
+            "l10GoalsFor": 35,
+            "l10Losses": 4,
+            "l10OtLosses": 3,
+            "l10Points": 9,
+            "l10RegulationPlusOtWins": 3,
+            "l10RegulationWins": 1,
+            "l10Ties": 0,
+            "l10Wins": 3,
+            "leagueHomeSequence": 24,
+            "leagueL10Sequence": 26,
+            "leagueRoadSequence": 29,
+            "leagueSequence": 28,
+            "losses": 19,
+            "otLosses": 8,
+            "placeName": {
+                "default": "Columbus"
+            },
+            "pointPctg": 0.410256,
+            "points": 32,
+            "regulationPlusOtWinPctg": 0.307692,
+            "regulationPlusOtWins": 12,
+            "regulationWinPctg": 0.230769,
+            "regulationWins": 9,
+            "roadGamesPlayed": 17,
+            "roadGoalDifferential": -12,
+            "roadGoalsAgainst": 68,
+            "roadGoalsFor": 56,
+            "roadLosses": 8,
+            "roadOtLosses": 5,
+            "roadPoints": 13,
+            "roadRegulationPlusOtWins": 4,
+            "roadRegulationWins": 2,
+            "roadTies": 0,
+            "roadWins": 4,
+            "seasonId": 20232024,
+            "shootoutLosses": 1,
+            "shootoutWins": 0,
+            "streakCode": "L",
+            "streakCount": 1,
+            "teamName": {
+                "default": "Columbus Blue Jackets",
+                "fr": "Blue Jackets de Columbus"
+            },
+            "teamCommonName": {
+                "default": "Blue Jackets"
+            },
+            "teamAbbrev": {
+                "default": "CBJ"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/CBJ_light.svg",
+            "ties": 0,
+            "waiversSequence": 4,
+            "wildcardSequence": 9,
+            "winPctg": 0.307692,
+            "wins": 12
+        },
+        {
+            "conferenceAbbrev": "E",
+            "conferenceHomeSequence": 11,
+            "conferenceL10Sequence": 15,
+            "conferenceName": "Eastern",
+            "conferenceRoadSequence": 16,
+            "conferenceSequence": 16,
+            "date": "2024-01-03",
+            "divisionAbbrev": "A",
+            "divisionHomeSequence": 6,
+            "divisionL10Sequence": 7,
+            "divisionName": "Atlantic",
+            "divisionRoadSequence": 8,
+            "divisionSequence": 8,
+            "gameTypeId": 2,
+            "gamesPlayed": 33,
+            "goalDifferential": -4,
+            "goalDifferentialPctg": -0.121212,
+            "goalAgainst": 118,
+            "goalFor": 114,
+            "goalsForPctg": 3.454545,
+            "homeGamesPlayed": 20,
+            "homeGoalDifferential": 1,
+            "homeGoalsAgainst": 67,
+            "homeGoalsFor": 68,
+            "homeLosses": 10,
+            "homeOtLosses": 0,
+            "homePoints": 20,
+            "homeRegulationPlusOtWins": 9,
+            "homeRegulationWins": 7,
+            "homeTies": 0,
+            "homeWins": 10,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -9,
+            "l10GoalsAgainst": 44,
+            "l10GoalsFor": 35,
+            "l10Losses": 7,
+            "l10OtLosses": 0,
+            "l10Points": 6,
+            "l10RegulationPlusOtWins": 3,
+            "l10RegulationWins": 2,
+            "l10Ties": 0,
+            "l10Wins": 3,
+            "leagueHomeSequence": 21,
+            "leagueL10Sequence": 29,
+            "leagueRoadSequence": 31,
+            "leagueSequence": 29,
+            "losses": 19,
+            "otLosses": 0,
+            "placeName": {
+                "default": "Ottawa"
+            },
+            "pointPctg": 0.424242,
+            "points": 28,
+            "regulationPlusOtWinPctg": 0.393939,
+            "regulationPlusOtWins": 13,
+            "regulationWinPctg": 0.333333,
+            "regulationWins": 11,
+            "roadGamesPlayed": 13,
+            "roadGoalDifferential": -5,
+            "roadGoalsAgainst": 51,
+            "roadGoalsFor": 46,
+            "roadLosses": 9,
+            "roadOtLosses": 0,
+            "roadPoints": 8,
+            "roadRegulationPlusOtWins": 4,
+            "roadRegulationWins": 4,
+            "roadTies": 0,
+            "roadWins": 4,
+            "seasonId": 20232024,
+            "shootoutLosses": 0,
+            "shootoutWins": 1,
+            "streakCode": "L",
+            "streakCount": 1,
+            "teamName": {
+                "default": "Ottawa Senators",
+                "fr": "S\u00e9nateurs d'Ottawa"
+            },
+            "teamCommonName": {
+                "default": "Senators",
+                "fr": "S\u00e9nateurs"
+            },
+            "teamAbbrev": {
+                "default": "OTT"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/OTT_light.svg",
+            "ties": 0,
+            "waiversSequence": 5,
+            "wildcardSequence": 10,
+            "winPctg": 0.424242,
+            "wins": 14
+        },
+        {
+            "conferenceAbbrev": "W",
+            "conferenceHomeSequence": 16,
+            "conferenceL10Sequence": 14,
+            "conferenceName": "Western",
+            "conferenceRoadSequence": 13,
+            "conferenceSequence": 14,
+            "date": "2024-01-03",
+            "divisionAbbrev": "P",
+            "divisionHomeSequence": 8,
+            "divisionL10Sequence": 7,
+            "divisionName": "Pacific",
+            "divisionRoadSequence": 7,
+            "divisionSequence": 7,
+            "gameTypeId": 2,
+            "gamesPlayed": 36,
+            "goalDifferential": -29,
+            "goalDifferentialPctg": -0.805556,
+            "goalAgainst": 122,
+            "goalFor": 93,
+            "goalsForPctg": 2.583333,
+            "homeGamesPlayed": 20,
+            "homeGoalDifferential": -16,
+            "homeGoalsAgainst": 66,
+            "homeGoalsFor": 50,
+            "homeLosses": 14,
+            "homeOtLosses": 0,
+            "homePoints": 12,
+            "homeRegulationPlusOtWins": 5,
+            "homeRegulationWins": 4,
+            "homeTies": 0,
+            "homeWins": 6,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -10,
+            "l10GoalsAgainst": 34,
+            "l10GoalsFor": 24,
+            "l10Losses": 7,
+            "l10OtLosses": 0,
+            "l10Points": 6,
+            "l10RegulationPlusOtWins": 3,
+            "l10RegulationWins": 3,
+            "l10Ties": 0,
+            "l10Wins": 3,
+            "leagueHomeSequence": 32,
+            "leagueL10Sequence": 28,
+            "leagueRoadSequence": 27,
+            "leagueSequence": 30,
+            "losses": 23,
+            "otLosses": 0,
+            "placeName": {
+                "default": "Anaheim"
+            },
+            "pointPctg": 0.361111,
+            "points": 26,
+            "regulationPlusOtWinPctg": 0.333333,
+            "regulationPlusOtWins": 12,
+            "regulationWinPctg": 0.25,
+            "regulationWins": 9,
+            "roadGamesPlayed": 16,
+            "roadGoalDifferential": -13,
+            "roadGoalsAgainst": 56,
+            "roadGoalsFor": 43,
+            "roadLosses": 9,
+            "roadOtLosses": 0,
+            "roadPoints": 14,
+            "roadRegulationPlusOtWins": 7,
+            "roadRegulationWins": 5,
+            "roadTies": 0,
+            "roadWins": 7,
+            "seasonId": 20232024,
+            "shootoutLosses": 0,
+            "shootoutWins": 1,
+            "streakCode": "L",
+            "streakCount": 2,
+            "teamName": {
+                "default": "Anaheim Ducks",
+                "fr": "Ducks d'Anaheim"
+            },
+            "teamCommonName": {
+                "default": "Ducks"
+            },
+            "teamAbbrev": {
+                "default": "ANA"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/ANA_light.svg",
+            "ties": 0,
+            "waiversSequence": 3,
+            "wildcardSequence": 8,
+            "winPctg": 0.361111,
+            "wins": 13
+        },
+        {
+            "conferenceAbbrev": "W",
+            "conferenceHomeSequence": 14,
+            "conferenceL10Sequence": 15,
+            "conferenceName": "Western",
+            "conferenceRoadSequence": 15,
+            "conferenceSequence": 15,
+            "date": "2024-01-03",
+            "divisionAbbrev": "C",
+            "divisionHomeSequence": 8,
+            "divisionL10Sequence": 8,
+            "divisionName": "Central",
+            "divisionRoadSequence": 8,
+            "divisionSequence": 8,
+            "gameTypeId": 2,
+            "gamesPlayed": 37,
+            "goalDifferential": -53,
+            "goalDifferentialPctg": -1.432432,
+            "goalAgainst": 140,
+            "goalFor": 87,
+            "goalsForPctg": 2.351351,
+            "homeGamesPlayed": 17,
+            "homeGoalDifferential": -9,
+            "homeGoalsAgainst": 52,
+            "homeGoalsFor": 43,
+            "homeLosses": 9,
+            "homeOtLosses": 1,
+            "homePoints": 15,
+            "homeRegulationPlusOtWins": 7,
+            "homeRegulationWins": 5,
+            "homeTies": 0,
+            "homeWins": 7,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -24,
+            "l10GoalsAgainst": 46,
+            "l10GoalsFor": 22,
+            "l10Losses": 7,
+            "l10OtLosses": 1,
+            "l10Points": 5,
+            "l10RegulationPlusOtWins": 2,
+            "l10RegulationWins": 1,
+            "l10Ties": 0,
+            "l10Wins": 2,
+            "leagueHomeSequence": 30,
+            "leagueL10Sequence": 31,
+            "leagueRoadSequence": 30,
+            "leagueSequence": 31,
+            "losses": 24,
+            "otLosses": 2,
+            "placeName": {
+                "default": "Chicago"
+            },
+            "pointPctg": 0.324324,
+            "points": 24,
+            "regulationPlusOtWinPctg": 0.297297,
+            "regulationPlusOtWins": 11,
+            "regulationWinPctg": 0.216216,
+            "regulationWins": 8,
+            "roadGamesPlayed": 20,
+            "roadGoalDifferential": -44,
+            "roadGoalsAgainst": 88,
+            "roadGoalsFor": 44,
+            "roadLosses": 15,
+            "roadOtLosses": 1,
+            "roadPoints": 9,
+            "roadRegulationPlusOtWins": 4,
+            "roadRegulationWins": 3,
+            "roadTies": 0,
+            "roadWins": 4,
+            "seasonId": 20232024,
+            "shootoutLosses": 1,
+            "shootoutWins": 0,
+            "streakCode": "L",
+            "streakCount": 2,
+            "teamName": {
+                "default": "Chicago Blackhawks",
+                "fr": "Blackhawks de Chicago"
+            },
+            "teamCommonName": {
+                "default": "Blackhawks"
+            },
+            "teamAbbrev": {
+                "default": "CHI"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/CHI_light.svg",
+            "ties": 0,
+            "waiversSequence": 2,
+            "wildcardSequence": 9,
+            "winPctg": 0.297297,
+            "wins": 11
+        },
+        {
+            "conferenceAbbrev": "W",
+            "conferenceHomeSequence": 15,
+            "conferenceL10Sequence": 16,
+            "conferenceName": "Western",
+            "conferenceRoadSequence": 16,
+            "conferenceSequence": 16,
+            "date": "2024-01-03",
+            "divisionAbbrev": "P",
+            "divisionHomeSequence": 7,
+            "divisionL10Sequence": 8,
+            "divisionName": "Pacific",
+            "divisionRoadSequence": 8,
+            "divisionSequence": 8,
+            "gameTypeId": 2,
+            "gamesPlayed": 38,
+            "goalDifferential": -80,
+            "goalDifferentialPctg": -2.105263,
+            "goalAgainst": 158,
+            "goalFor": 78,
+            "goalsForPctg": 2.052632,
+            "homeGamesPlayed": 18,
+            "homeGoalDifferential": -33,
+            "homeGoalsAgainst": 71,
+            "homeGoalsFor": 38,
+            "homeLosses": 10,
+            "homeOtLosses": 2,
+            "homePoints": 14,
+            "homeRegulationPlusOtWins": 6,
+            "homeRegulationWins": 6,
+            "homeTies": 0,
+            "homeWins": 6,
+            "l10GamesPlayed": 10,
+            "l10GoalDifferential": -26,
+            "l10GoalsAgainst": 42,
+            "l10GoalsFor": 16,
+            "l10Losses": 9,
+            "l10OtLosses": 0,
+            "l10Points": 2,
+            "l10RegulationPlusOtWins": 1,
+            "l10RegulationWins": 1,
+            "l10Ties": 0,
+            "l10Wins": 1,
+            "leagueHomeSequence": 31,
+            "leagueL10Sequence": 32,
+            "leagueRoadSequence": 32,
+            "leagueSequence": 32,
+            "losses": 26,
+            "otLosses": 3,
+            "placeName": {
+                "default": "San Jose"
+            },
+            "pointPctg": 0.276316,
+            "points": 21,
+            "regulationPlusOtWinPctg": 0.236842,
+            "regulationPlusOtWins": 9,
+            "regulationWinPctg": 0.184211,
+            "regulationWins": 7,
+            "roadGamesPlayed": 20,
+            "roadGoalDifferential": -47,
+            "roadGoalsAgainst": 87,
+            "roadGoalsFor": 40,
+            "roadLosses": 16,
+            "roadOtLosses": 1,
+            "roadPoints": 7,
+            "roadRegulationPlusOtWins": 3,
+            "roadRegulationWins": 1,
+            "roadTies": 0,
+            "roadWins": 3,
+            "seasonId": 20232024,
+            "shootoutLosses": 3,
+            "shootoutWins": 0,
+            "streakCode": "L",
+            "streakCount": 9,
+            "teamName": {
+                "default": "San Jose Sharks",
+                "fr": "Sharks de San Jose"
+            },
+            "teamCommonName": {
+                "default": "Sharks"
+            },
+            "teamAbbrev": {
+                "default": "SJS"
+            },
+            "teamLogo": "https://assets.nhle.com/logos/nhl/svg/SJS_light.svg",
+            "ties": 0,
+            "waiversSequence": 1,
+            "wildcardSequence": 10,
+            "winPctg": 0.236842,
+            "wins": 9
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+</div>
+<p>Ok, this is cool! We can see all of the data is in the <code>standings</code> item. But it’s difficult to scroll through the whole data structure.</p>
+<p>Let’s see if we can figure out how many wins the New Jersey Devils have this year. We’ll go step by step, but you could write most of this code as a single line.</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>standings <span class="op">=</span> parse_json[<span class="st">'standings'</span>] <span class="co"># get the standings </span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>NJ <span class="op">=</span> <span class="bu">next</span>(item <span class="cf">for</span> item <span class="kw">in</span> standings <span class="cf">if</span> item[<span class="st">'teamName'</span>][<span class="st">'default'</span>] <span class="op">==</span> <span class="st">'New Jersey Devils'</span>) <span class="co"># find the list item with teamName 'New Jersey Devils'</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>NJ_wins <span class="op">=</span> NJ[<span class="st">'wins'</span>] <span class="co"># find the wins item in the NJ Devils dictionary</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The New Jersey Devils have"</span>, NJ_wins, <span class="st">"wins"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="scrolling">
+<div class="cell" data-execution_count="4">
+<div class="cell-output cell-output-stdout">
+<pre><code>The New Jersey Devils have 19 wins</code></pre>
+</div>
+</div>
+</div>
+<p>Nice! So that’s the basics of how to navigate these data structures in Python. Let’s try something more involved.</p>
+<p>Let’s pull the current roster for the New Jersey Devils</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>roster <span class="op">=</span> requests.get(<span class="st">'https://api-web.nhle.com/v1/roster/NJD/current'</span>) <span class="co"># pull current roster</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>roster_data <span class="op">=</span> roster.text <span class="co"># get just the data</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>roster_dict <span class="op">=</span> json.loads(roster_data) <span class="co"># parse the JSON data into a Python dictionary</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(json.dumps(roster_dict, indent<span class="op">=</span><span class="dv">4</span>)) <span class="co"># print the new dictionary object</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="scrolling">
+<div class="cell" data-execution_count="6">
+<div class="cell-output cell-output-stdout">
+<pre><code>{
+    "forwards": [
+        {
+            "id": 8479414,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8479414.png",
+            "firstName": {
+                "default": "Nathan"
+            },
+            "lastName": {
+                "default": "Bastian"
+            },
+            "sweaterNumber": 14,
+            "positionCode": "R",
+            "shootsCatches": "R",
+            "heightInInches": 76,
+            "weightInPounds": 205,
+            "heightInCentimeters": 193,
+            "weightInKilograms": 93,
+            "birthDate": "1997-12-06",
+            "birthCity": {
+                "default": "Kitchener"
+            },
+            "birthCountry": "CAN",
+            "birthStateProvince": {
+                "default": "Ontario"
+            }
+        },
+        {
+            "id": 8479407,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8479407.png",
+            "firstName": {
+                "default": "Jesper"
+            },
+            "lastName": {
+                "default": "Bratt"
+            },
+            "sweaterNumber": 63,
+            "positionCode": "L",
+            "shootsCatches": "L",
+            "heightInInches": 70,
+            "weightInPounds": 175,
+            "heightInCentimeters": 178,
+            "weightInKilograms": 79,
+            "birthDate": "1998-07-30",
+            "birthCity": {
+                "default": "Stockholm",
+                "fi": "Tukholma"
+            },
+            "birthCountry": "SWE"
+        },
+        {
+            "id": 8481578,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8481578.png",
+            "firstName": {
+                "default": "Graeme"
+            },
+            "lastName": {
+                "default": "Clarke"
+            },
+            "sweaterNumber": 95,
+            "positionCode": "R",
+            "shootsCatches": "R",
+            "heightInInches": 72,
+            "weightInPounds": 175,
+            "heightInCentimeters": 183,
+            "weightInKilograms": 79,
+            "birthDate": "2001-04-24",
+            "birthCity": {
+                "default": "Waconia"
+            },
+            "birthCountry": "USA",
+            "birthStateProvince": {
+                "default": "Minnesota"
+            }
+        },
+        {
+            "id": 8475287,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8475287.png",
+            "firstName": {
+                "default": "Erik"
+            },
+            "lastName": {
+                "default": "Haula"
+            },
+            "sweaterNumber": 56,
+            "positionCode": "L",
+            "shootsCatches": "L",
+            "heightInInches": 71,
+            "weightInPounds": 191,
+            "heightInCentimeters": 180,
+            "weightInKilograms": 87,
+            "birthDate": "1991-03-23",
+            "birthCity": {
+                "default": "Pori",
+                "sv": "Bj\u00f6rneborg"
+            },
+            "birthCountry": "FIN"
+        },
+        {
+            "id": 8480002,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8480002.png",
+            "firstName": {
+                "default": "Nico"
+            },
+            "lastName": {
+                "default": "Hischier"
+            },
+            "sweaterNumber": 13,
+            "positionCode": "C",
+            "shootsCatches": "L",
+            "heightInInches": 73,
+            "weightInPounds": 175,
+            "heightInCentimeters": 185,
+            "weightInKilograms": 79,
+            "birthDate": "1999-01-04",
+            "birthCity": {
+                "default": "Brig"
+            },
+            "birthCountry": "CHE"
+        },
+        {
+            "id": 8482125,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8482125.png",
+            "firstName": {
+                "default": "Alexander"
+            },
+            "lastName": {
+                "default": "Holtz"
+            },
+            "sweaterNumber": 10,
+            "positionCode": "R",
+            "shootsCatches": "R",
+            "heightInInches": 72,
+            "weightInPounds": 195,
+            "heightInCentimeters": 183,
+            "weightInKilograms": 88,
+            "birthDate": "2002-01-23",
+            "birthCity": {
+                "default": "Stockholm",
+                "fi": "Tukholma"
+            },
+            "birthCountry": "SWE"
+        },
+        {
+            "id": 8481559,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8481559.png",
+            "firstName": {
+                "default": "Jack"
+            },
+            "lastName": {
+                "default": "Hughes"
+            },
+            "sweaterNumber": 86,
+            "positionCode": "C",
+            "shootsCatches": "L",
+            "heightInInches": 71,
+            "weightInPounds": 175,
+            "heightInCentimeters": 180,
+            "weightInKilograms": 79,
+            "birthDate": "2001-05-14",
+            "birthCity": {
+                "default": "Orlando"
+            },
+            "birthCountry": "USA",
+            "birthStateProvince": {
+                "default": "Florida",
+                "fr": "Floride"
+            }
+        },
+        {
+            "id": 8477508,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8477508.png",
+            "firstName": {
+                "default": "Curtis"
+            },
+            "lastName": {
+                "default": "Lazar"
+            },
+            "sweaterNumber": 42,
+            "positionCode": "C",
+            "shootsCatches": "R",
+            "heightInInches": 72,
+            "weightInPounds": 203,
+            "heightInCentimeters": 183,
+            "weightInKilograms": 92,
+            "birthDate": "1995-02-02",
+            "birthCity": {
+                "default": "Salmon Arm"
+            },
+            "birthCountry": "CAN",
+            "birthStateProvince": {
+                "default": "British Columbia",
+                "fr": "Colombie-Britannique",
+                "sk": "Britsk\u00e1 Kolumbia"
+            }
+        },
+        {
+            "id": 8479415,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8479415.png",
+            "firstName": {
+                "default": "Michael"
+            },
+            "lastName": {
+                "default": "McLeod"
+            },
+            "sweaterNumber": 20,
+            "positionCode": "C",
+            "shootsCatches": "R",
+            "heightInInches": 74,
+            "weightInPounds": 190,
+            "heightInCentimeters": 188,
+            "weightInKilograms": 86,
+            "birthDate": "1998-02-03",
+            "birthCity": {
+                "default": "Mississauga"
+            },
+            "birthCountry": "CAN",
+            "birthStateProvince": {
+                "default": "Ontario"
+            }
+        },
+        {
+            "id": 8478414,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8478414.png",
+            "firstName": {
+                "default": "Timo"
+            },
+            "lastName": {
+                "default": "Meier"
+            },
+            "sweaterNumber": 28,
+            "positionCode": "R",
+            "shootsCatches": "L",
+            "heightInInches": 73,
+            "weightInPounds": 220,
+            "heightInCentimeters": 185,
+            "weightInKilograms": 100,
+            "birthDate": "1996-10-08",
+            "birthCity": {
+                "default": "Herisau"
+            },
+            "birthCountry": "CHE"
+        },
+        {
+            "id": 8482110,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8482110.png",
+            "firstName": {
+                "default": "Dawson"
+            },
+            "lastName": {
+                "default": "Mercer"
+            },
+            "sweaterNumber": 91,
+            "positionCode": "C",
+            "shootsCatches": "R",
+            "heightInInches": 72,
+            "weightInPounds": 180,
+            "heightInCentimeters": 183,
+            "weightInKilograms": 82,
+            "birthDate": "2001-10-27",
+            "birthCity": {
+                "default": "Carbonear"
+            },
+            "birthCountry": "CAN",
+            "birthStateProvince": {
+                "default": "Newfoundland and Labrador",
+                "fr": "Newfoundland et Labrador",
+                "sk": "Newfoundland a Labrador",
+                "sv": "Newfoundland och Labrador"
+            }
+        },
+        {
+            "id": 8477931,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8477931.png",
+            "firstName": {
+                "default": "Tomas",
+                "cs": "Tom\u00e1\u0161",
+                "sk": "Tom\u00e1\u0161"
+            },
+            "lastName": {
+                "default": "Nosek"
+            },
+            "sweaterNumber": 92,
+            "positionCode": "L",
+            "shootsCatches": "L",
+            "heightInInches": 75,
+            "weightInPounds": 205,
+            "heightInCentimeters": 191,
+            "weightInKilograms": 93,
+            "birthDate": "1992-09-01",
+            "birthCity": {
+                "default": "Pardubice"
+            },
+            "birthCountry": "CZE"
+        },
+        {
+            "id": 8476292,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8476292.png",
+            "firstName": {
+                "default": "Ondrej",
+                "cs": "Ond\u0159ej",
+                "sk": "Ond\u0159ej"
+            },
+            "lastName": {
+                "default": "Palat",
+                "cs": "Pal\u00e1t",
+                "sk": "Pal\u00e1t"
+            },
+            "sweaterNumber": 18,
+            "positionCode": "L",
+            "shootsCatches": "L",
+            "heightInInches": 72,
+            "weightInPounds": 194,
+            "heightInCentimeters": 183,
+            "weightInKilograms": 88,
+            "birthDate": "1991-03-28",
+            "birthCity": {
+                "default": "Frydek-Mistek",
+                "cs": "Fr\u00fddek-M\u00edstek",
+                "fi": "Fr\u00fddek-M\u00edstek",
+                "sk": "Fr\u00fddek-M\u00edstek"
+            },
+            "birthCountry": "CZE"
+        },
+        {
+            "id": 8476919,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8476919.png",
+            "firstName": {
+                "default": "Chris"
+            },
+            "lastName": {
+                "default": "Tierney"
+            },
+            "sweaterNumber": 11,
+            "positionCode": "C",
+            "shootsCatches": "L",
+            "heightInInches": 73,
+            "weightInPounds": 191,
+            "heightInCentimeters": 185,
+            "weightInKilograms": 87,
+            "birthDate": "1994-07-01",
+            "birthCity": {
+                "default": "Keswick"
+            },
+            "birthCountry": "CAN",
+            "birthStateProvince": {
+                "default": "Ontario"
+            }
+        },
+        {
+            "id": 8475726,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8475726.png",
+            "firstName": {
+                "default": "Tyler"
+            },
+            "lastName": {
+                "default": "Toffoli"
+            },
+            "sweaterNumber": 73,
+            "positionCode": "C",
+            "shootsCatches": "R",
+            "heightInInches": 72,
+            "weightInPounds": 203,
+            "heightInCentimeters": 183,
+            "weightInKilograms": 92,
+            "birthDate": "1992-04-24",
+            "birthCity": {
+                "default": "Scarborough"
+            },
+            "birthCountry": "CAN",
+            "birthStateProvince": {
+                "default": "Ontario"
+            }
+        }
+    ],
+    "defensemen": [
+        {
+            "id": 8480860,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8480860.png",
+            "firstName": {
+                "default": "Kevin"
+            },
+            "lastName": {
+                "default": "Bahl"
+            },
+            "sweaterNumber": 88,
+            "positionCode": "D",
+            "shootsCatches": "L",
+            "heightInInches": 78,
+            "weightInPounds": 230,
+            "heightInCentimeters": 198,
+            "weightInKilograms": 104,
+            "birthDate": "2000-06-27",
+            "birthCity": {
+                "default": "New Westminster"
+            },
+            "birthCountry": "CAN",
+            "birthStateProvince": {
+                "default": "British Columbia",
+                "fr": "Colombie-Britannique",
+                "sk": "Britsk\u00e1 Kolumbia"
+            }
+        },
+        {
+            "id": 8476462,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8476462.png",
+            "firstName": {
+                "default": "Dougie"
+            },
+            "lastName": {
+                "default": "Hamilton"
+            },
+            "sweaterNumber": 7,
+            "positionCode": "D",
+            "shootsCatches": "R",
+            "heightInInches": 78,
+            "weightInPounds": 230,
+            "heightInCentimeters": 198,
+            "weightInKilograms": 104,
+            "birthDate": "1993-06-17",
+            "birthCity": {
+                "default": "Toronto"
+            },
+            "birthCountry": "CAN",
+            "birthStateProvince": {
+                "default": "Ontario"
+            }
+        },
+        {
+            "id": 8482684,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8482684.png",
+            "firstName": {
+                "default": "Luke"
+            },
+            "lastName": {
+                "default": "Hughes"
+            },
+            "sweaterNumber": 43,
+            "positionCode": "D",
+            "shootsCatches": "L",
+            "heightInInches": 74,
+            "weightInPounds": 184,
+            "heightInCentimeters": 188,
+            "weightInKilograms": 83,
+            "birthDate": "2003-09-09",
+            "birthCity": {
+                "default": "Manchester"
+            },
+            "birthCountry": "USA",
+            "birthStateProvince": {
+                "default": "New Hampshire"
+            }
+        },
+        {
+            "id": 8478507,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8478507.png",
+            "firstName": {
+                "default": "John"
+            },
+            "lastName": {
+                "default": "Marino"
+            },
+            "sweaterNumber": 6,
+            "positionCode": "D",
+            "shootsCatches": "R",
+            "heightInInches": 73,
+            "weightInPounds": 181,
+            "heightInCentimeters": 185,
+            "weightInKilograms": 82,
+            "birthDate": "1997-05-21",
+            "birthCity": {
+                "default": "North Easton"
+            },
+            "birthCountry": "USA",
+            "birthStateProvince": {
+                "default": "Massachusetts"
+            }
+        },
+        {
+            "id": 8476525,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8476525.png",
+            "firstName": {
+                "default": "Colin"
+            },
+            "lastName": {
+                "default": "Miller"
+            },
+            "sweaterNumber": 24,
+            "positionCode": "D",
+            "shootsCatches": "R",
+            "heightInInches": 73,
+            "weightInPounds": 200,
+            "heightInCentimeters": 185,
+            "weightInKilograms": 91,
+            "birthDate": "1992-10-29",
+            "birthCity": {
+                "default": "Sault Ste. Marie",
+                "fr": "Sault-Sainte-Marie"
+            },
+            "birthCountry": "CAN",
+            "birthStateProvince": {
+                "default": "Ontario"
+            }
+        },
+        {
+            "id": 8483495,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8483495.png",
+            "firstName": {
+                "default": "Simon"
+            },
+            "lastName": {
+                "default": "Nemec"
+            },
+            "sweaterNumber": 17,
+            "positionCode": "D",
+            "shootsCatches": "R",
+            "heightInInches": 73,
+            "weightInPounds": 190,
+            "heightInCentimeters": 185,
+            "weightInKilograms": 86,
+            "birthDate": "2004-02-15",
+            "birthCity": {
+                "default": "Liptovsk\u00fd Mikul\u00e1\u0161"
+            },
+            "birthCountry": "SVK"
+        },
+        {
+            "id": 8478399,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8478399.png",
+            "firstName": {
+                "default": "Jonas"
+            },
+            "lastName": {
+                "default": "Siegenthaler"
+            },
+            "sweaterNumber": 71,
+            "positionCode": "D",
+            "shootsCatches": "L",
+            "heightInInches": 74,
+            "weightInPounds": 218,
+            "heightInCentimeters": 188,
+            "weightInKilograms": 99,
+            "birthDate": "1997-05-06",
+            "birthCity": {
+                "default": "Zurich"
+            },
+            "birthCountry": "CHE"
+        },
+        {
+            "id": 8474090,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8474090.png",
+            "firstName": {
+                "default": "Brendan"
+            },
+            "lastName": {
+                "default": "Smith"
+            },
+            "sweaterNumber": 2,
+            "positionCode": "D",
+            "shootsCatches": "L",
+            "heightInInches": 74,
+            "weightInPounds": 200,
+            "heightInCentimeters": 188,
+            "weightInKilograms": 91,
+            "birthDate": "1989-02-08",
+            "birthCity": {
+                "default": "Mimico"
+            },
+            "birthCountry": "CAN",
+            "birthStateProvince": {
+                "default": "Ontario"
+            }
+        }
+    ],
+    "goalies": [
+        {
+            "id": 8482076,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8482076.png",
+            "firstName": {
+                "default": "Nico"
+            },
+            "lastName": {
+                "default": "Daws"
+            },
+            "sweaterNumber": 50,
+            "positionCode": "G",
+            "shootsCatches": "L",
+            "heightInInches": 76,
+            "weightInPounds": 205,
+            "heightInCentimeters": 193,
+            "weightInKilograms": 93,
+            "birthDate": "2000-12-22",
+            "birthCity": {
+                "default": "Munich",
+                "cs": "Mnichov",
+                "de": "M\u00fcnchen",
+                "fi": "M\u00fcnchen",
+                "sk": "Mnichov",
+                "sv": "M\u00fcnchen"
+            },
+            "birthCountry": "DEU"
+        },
+        {
+            "id": 8477970,
+            "headshot": "https://assets.nhle.com/mugs/nhl/20232024/NJD/8477970.png",
+            "firstName": {
+                "default": "Vitek"
+            },
+            "lastName": {
+                "default": "Vanecek",
+                "cs": "Van\u011b\u010dek",
+                "sk": "Van\u011b\u010dek"
+            },
+            "sweaterNumber": 41,
+            "positionCode": "G",
+            "shootsCatches": "L",
+            "heightInInches": 74,
+            "weightInPounds": 184,
+            "heightInCentimeters": 188,
+            "weightInKilograms": 83,
+            "birthDate": "1996-01-09",
+            "birthCity": {
+                "default": "Havlickuv Brod",
+                "cs": "Havl\u00ed\u010dk\u016fv Brod",
+                "fi": "Havl\u00ed\u010dk\u016fv Brod",
+                "sk": "Havl\u00ed\u010dk\u016fv Brod"
+            },
+            "birthCountry": "CZE"
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+</div>
+<p>Pretty messy. How about we just identify the keys in the dictionary?</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>roster_dict.keys()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="scrolling">
+<div class="cell" data-execution_count="8">
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>dict_keys(['forwards', 'defensemen', 'goalies'])</code></pre>
+</div>
+</div>
+</div>
+<p>Nice, so now let’s access the <code>forwards</code> element, then try to spit out the first player name.</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>lastName <span class="op">=</span> roster_dict[<span class="st">'forwards'</span>][<span class="dv">0</span>][<span class="st">'lastName'</span>][<span class="st">'default'</span>] <span class="co"># access the 1st (0th) element of the forwards list, then get their last name</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>firstName <span class="op">=</span> roster_dict[<span class="st">'forwards'</span>][<span class="dv">0</span>][<span class="st">'firstName'</span>][<span class="st">'default'</span>] <span class="co"># access the 1st (0th) element of the forwards list, then get their first name</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Let's meet our first NJ Devils forward: "</span>, firstName, <span class="st">" "</span>, lastName, <span class="st">"!"</span>, sep<span class="op">=</span><span class="st">''</span>) <span class="co"># sep='' prints the output without spaces between the elements </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="scrolling">
+<div class="cell" data-execution_count="10">
+<div class="cell-output cell-output-stdout">
+<pre><code>Let's meet our first NJ Devils forward: Nathan Bastian!</code></pre>
+</div>
+</div>
+</div>
+<p>Now let’s try printing a list of all NJ Devils players on the current roster.</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Introducing the full NJ Devils lineup!"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">""</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"FORWARDS:"</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x <span class="kw">in</span> roster_dict[<span class="st">'forwards'</span>]: <span class="co"># loop through all items in the roster_dict forwards list</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(x[<span class="st">'firstName'</span>][<span class="st">'default'</span>], x[<span class="st">'lastName'</span>][<span class="st">'default'</span>])</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">""</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DEFENSEMEN:"</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x <span class="kw">in</span> roster_dict[<span class="st">'defensemen'</span>]: <span class="co"># loop through all items in the roster_dict defensemen list</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(x[<span class="st">'firstName'</span>][<span class="st">'default'</span>], x[<span class="st">'lastName'</span>][<span class="st">'default'</span>])</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">""</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"GOALIES:"</span>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x <span class="kw">in</span> roster_dict[<span class="st">'goalies'</span>]: <span class="co"># loop through all items in the roster_dict goalies list</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(x[<span class="st">'firstName'</span>][<span class="st">'default'</span>], x[<span class="st">'lastName'</span>][<span class="st">'default'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="scrolling">
+<div class="cell" data-execution_count="12">
+<div class="cell-output cell-output-stdout">
+<pre><code>Introducing the full NJ Devils lineup!
+
+FORWARDS:
+Nathan Bastian
+Jesper Bratt
+Graeme Clarke
+Erik Haula
+Nico Hischier
+Alexander Holtz
+Jack Hughes
+Curtis Lazar
+Michael McLeod
+Timo Meier
+Dawson Mercer
+Tomas Nosek
+Ondrej Palat
+Chris Tierney
+Tyler Toffoli
+
+DEFENSEMEN:
+Kevin Bahl
+Dougie Hamilton
+Luke Hughes
+John Marino
+Colin Miller
+Simon Nemec
+Jonas Siegenthaler
+Brendan Smith
+
+GOALIES:
+Nico Daws
+Vitek Vanecek</code></pre>
+</div>
+</div>
+</div>
+<p>After a bit of digging <a href="https://github.com/Zmalski/NHL-API-Reference?tab=readme-ov-file#get-team-roster-by-season">here</a>, it looks like we can access historic team rosters in a similar manner.</p>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>roster <span class="op">=</span> requests.get(<span class="st">'https://api-web.nhle.com/v1/roster/NJD/19931994'</span>) <span class="co"># pull roster for 1993-1994 season</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>roster_data <span class="op">=</span> roster.text <span class="co"># get just the data</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>roster_dict <span class="op">=</span> json.loads(roster_data) <span class="co"># parse the JSON data into a Python dictionary</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Introducing the 1993-1994 NJ Devils lineup!"</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">""</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"FORWARDS:"</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x <span class="kw">in</span> roster_dict[<span class="st">'forwards'</span>]: <span class="co"># loop through all items in the roster_dict forwards list</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(x[<span class="st">'firstName'</span>][<span class="st">'default'</span>], x[<span class="st">'lastName'</span>][<span class="st">'default'</span>])</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">""</span>)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DEFENSEMEN:"</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x <span class="kw">in</span> roster_dict[<span class="st">'defensemen'</span>]: <span class="co"># loop through all items in the roster_dict defensemen list</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(x[<span class="st">'firstName'</span>][<span class="st">'default'</span>], x[<span class="st">'lastName'</span>][<span class="st">'default'</span>])</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">""</span>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"GOALIES:"</span>)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x <span class="kw">in</span> roster_dict[<span class="st">'goalies'</span>]: <span class="co"># loop through all items in the roster_dict goalies list</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(x[<span class="st">'firstName'</span>][<span class="st">'default'</span>], x[<span class="st">'lastName'</span>][<span class="st">'default'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="scrolling">
+<div class="cell" data-execution_count="14">
+<div class="cell-output cell-output-stdout">
+<pre><code>Introducing the 1993-1994 NJ Devils lineup!
+
+FORWARDS:
+Bobby Carpenter
+Tom Chorske
+Jim Dowd
+David Emma
+Bill Guerin
+Ben Hankinson
+Bobby Holik
+Claude Lemieux
+John MacLean
+Randy Mckay
+Corey Millen
+Bernie Nicholls
+Scott Pellerin
+Mike Peluso
+Stephane Richer
+Alexander Semak
+Valeri Zelepukin
+
+DEFENSEMEN:
+Tommy Albelin
+Ken Daneyko
+Bruce Driver
+Viacheslav Fetisov
+Jaroslav Modry
+Scott Niedermayer
+Jason Smith
+Scott Stevens
+
+GOALIES:
+Martin Brodeur
+Peter Sidorkiewicz
+Chris Terreri</code></pre>
+</div>
+</div>
+</div>
+<p>Hey look! There’s hall-of-famer Martin Brodeur in net for his rookie season!</p>
+<p>(Technically this isn’t his first appearance for the Devils. He was called up for a few games in the 1991-1992 season. But it seems the NHL database doesn’t consider that enough playing time to list him on the roster)</p>
 
 
 
