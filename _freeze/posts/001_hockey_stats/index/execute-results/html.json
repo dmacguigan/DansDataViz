@@ -1,0 +1,11 @@
+{
+  "hash": "d914e6d27acd8e6a492567f5dca96a13",
+  "result": {
+    "markdown": "---\ntitle: \"#001: hockey stats\"\nauthor: \"Dan MacGuigan\"\ndate: \"2024-01-03\"\ncategories: [code, analysis, sports, hockey]\n#image: \"image.jpg\"\n---\n\nToday we're going to explore some sports data.\nWhile watching my favorite hockey team this year (the Philadeplphia Flyers), I've felt like I barely know the players. There was a lot of turnover in the roster in the past couple of years. \n\nThis got me thinking. Which year did the Flyers roster experience the most turnover?\n\nTo answer this question, we will turn to [hockey-reference.com/](https://www.hockey-reference.com/).\n\nFirst, let's download a table of all Flyers players across the team's history. Rather than scraping the website, I manually accessed the data [here](https://www.hockey-reference.com/teams/PHI/skaters.html#stats)\n\n::: {.cell execution_count=1}\n``` {.python .cell-code}\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nr = np.arange(0, 2, 0.01)\ntheta = 5 * np.pi * r\nfig, ax = plt.subplots(\n  subplot_kw = {'projection': 'polar'} \n)\nax.plot(theta, r)\nax.set_rticks([0.5, 1, 1.5, 2])\nax.grid(True)\nplt.show()\n```\n\n::: {.cell-output .cell-output-display}\n![A line plot on a polar axis](index_files/figure-html/fig-polar-output-1.png){#fig-polar width=450 height=439}\n:::\n:::\n\n\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}

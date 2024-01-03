@@ -1,17 +1,10 @@
 [
   {
-    "objectID": "posts/test-post/index.html",
-    "href": "posts/test-post/index.html",
-    "title": "Test Jupyter post",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Dan’s Data Viz",
     "section": "",
-    "text": "This is a post with executable code.\n\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nr = np.arange(0, 2, 0.01)\ntheta = 4 * np.pi * r\nfig, ax = plt.subplots(\n  subplot_kw = {'projection': 'polar'} \n)\nax.plot(theta, r)\nax.set_rticks([0.5, 1, 1.5, 2])\nax.grid(True)\nplt.show()\n\n\n\n\nFigure 1: A line plot on a polar axis"
-  },
-  {
-    "objectID": "posts/post-with-code/index.html",
-    "href": "posts/post-with-code/index.html",
-    "title": "Post With Code",
-    "section": "",
-    "text": "This is a post with executable code."
+    "text": "001: hockey stats\n\n\n\n\n\n\n\ncode\n\n\nanalysis\n\n\nsports\n\n\nhockey\n\n\n\n\n\n\n\n\n\n\n\nJan 3, 2024\n\n\nDan MacGuigan\n\n\n\n\n\n\n  \n\n\n\n\n001: hockey stats\n\n\n\n\n\n\n\ncode\n\n\nanalysis\n\n\nsports\n\n\nhockey\n\n\n\n\n\n\n\n\n\n\n\nJan 3, 2024\n\n\nDan MacGuigan\n\n\n\n\n\n\n  \n\n\n\n\nPost With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nJan 2, 2024\n\n\nHarlow Malloc\n\n\n\n\n\n\n  \n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nDec 30, 2023\n\n\nTristan O’Malley\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/welcome/index.html",
@@ -19,5 +12,33 @@
     "title": "Welcome To My Blog",
     "section": "",
     "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+  },
+  {
+    "objectID": "posts/test-post/index.html",
+    "href": "posts/test-post/index.html",
+    "title": "Test Jupyter post",
+    "section": "",
+    "text": "This is a post with executable code.\n\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nr = np.arange(0, 2, 0.01)\ntheta = 4 * np.pi * r\nfig, ax = plt.subplots(\n  subplot_kw = {'projection': 'polar'} \n)\nax.plot(theta, r)\nax.set_rticks([0.5, 1, 1.5, 2])\nax.grid(True)\nplt.show()\n\n\n\n\nFigure 1: A line plot on a polar axis"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this blog"
+  },
+  {
+    "objectID": "posts/001_hockey_stats/index.html",
+    "href": "posts/001_hockey_stats/index.html",
+    "title": "#001: hockey stats",
+    "section": "",
+    "text": "Today we’re going to explore some sports data. While watching my favorite hockey team this year (the Philadeplphia Flyers), I’ve felt like I barely know the players. There was a lot of turnover in the roster in the past couple of years.\nThis got me thinking. Which year did the Flyers roster experience the most turnover?\nTo answer this question, we will turn to hockey-reference.com/.\nFirst, let’s download a table of all Flyers players across the team’s history. Rather than scraping the website, I manually accessed the data here\n\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nr = np.arange(0, 2, 0.01)\ntheta = 5 * np.pi * r\nfig, ax = plt.subplots(\n  subplot_kw = {'projection': 'polar'} \n)\nax.plot(theta, r)\nax.set_rticks([0.5, 1, 1.5, 2])\nax.grid(True)\nplt.show()\n\n\n\n\nFigure 1: A line plot on a polar axis"
+  },
+  {
+    "objectID": "posts/post-with-code/index.html",
+    "href": "posts/post-with-code/index.html",
+    "title": "Post With Code",
+    "section": "",
+    "text": "This is a post with executable code."
   }
 ]
