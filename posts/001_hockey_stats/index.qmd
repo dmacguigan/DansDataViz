@@ -390,4 +390,18 @@ fig = px.bar(df, x='Year', y='% Roster Returning', title = "Philadelphia Flyers 
 fig.show()
 ```
  
- Pretty bare bones. Let's make it prettier.
+Pretty bare bones. Let's make it prettier. Let's also drop the 2004-2005 season, since it was a lockout year.
+
+```{python}
+import plotly.express as px
+import pandas as pd
+
+perc_returning_dict[2004] = None
+
+df = pd.DataFrame(perc_returning_dict.items(), columns=['Year', '% Roster Returning']) # convert dictionary to two column data frame
+
+fig = px.bar(df, x='Year', y='% Roster Returning', title = "Philadelphia Flyers Roster Continuity", template="plotly_dark") # use a dark template for contrast
+fig.update_traces(marker_color = "#F74902") # make the bars "Flyers orange"
+
+fig.show()
+```
