@@ -405,3 +405,77 @@ fig.update_traces(marker_color = "#F74902") # make the bars "Flyers orange"
 
 fig.show()
 ```
+
+How well does roster continuity correlated with team performance? Do years with higher continuity also have more wins?
+
+Annoyingly, the NHL API does not have an easy way to pull team win-loss records for each season. To get win percentage per season, let's pull league standings on the season end date from every year. Note that have to look at only regulation wins, since the NHL used to allow ties.
+
+
+```{python}
+#| eva: false
+#s = requests.get('https://api-web.nhle.com/v1/standings/' + str(1968) + '-03-01') # pull data
+s = requests.get('https://api-web.nhle.com/v1/standings-season')
+s_data = s.text # get just the data
+s_dict = json.loads(s_data) # parse the JSON data into a Python dictionary
+s_seasons = s_dict['seasons']
+
+flyers_win_perc = {} # dict to contain win percentage for each year
+
+for i in range(1968, 2024): 
+  j = i + 1 # get next year
+  year = int(str(i) + str(j))
+  if i != 2004: # skip the lockout year
+    season = next(item for item in s_seasons if item['id'] == year) # find the flyers in this seasons standings
+    season_end = season['standingsEnd']
+    stand = requests.get('https://api-web.nhle.com/v1/standings/' + season_end) # pull data from the end of the season
+    stand_dict = json.loads(stand.text) # convert to dict
+    flyers = next(item for item in stand_dict['standings'] if item['teamName']['default'] == 'Philadelphia Flyers') # find the list item with teamName 'Philadelphia Flyers'
+    flyers_winP = flyers['regulationWinPctg'] # find the regulation win percentage item in the Flyers dictionary
+    #print(json.dumps(flyers, indent=4)) # print the new dictionary object
+    print(i, "-", j, " season win %: ", round(flyers_winP * 100, 1), sep="")
+    flyers_win_perc[i] = round(flyers_winP * 100, 1)
+  else:
+    flyers_win_perc[i] = None
+```
+:::{.scrolling}
+```{python}
+#| echo: false
+s = requests.get('https://api-web.nhle.com/v1/standings/' + str(1968) + '-03-01') # pull data
+s = requests.get('https://api-web.nhle.com/v1/standings-season')
+s_data = s.text # get just the data
+s_dict = json.loads(s_data) # parse the JSON data into a Python dictionary
+s_seasons = s_dict['seasons']
+
+flyers_win_perc = {} # dict to contain win percentage for each year
+
+for i in range(1968, 2024): 
+  j = i + 1 # get next year
+  year = int(str(i) + str(j))
+  if i != 2004: # skip the lockout year
+    season = next(item for item in s_seasons if item['id'] == year) # find the flyers in this seasons standings
+    season_end = season['standingsEnd']
+    stand = requests.get('https://api-web.nhle.com/v1/standings/' + season_end) # pull data from the end of the season
+    stand_dict = json.loads(stand.text) # convert to dict
+    flyers = next(item for item in stand_dict['standings'] if item['teamName']['default'] == 'Philadelphia Flyers') # find the list item with teamName 'Philadelphia Flyers'
+    flyers_winP = flyers['regulationWinPctg'] # find the regulation win percentage item in the Flyers dictionary
+    #print(json.dumps(flyers, indent=4)) # print the new dictionary object
+    print(i, "-", j, " season win %: ", round(flyers_winP * 100, 1), sep="")
+    flyers_win_perc[i] = round(flyers_winP * 100, 1)
+  else:
+    flyers_win_perc[i] = None
+```
+:::
+
+Now let's plot regulation win percentage by season.
+
+```{python}
+import plotly.express as px
+import pandas as pd
+
+df = pd.DataFrame(flyers_win_perc.items(), columns=['Year', 'Regulation Win %']) # convert dictionary to two column data frame
+
+fig = px.bar(df, x='Year', y='Regulation Win %', title = "Philadelphia Flyers Season Performance", template="plotly_dark") # use a dark template for contrast
+fig.update_traces(marker_color = "#F74902") # make the bars "Flyers orange"
+
+fig.show()
+```
