@@ -381,7 +381,7 @@ print(perc_returning_dict)
 ```
 :::
 
-So now that we have a dictionary with our data values, let's make some figure! We'll use the `plotly` Python library. We'll also need the `pandas` library to format our data as a DataFrame object.
+So now that we have a dictionary with our data values, let's make some figures! We'll use the `plotly` Python library. We'll also need the `pandas` library to format our data as a DataFrame object.
 
 ```{python}
 import plotly.express as px
