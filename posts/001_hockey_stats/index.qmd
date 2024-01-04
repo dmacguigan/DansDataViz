@@ -47,33 +47,33 @@ print(json.dumps(parse_json, indent=4)) # print the new dictionary object
 
 Ok, this is cool! We can see all of the data is in the `standings` item. But it's difficult to scroll through the whole data structure.
 
-Let's see if we can figure out how many wins the New Jersey Devils have this year. We'll go step by step, but you could write most of this code as a single line.
+Let's see if we can figure out how many wins the Philadelphia Flyers have this year. We'll go step by step, but you could write most of this code as a single line.
 
 ```{python}
 #| eval: false
 standings = parse_json['standings'] # get the standings 
-NJ = next(item for item in standings if item['teamName']['default'] == 'New Jersey Devils') # find the list item with teamName 'New Jersey Devils'
-NJ_wins = NJ['wins'] # find the wins item in the NJ Devils dictionary
-print("The New Jersey Devils have", NJ_wins, "wins") 
+flyers = next(item for item in standings if item['teamName']['default'] == 'Philadelphia Flyers') # find the list item with teamName 'Philadelphia Flyers'
+flyers_wins = flyers['wins'] # find the wins item in the Flyers dictionary
+print("The Philadelphia Flyers have", flyers_wins, "wins") 
 ```
 
 :::{.scrolling}
 ```{python}
 #| echo: false
 standings = parse_json['standings'] # get the standings 
-NJ = next(item for item in standings if item['teamName']['default'] == 'New Jersey Devils') # find the list item with teamName 'New Jersey Devils'
-NJ_wins = NJ['wins'] # find the wins item in the NJ Devils dictionary
-print("The New Jersey Devils have", NJ_wins, "wins") 
+flyers = next(item for item in standings if item['teamName']['default'] == 'Philadelphia Flyers') # find the list item with teamName 'Philadelphia Flyers'
+flyers_wins = flyers['wins'] # find the wins item in the Flyers dictionary
+print("The Philadelphia Flyers have", flyers_wins, "wins") 
 ```
 :::
 
 Nice! So that's the basics of how to navigate these data structures in Python. Let's try something more involved.
 
-Let's pull the current roster for the New Jersey Devils
+Let's pull the current roster for the Philadelphia Flyers
 
 ```{python}
 #| eval: false
-roster = requests.get('https://api-web.nhle.com/v1/roster/NJD/current') # pull current roster
+roster = requests.get('https://api-web.nhle.com/v1/roster/PHI/current') # pull current roster
 roster_data = roster.text # get just the data
 roster_dict = json.loads(roster_data) # parse the JSON data into a Python dictionary
 print(json.dumps(roster_dict, indent=4)) # print the new dictionary object
@@ -82,7 +82,7 @@ print(json.dumps(roster_dict, indent=4)) # print the new dictionary object
 :::{.scrolling}
 ```{python}
 #| echo: false
-roster = requests.get('https://api-web.nhle.com/v1/roster/NJD/current') # pull current roster
+roster = requests.get('https://api-web.nhle.com/v1/roster/PHI/current') # pull current roster
 roster_data = roster.text # get just the data
 roster_dict = json.loads(roster_data) # parse the JSON data into a Python dictionary
 print(json.dumps(roster_dict, indent=4)) # print the new dictionary object
@@ -109,7 +109,7 @@ Nice, so now let's access the `forwards` element, then try to spit out the first
 #| eval: false
 lastName = roster_dict['forwards'][0]['lastName']['default'] # access the 1st (0th) element of the forwards list, then get their last name
 firstName = roster_dict['forwards'][0]['firstName']['default'] # access the 1st (0th) element of the forwards list, then get their first name
-print("Let's meet our first NJ Devils forward: ", firstName, " ", lastName, "!", sep='') # sep='' prints the output without spaces between the elements 
+print("Let's meet our first Flyers forward: ", firstName, " ", lastName, "!", sep='') # sep='' prints the output without spaces between the elements 
 ```
 
 :::{.scrolling}
@@ -117,14 +117,14 @@ print("Let's meet our first NJ Devils forward: ", firstName, " ", lastName, "!",
 #| echo: false
 lastName = roster_dict['forwards'][0]['lastName']['default'] # access the 1st (0th) element of the forwards list, then get their last name
 firstName = roster_dict['forwards'][0]['firstName']['default'] # access the 1st (0th) element of the forwards list, then get their first name
-print("Let's meet our first NJ Devils forward: ", firstName, " ", lastName, "!", sep='') # sep='' prints the output without spaces between the elements 
+print("Let's meet our first Flyers forward: ", firstName, " ", lastName, "!", sep='') # sep='' prints the output without spaces between the elements 
 ```
 :::
 
-Now let's try printing a list of all NJ Devils players on the current roster.
+Now let's try printing a list of all Flyers players on the current roster.
 ```{python}
 #| eval: false
-print("Introducing the full NJ Devils lineup!")
+print("Introducing the full Flyers lineup!")
 print("")
 print("FORWARDS:")
 for x in roster_dict['forwards']: # loop through all items in the roster_dict forwards list
@@ -142,7 +142,7 @@ for x in roster_dict['goalies']: # loop through all items in the roster_dict goa
 :::{.scrolling}
 ```{python}
 #| echo: false
-print("Introducing the full NJ Devils lineup!")
+print("Introducing the full Flyers lineup!")
 print("")
 print("FORWARDS:")
 for x in roster_dict['forwards']: # loop through all items in the roster_dict forwards list
@@ -162,11 +162,11 @@ After a bit of digging [here](https://github.com/Zmalski/NHL-API-Reference?tab=r
 
 ```{python}
 #| eval: false
-roster = requests.get('https://api-web.nhle.com/v1/roster/NJD/19931994') # pull roster for 1993-1994 season
+roster = requests.get('https://api-web.nhle.com/v1/roster/PHI/19931994') # pull roster for 1993-1994 season
 roster_data = roster.text # get just the data
 roster_dict = json.loads(roster_data) # parse the JSON data into a Python dictionary
 
-print("Introducing the 1993-1994 NJ Devils lineup!")
+print("Introducing the 1993-1994 Flyers lineup!")
 print("")
 print("FORWARDS:")
 for x in roster_dict['forwards']: # loop through all items in the roster_dict forwards list
@@ -184,11 +184,11 @@ for x in roster_dict['goalies']: # loop through all items in the roster_dict goa
 :::{.scrolling}
 ```{python}
 #| echo: false
-roster = requests.get('https://api-web.nhle.com/v1/roster/NJD/19931994') # pull roster for 1993-1994 season
+roster = requests.get('https://api-web.nhle.com/v1/roster/PHI/19931994') # pull roster for 1993-1994 season
 roster_data = roster.text # get just the data
 roster_dict = json.loads(roster_data) # parse the JSON data into a Python dictionary
 
-print("Introducing the 1993-1994 NJ Devils lineup!")
+print("Introducing the 1993-1994 Flyers lineup!")
 print("")
 print("FORWARDS:")
 for x in roster_dict['forwards']: # loop through all items in the roster_dict forwards list
@@ -204,6 +204,178 @@ for x in roster_dict['goalies']: # loop through all items in the roster_dict goa
 ```
 :::
 
-Hey look! There's hall-of-famer Martin Brodeur in net for his rookie season!
+Now for the real question. How much turnover does the Flyers roster have from year to year? When did we see peak turnover?
 
-(Technically this isn't his first appearance for the Devils. He was called up for a few games in the 1991-1992 season. But it seems the NHL database doesn't consider that enough playing time to list him on the roster)
+For this, we'll need to loop through all of the Flyers seasons, pull the rosters, and do a lookback on the previous year's roster.
+
+Let's start by just looping through rosters year-by-year. The Flyers first season was in 1967-1968.
+
+The NHL API uses the format YEARYEAR to name its seasons. E.g. the season starting in 1967 is `19671968`.
+
+Also, let's start in 1968, since there was no roster continuity for the 1967 season.
+
+Lastly, we'll need to skip the 2004-2005 season, as it was canceled due to a player lockout. Let's just pretend there were not roster changes that season.
+
+```{python}
+#| eval: false
+for i in range(1968, 2024): 
+  j = i + 1 # get next year
+  k = i - 1 # get previous year
+  season = str(i) + str(j)
+  prev_season = str(k) + str(i)
+
+  if i == 2004:
+    roster_dict = prev_roster_dict
+
+  else: 
+    roster = requests.get('https://api-web.nhle.com/v1/roster/PHI/' + season) # pull roster
+    roster_data = roster.text # get just the data
+    roster_dict = json.loads(roster_data) # parse the JSON data into a Python dictionary
+
+  if season == 1968: # use a conditional to skip this pull request for future years
+    prev_roster = requests.get('https://api-web.nhle.com/v1/roster/PHI/' + season) # pull previous season roster
+    prev_roster_data = prev_roster.text # get just the data
+    prev_roster_dict = json.loads(prev_roster_data) # parse the JSON data into a Python dictionary
+
+  lastName = roster_dict['forwards'][0]['lastName']['default'] # access the 1st (0th) element of the forwards list, then get their last name
+  firstName = roster_dict['forwards'][0]['firstName']['default'] # access the 1st (0th) element of the forwards list, then get their first name
+
+  print(i, "-", j, " season: ", firstName, " ", lastName, sep='')
+
+  prev_roster = roster
+
+```
+
+:::{.scrolling}
+```{python}
+#| echo: false
+for i in range(1968, 2024): 
+  j = i + 1 # get next year
+  k = i - 1 # get previous year
+  season = str(i) + str(j)
+  prev_season = str(k) + str(i)
+
+  if i == 2004:
+    roster_dict = prev_roster_dict
+
+  else: 
+    roster = requests.get('https://api-web.nhle.com/v1/roster/PHI/' + season) # pull roster
+    roster_data = roster.text # get just the data
+    roster_dict = json.loads(roster_data) # parse the JSON data into a Python dictionary
+
+  if season == 1968: # use a conditional to skip this pull request for future years
+    prev_roster = requests.get('https://api-web.nhle.com/v1/roster/PHI/' + season) # pull previous season roster
+    prev_roster_data = prev_roster.text # get just the data
+    prev_roster_dict = json.loads(prev_roster_data) # parse the JSON data into a Python dictionary
+
+  lastName = roster_dict['forwards'][0]['lastName']['default'] # access the 1st (0th) element of the forwards list, then get their last name
+  firstName = roster_dict['forwards'][0]['firstName']['default'] # access the 1st (0th) element of the forwards list, then get their first name
+
+  id = roster_dict['forwards'][0]['id']
+
+  print(i, "-", j, " season: ", firstName, " ", lastName, " ID = ", id, sep='')
+
+  prev_roster_dict = roster_dict
+
+```
+:::
+
+Looking good. However, it will be annoying to compare first and last names every season. Also, what if two players have the same name?
+
+Fortunately, the NHL API assigns each player a unique `id` attribute, so we can use those instead of names.
+
+```{python}
+#| eval: false
+for i in range(1968, 2024): 
+  j = i + 1 # get next year
+  k = i - 1 # get previous year
+  season = str(i) + str(j)
+  prev_season = str(k) + str(i)
+
+  if i == 2004:
+    roster_dict = prev_roster_dict
+
+  else: 
+    roster = requests.get('https://api-web.nhle.com/v1/roster/PHI/' + season) # pull roster
+    roster_data = roster.text # get just the data
+    roster_dict = json.loads(roster_data) # parse the JSON data into a Python dictionary
+
+  if season == 1968: # use a conditional to skip this pull request for future years
+    prev_roster = requests.get('https://api-web.nhle.com/v1/roster/PHI/' + season) # pull previous season roster
+    prev_roster_data = prev_roster.text # get just the data
+    prev_roster_dict = json.loads(prev_roster_data) # parse the JSON data into a Python dictionary
+  
+  prev_roster_ids = [] # create list to contain previous year roster player IDs
+  for x in prev_roster_dict: # loop through the dictionary
+      for y in prev_roster_dict[x]: # loop through each player
+        prev_roster_ids.append(y['id']) # and extract ID
+
+  count = 0 # keep track of how many players are on the roster
+  returning = 0 # keep track of how many players returned from the previous season
+  for x in roster_dict:
+    for y in roster_dict[x]: # loop through each player
+      #print(y['id'])
+      if y['id'] in prev_roster_ids:
+        returning = returning + 1
+      count = count + 1 
+
+  perc_returning = round(returning / count * 100)
+  print(perc_returning, "% of players returned for the ", i, "-", j, " season", sep="")
+
+  prev_roster_dict = roster_dict # do this to avoid extra data pull requests
+```
+
+:::{.scrolling}
+```{python}
+#| echo: false
+
+perc_returning_list = [] # list to save percent of returning roster year by year
+
+for i in range(1968, 2024): 
+  j = i + 1 # get next year
+  k = i - 1 # get previous year
+  season = str(i) + str(j)
+  prev_season = str(k) + str(i)
+
+  if i == 2004:
+    roster_dict = prev_roster_dict
+
+  else: 
+    roster = requests.get('https://api-web.nhle.com/v1/roster/PHI/' + season) # pull roster
+    roster_data = roster.text # get just the data
+    roster_dict = json.loads(roster_data) # parse the JSON data into a Python dictionary
+
+  if i == 1968: # use a conditional to skip this pull request for future years
+    prev_roster = requests.get('https://api-web.nhle.com/v1/roster/PHI/' + prev_season) # pull previous season roster
+    prev_roster_data = prev_roster.text # get just the data
+    prev_roster_dict = json.loads(prev_roster_data) # parse the JSON data into a Python dictionary
+  
+  prev_roster_ids = [] # create list to contain previous year roster player IDs
+  for x in prev_roster_dict: # loop through the dictionary
+      for y in prev_roster_dict[x]: # loop through each player
+        prev_roster_ids.append(y['id']) # and extract ID
+
+  count = 0 # keep track of how many players are on the roster
+  returning = 0 # keep track of how many players returned from the previous season
+  for x in roster_dict:
+    for y in roster_dict[x]: # loop through each player
+      #print(y['id'])
+      if y['id'] in prev_roster_ids:
+        returning = returning + 1
+      count = count + 1 
+
+  perc_returning = round(returning / count * 100)
+  print(perc_returning, "% of players returned for the ", i, "-", j, " season", sep="")
+
+  perc_returning_list.append(perc_returning)
+
+  prev_roster_dict = roster_dict # do this to avoid extra data pull requests
+```
+:::
+
+So now that we have a list with our data values, let's make some figure!
+
+```{python}
+
+
+```
