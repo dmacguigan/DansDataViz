@@ -375,9 +375,6 @@ for i in range(1968, 2024):
   perc_returning_dict[i] = perc_returning # append each year's values to the dictionary
 
   prev_roster_dict = roster_dict # do this to avoid extra data pull requests
-
-print(perc_returning_dict)
-
 ```
 :::
 
