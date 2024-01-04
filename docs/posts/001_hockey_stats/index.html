@@ -95,6 +95,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script type="text/javascript">
+window.PlotlyConfig = {MathJaxConfig: 'local'};
+if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}
+if (typeof require !== 'undefined') {
+require.undef("plotly");
+requirejs.config({
+    paths: {
+        'plotly': ['https://cdn.plot.ly/plotly-2.27.0.min']
+    }
+});
+require(['plotly'], function(Plotly) {
+    window._Plotly = Plotly;
+});
+}
+</script>
+
 
 
 <link rel="stylesheet" href="../../styles.css">
@@ -4015,107 +4034,150 @@ Tommy Soderstrom</code></pre>
 <p>Looking good. However, it will be annoying to compare first and last names every season. Also, what if two players have the same name?</p>
 <p>Fortunately, the NHL API assigns each player a unique <code>id</code> attribute, so we can use those instead of names.</p>
 <div class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1968</span>, <span class="dv">2024</span>): </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  j <span class="op">=</span> i <span class="op">+</span> <span class="dv">1</span> <span class="co"># get next year</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  k <span class="op">=</span> i <span class="op">-</span> <span class="dv">1</span> <span class="co"># get previous year</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  season <span class="op">=</span> <span class="bu">str</span>(i) <span class="op">+</span> <span class="bu">str</span>(j)</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  prev_season <span class="op">=</span> <span class="bu">str</span>(k) <span class="op">+</span> <span class="bu">str</span>(i)</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> i <span class="op">==</span> <span class="dv">2004</span>:</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    roster_dict <span class="op">=</span> prev_roster_dict</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>: </span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    roster <span class="op">=</span> requests.get(<span class="st">'https://api-web.nhle.com/v1/roster/PHI/'</span> <span class="op">+</span> season) <span class="co"># pull roster</span></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    roster_data <span class="op">=</span> roster.text <span class="co"># get just the data</span></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    roster_dict <span class="op">=</span> json.loads(roster_data) <span class="co"># parse the JSON data into a Python dictionary</span></span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> season <span class="op">==</span> <span class="dv">1968</span>: <span class="co"># use a conditional to skip this pull request for future years</span></span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    prev_roster <span class="op">=</span> requests.get(<span class="st">'https://api-web.nhle.com/v1/roster/PHI/'</span> <span class="op">+</span> season) <span class="co"># pull previous season roster</span></span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    prev_roster_data <span class="op">=</span> prev_roster.text <span class="co"># get just the data</span></span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>    prev_roster_dict <span class="op">=</span> json.loads(prev_roster_data) <span class="co"># parse the JSON data into a Python dictionary</span></span>
-<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>  prev_roster_ids <span class="op">=</span> [] <span class="co"># create list to contain previous year roster player IDs</span></span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> x <span class="kw">in</span> prev_roster_dict: <span class="co"># loop through the dictionary</span></span>
-<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> y <span class="kw">in</span> prev_roster_dict[x]: <span class="co"># loop through each player</span></span>
-<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>        prev_roster_ids.append(y[<span class="st">'id'</span>]) <span class="co"># and extract ID</span></span>
-<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>  count <span class="op">=</span> <span class="dv">0</span> <span class="co"># keep track of how many players are on the roster</span></span>
-<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>  returning <span class="op">=</span> <span class="dv">0</span> <span class="co"># keep track of how many players returned from the previous season</span></span>
-<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> x <span class="kw">in</span> roster_dict:</span>
-<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> y <span class="kw">in</span> roster_dict[x]: <span class="co"># loop through each player</span></span>
-<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>      <span class="co">#print(y['id'])</span></span>
-<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> y[<span class="st">'id'</span>] <span class="kw">in</span> prev_roster_ids:</span>
-<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>        returning <span class="op">=</span> returning <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>      count <span class="op">=</span> count <span class="op">+</span> <span class="dv">1</span> </span>
-<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>  perc_returning <span class="op">=</span> <span class="bu">round</span>(returning <span class="op">/</span> count <span class="op">*</span> <span class="dv">100</span>)</span>
-<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(perc_returning, <span class="st">"</span><span class="sc">% o</span><span class="st">f players returned for the "</span>, i, <span class="st">"-"</span>, j, <span class="st">" season"</span>, sep<span class="op">=</span><span class="st">""</span>)</span>
-<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>  prev_roster_dict <span class="op">=</span> roster_dict <span class="co"># do this to avoid extra data pull requests</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>perc_returning_dict <span class="op">=</span> {} <span class="co"># dict to save percent of returning roster year by year</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1968</span>, <span class="dv">2024</span>): </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  j <span class="op">=</span> i <span class="op">+</span> <span class="dv">1</span> <span class="co"># get next year</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  k <span class="op">=</span> i <span class="op">-</span> <span class="dv">1</span> <span class="co"># get previous year</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  season <span class="op">=</span> <span class="bu">str</span>(i) <span class="op">+</span> <span class="bu">str</span>(j)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  prev_season <span class="op">=</span> <span class="bu">str</span>(k) <span class="op">+</span> <span class="bu">str</span>(i)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> i <span class="op">==</span> <span class="dv">2004</span>:</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    roster_dict <span class="op">=</span> prev_roster_dict</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>: </span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    roster <span class="op">=</span> requests.get(<span class="st">'https://api-web.nhle.com/v1/roster/PHI/'</span> <span class="op">+</span> season) <span class="co"># pull roster</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    roster_data <span class="op">=</span> roster.text <span class="co"># get just the data</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    roster_dict <span class="op">=</span> json.loads(roster_data) <span class="co"># parse the JSON data into a Python dictionary</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> season <span class="op">==</span> <span class="dv">1968</span>: <span class="co"># use a conditional to skip this pull request for future years</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>    prev_roster <span class="op">=</span> requests.get(<span class="st">'https://api-web.nhle.com/v1/roster/PHI/'</span> <span class="op">+</span> season) <span class="co"># pull previous season roster</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>    prev_roster_data <span class="op">=</span> prev_roster.text <span class="co"># get just the data</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    prev_roster_dict <span class="op">=</span> json.loads(prev_roster_data) <span class="co"># parse the JSON data into a Python dictionary</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>  prev_roster_ids <span class="op">=</span> [] <span class="co"># create list to contain previous year roster player IDs</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> x <span class="kw">in</span> prev_roster_dict: <span class="co"># loop through the dictionary</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> y <span class="kw">in</span> prev_roster_dict[x]: <span class="co"># loop through each player</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>        prev_roster_ids.append(y[<span class="st">'id'</span>]) <span class="co"># and extract ID</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>  count <span class="op">=</span> <span class="dv">0</span> <span class="co"># keep track of how many players are on the roster</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>  returning <span class="op">=</span> <span class="dv">0</span> <span class="co"># keep track of how many players returned from the previous season</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> x <span class="kw">in</span> roster_dict:</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> y <span class="kw">in</span> roster_dict[x]: <span class="co"># loop through each player</span></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>      <span class="co">#print(y['id'])</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> y[<span class="st">'id'</span>] <span class="kw">in</span> prev_roster_ids:</span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>        returning <span class="op">=</span> returning <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>      count <span class="op">=</span> count <span class="op">+</span> <span class="dv">1</span> </span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>  perc_returning <span class="op">=</span> <span class="bu">round</span>(returning <span class="op">/</span> count <span class="op">*</span> <span class="dv">100</span>, <span class="dv">1</span>)</span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(perc_returning, <span class="st">"</span><span class="sc">% o</span><span class="st">f players returned for the "</span>, i, <span class="st">"-"</span>, j, <span class="st">" season"</span>, sep<span class="op">=</span><span class="st">""</span>)</span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>  perc_returning_dict[i] <span class="op">=</span> perc_returning <span class="co"># append each year's values to the dictionary</span></span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a>  prev_roster_dict <span class="op">=</span> roster_dict <span class="co"># do this to avoid extra data pull requests</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="scrolling">
 <div class="cell" data-execution_count="18">
 <div class="cell-output cell-output-stdout">
-<pre><code>70% of players returned for the 1968-1969 season
-69% of players returned for the 1969-1970 season
-63% of players returned for the 1970-1971 season
-54% of players returned for the 1971-1972 season
-75% of players returned for the 1972-1973 season
-83% of players returned for the 1973-1974 season
-70% of players returned for the 1974-1975 season
-79% of players returned for the 1975-1976 season
-69% of players returned for the 1976-1977 season
-76% of players returned for the 1977-1978 season
-65% of players returned for the 1978-1979 season
-66% of players returned for the 1979-1980 season
-71% of players returned for the 1980-1981 season
-63% of players returned for the 1981-1982 season
-65% of players returned for the 1982-1983 season
-74% of players returned for the 1983-1984 season
-66% of players returned for the 1984-1985 season
-74% of players returned for the 1985-1986 season
-62% of players returned for the 1986-1987 season
-73% of players returned for the 1987-1988 season
-69% of players returned for the 1988-1989 season
-68% of players returned for the 1989-1990 season
-74% of players returned for the 1990-1991 season
-48% of players returned for the 1991-1992 season
-44% of players returned for the 1992-1993 season
-51% of players returned for the 1993-1994 season
-52% of players returned for the 1994-1995 season
-61% of players returned for the 1995-1996 season
-67% of players returned for the 1996-1997 season
-72% of players returned for the 1997-1998 season
-42% of players returned for the 1998-1999 season
-67% of players returned for the 1999-2000 season
-53% of players returned for the 2000-2001 season
-51% of players returned for the 2001-2002 season
-49% of players returned for the 2002-2003 season
-59% of players returned for the 2003-2004 season
-100% of players returned for the 2004-2005 season
-42% of players returned for the 2005-2006 season
-47% of players returned for the 2006-2007 season
-56% of players returned for the 2007-2008 season
-51% of players returned for the 2008-2009 season
-55% of players returned for the 2009-2010 season
-61% of players returned for the 2010-2011 season
-52% of players returned for the 2011-2012 season
-56% of players returned for the 2012-2013 season
-67% of players returned for the 2013-2014 season
-55% of players returned for the 2014-2015 season
-76% of players returned for the 2015-2016 season
-70% of players returned for the 2016-2017 season
-62% of players returned for the 2017-2018 season
-61% of players returned for the 2018-2019 season
-59% of players returned for the 2019-2020 season
-75% of players returned for the 2020-2021 season
-48% of players returned for the 2021-2022 season
-71% of players returned for the 2022-2023 season
-62% of players returned for the 2023-2024 season</code></pre>
+<pre><code>70.0% of players returned for the 1968-1969 season
+69.2% of players returned for the 1969-1970 season
+63.3% of players returned for the 1970-1971 season
+53.8% of players returned for the 1971-1972 season
+75.0% of players returned for the 1972-1973 season
+83.3% of players returned for the 1973-1974 season
+70.4% of players returned for the 1974-1975 season
+78.6% of players returned for the 1975-1976 season
+68.8% of players returned for the 1976-1977 season
+75.9% of players returned for the 1977-1978 season
+64.7% of players returned for the 1978-1979 season
+65.5% of players returned for the 1979-1980 season
+71.0% of players returned for the 1980-1981 season
+62.9% of players returned for the 1981-1982 season
+64.7% of players returned for the 1982-1983 season
+74.2% of players returned for the 1983-1984 season
+65.6% of players returned for the 1984-1985 season
+73.5% of players returned for the 1985-1986 season
+62.5% of players returned for the 1986-1987 season
+73.2% of players returned for the 1987-1988 season
+69.4% of players returned for the 1988-1989 season
+68.3% of players returned for the 1989-1990 season
+74.3% of players returned for the 1990-1991 season
+47.6% of players returned for the 1991-1992 season
+44.1% of players returned for the 1992-1993 season
+51.4% of players returned for the 1993-1994 season
+51.5% of players returned for the 1994-1995 season
+60.5% of players returned for the 1995-1996 season
+66.7% of players returned for the 1996-1997 season
+71.9% of players returned for the 1997-1998 season
+42.2% of players returned for the 1998-1999 season
+66.7% of players returned for the 1999-2000 season
+52.8% of players returned for the 2000-2001 season
+51.4% of players returned for the 2001-2002 season
+48.8% of players returned for the 2002-2003 season
+58.5% of players returned for the 2003-2004 season
+100.0% of players returned for the 2004-2005 season
+42.5% of players returned for the 2005-2006 season
+46.9% of players returned for the 2006-2007 season
+55.6% of players returned for the 2007-2008 season
+51.4% of players returned for the 2008-2009 season
+54.5% of players returned for the 2009-2010 season
+61.3% of players returned for the 2010-2011 season
+51.5% of players returned for the 2011-2012 season
+56.4% of players returned for the 2012-2013 season
+66.7% of players returned for the 2013-2014 season
+54.5% of players returned for the 2014-2015 season
+75.9% of players returned for the 2015-2016 season
+69.7% of players returned for the 2016-2017 season
+62.5% of players returned for the 2017-2018 season
+60.5% of players returned for the 2018-2019 season
+58.8% of players returned for the 2019-2020 season
+75.0% of players returned for the 2020-2021 season
+47.6% of players returned for the 2021-2022 season
+71.4% of players returned for the 2022-2023 season
+62.5% of players returned for the 2023-2024 season
+{1968: 70.0, 1969: 69.2, 1970: 63.3, 1971: 53.8, 1972: 75.0, 1973: 83.3, 1974: 70.4, 1975: 78.6, 1976: 68.8, 1977: 75.9, 1978: 64.7, 1979: 65.5, 1980: 71.0, 1981: 62.9, 1982: 64.7, 1983: 74.2, 1984: 65.6, 1985: 73.5, 1986: 62.5, 1987: 73.2, 1988: 69.4, 1989: 68.3, 1990: 74.3, 1991: 47.6, 1992: 44.1, 1993: 51.4, 1994: 51.5, 1995: 60.5, 1996: 66.7, 1997: 71.9, 1998: 42.2, 1999: 66.7, 2000: 52.8, 2001: 51.4, 2002: 48.8, 2003: 58.5, 2004: 100.0, 2005: 42.5, 2006: 46.9, 2007: 55.6, 2008: 51.4, 2009: 54.5, 2010: 61.3, 2011: 51.5, 2012: 56.4, 2013: 66.7, 2014: 54.5, 2015: 75.9, 2016: 69.7, 2017: 62.5, 2018: 60.5, 2019: 58.8, 2020: 75.0, 2021: 47.6, 2022: 71.4, 2023: 62.5}</code></pre>
 </div>
 </div>
 </div>
-<p>So now that we have a list with our data values, let’s make some figure!</p>
+<p>So now that we have a dictionary with our data values, let’s make some figure! We’ll use the <code>plotly</code> Python library. We’ll also need the <code>pandas</code> library to format our data as a DataFrame object.</p>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(perc_returning_dict.items(), columns<span class="op">=</span>[<span class="st">'Year'</span>, <span class="st">'% Roster Returning'</span>]) <span class="co"># convert dictionary to two column data frame</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.bar(df, x<span class="op">=</span><span class="st">'Year'</span>, y<span class="op">=</span><span class="st">'% Roster Returning'</span>, title <span class="op">=</span> <span class="st">"Philadelphia Flyers Roster Continuity"</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>                            <div id="319127c3-4029-4d89-b76c-00bf3666bf43" class="plotly-graph-div" style="height:525px; width:100%;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("319127c3-4029-4d89-b76c-00bf3666bf43")) {                    Plotly.newPlot(                        "319127c3-4029-4d89-b76c-00bf3666bf43",                        [{"alignmentgroup":"True","hovertemplate":"Year=%{x}\u003cbr\u003e% Roster Returning=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"","marker":{"color":"#636efa","pattern":{"shape":""}},"name":"","offsetgroup":"","orientation":"v","showlegend":false,"textposition":"auto","x":[1968,1969,1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023],"xaxis":"x","y":[70.0,69.2,63.3,53.8,75.0,83.3,70.4,78.6,68.8,75.9,64.7,65.5,71.0,62.9,64.7,74.2,65.6,73.5,62.5,73.2,69.4,68.3,74.3,47.6,44.1,51.4,51.5,60.5,66.7,71.9,42.2,66.7,52.8,51.4,48.8,58.5,100.0,42.5,46.9,55.6,51.4,54.5,61.3,51.5,56.4,66.7,54.5,75.9,69.7,62.5,60.5,58.8,75.0,47.6,71.4,62.5],"yaxis":"y","type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"Year"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"% Roster Returning"}},"legend":{"tracegroupgap":0},"title":{"text":"Philadelphia Flyers Roster Continuity"},"barmode":"relative"},                        {"responsive": true}                    ).then(function(){
+                            
+var gd = document.getElementById('319127c3-4029-4d89-b76c-00bf3666bf43');
+var x = new MutationObserver(function (mutations, observer) {{
+        var display = window.getComputedStyle(gd).display;
+        if (!display || display === 'none') {{
+            console.log([gd, 'removed!']);
+            Plotly.purge(gd);
+            observer.disconnect();
+        }}
+}});
+
+// Listen for the removal of the full notebook cells
+var notebookContainer = gd.closest('#notebook-container');
+if (notebookContainer) {{
+    x.observe(notebookContainer, {childList: true});
+}}
+
+// Listen for the clearing of the current output cell
+var outputEl = gd.closest('.output');
+if (outputEl) {{
+    x.observe(outputEl, {childList: true});
+}}
+
+                        })                };                });            </script>        </div>
+</div>
+</div>
+<p>Pretty bare bones. Let’s make it prettier.</p>
 
 
 

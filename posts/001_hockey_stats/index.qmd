@@ -286,6 +286,9 @@ Fortunately, the NHL API assigns each player a unique `id` attribute, so we can 
 
 ```{python}
 #| eval: false
+
+perc_returning_dict = {} # dict to save percent of returning roster year by year
+
 for i in range(1968, 2024): 
   j = i + 1 # get next year
   k = i - 1 # get previous year
@@ -319,8 +322,10 @@ for i in range(1968, 2024):
         returning = returning + 1
       count = count + 1 
 
-  perc_returning = round(returning / count * 100)
+  perc_returning = round(returning / count * 100, 1)
   print(perc_returning, "% of players returned for the ", i, "-", j, " season", sep="")
+
+  perc_returning_dict[i] = perc_returning # append each year's values to the dictionary
 
   prev_roster_dict = roster_dict # do this to avoid extra data pull requests
 ```
@@ -329,7 +334,7 @@ for i in range(1968, 2024):
 ```{python}
 #| echo: false
 
-perc_returning_list = [] # list to save percent of returning roster year by year
+perc_returning_dict = {} # dict to save percent of returning roster year by year
 
 for i in range(1968, 2024): 
   j = i + 1 # get next year
@@ -364,18 +369,28 @@ for i in range(1968, 2024):
         returning = returning + 1
       count = count + 1 
 
-  perc_returning = round(returning / count * 100)
+  perc_returning = round(returning / count * 100, 1)
   print(perc_returning, "% of players returned for the ", i, "-", j, " season", sep="")
 
-  perc_returning_list.append(perc_returning)
+  perc_returning_dict[i] = perc_returning # append each year's values to the dictionary
 
   prev_roster_dict = roster_dict # do this to avoid extra data pull requests
+
+print(perc_returning_dict)
+
 ```
 :::
 
-So now that we have a list with our data values, let's make some figure!
+So now that we have a dictionary with our data values, let's make some figure! We'll use the `plotly` Python library. We'll also need the `pandas` library to format our data as a DataFrame object.
 
 ```{python}
+import plotly.express as px
+import pandas as pd
 
+df = pd.DataFrame(perc_returning_dict.items(), columns=['Year', '% Roster Returning']) # convert dictionary to two column data frame
 
+fig = px.bar(df, x='Year', y='% Roster Returning', title = "Philadelphia Flyers Roster Continuity")
+fig.show()
 ```
+ 
+ Pretty bare bones. Let's make it prettier.
