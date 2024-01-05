@@ -475,7 +475,51 @@ import pandas as pd
 df = pd.DataFrame(flyers_win_perc.items(), columns=['Year', 'Regulation Win %']) # convert dictionary to two column data frame
 
 fig = px.bar(df, x='Year', y='Regulation Win %', title = "Philadelphia Flyers Season Performance", template="plotly_dark") # use a dark template for contrast
-fig.update_traces(marker_color = "#F74902") # make the bars "Flyers orange"
+fig.update_traces(marker_color = "white") # make the bars "Flyers orange"
 
 fig.show()
 ```
+
+What about regulation win perentage vs roster retention?
+
+```{python}
+import plotly.express as px
+import pandas as pd
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+df_1 = pd.DataFrame(flyers_win_perc.items(), columns=['Year', 'Regulation Win %']) # convert dictionary to two column data frame
+
+df_2 = pd.DataFrame(perc_returning_dict.items(), columns=['Year', '% Roster Returning']) # convert dictionary to two column data frame
+
+df = pd.merge(df_1, df_2, on="Year")
+
+print(df)
+
+fig = make_subplots(specs=[[{"secondary_y": True}]])
+
+# Add traces
+fig.add_trace(go.Scatter(x=df["Year"], y=df['Regulation Win %'], name="Regulation Win %'", marker = dict(color = 'white')), secondary_y=False)
+
+fig.add_trace(go.Scatter(x=df['Year'], y=df['% Roster Returning'], name="% Roster Returning", marker = dict(color="#F74902")), secondary_y=True)
+
+# Add figure title
+fig.update_layout(
+    title_text="Philadelphia Flyers Roster Continuity vs Wins"
+)
+
+# Set x-axis title
+fig.update_xaxes(title_text="Year")
+
+# Set y-axes titles
+fig.update_yaxes(title_text="Regulation Win %", secondary_y=False)
+fig.update_yaxes(title_text="% Roster Returning", secondary_y=True)
+
+# theme, hide grid lines
+fig.update_layout(template = "plotly_dark", yaxis2=dict(showgrid=False),
+              yaxis=dict(showgrid=False))
+
+fig.show()
+```
+
+Neat! We can see the Flyer's "Broad Street Bullies" period in the 70s and early 80s where they had a dominant win percentage, thanks in no small part to their consistent roster.
