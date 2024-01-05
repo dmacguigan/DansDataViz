@@ -1,8 +1,9 @@
 ---
-title: "About"
-image: profile.jpg
+title: "Dan MacGuigan, Ph.D."
+image: DJM.jpg
 about:
-  template: jolla
+
+  template: trestles
   links:
     - icon: linkedin
       text: LinkedIn
@@ -10,7 +11,31 @@ about:
     - icon: github
       text: Github
       href: https://github.com/dmacguigan
+    - icon: info-circle-fill
+      text: Personal Website
+      href: https://danjmac.weebly.com/
 
 ---
 
-About this blog
+Welcome to my data visualization blog! Each post contains a random project where I practice my coding and data science skills. I'll be covering all sorts of topics, from sports to biodiversity to climate science.
+
+My posts will primarily utilize Python and R. I'll do my best to make every post fully reproducible. The blog is built and published using [Quarto](https://quarto.org/).
+
+## About me:
+
+### Education
+
+**Yale University** | New Haven, CT
+PhD in Ecology and Evolutionary Biology | Sept 2014 - Dec 2020
+
+**University of Rochester** | Rochester, NY
+B.S. in Biology | Sept 2010 - June 2014
+
+### Experience
+
+**Research Scientist** | University at Buffalo, Dept. of Biol. Sciences | December 2023 - present
+
+**NSF Postdoctoral Fellowship in Biology** | University at Buffalo, Dept. of Biol. Sciences | December 2021 - November 2023
+
+**Postdoctoral Research Associate** | University at Buffalo, Dept. of Biol. Sciences | November 2020 - November 2021
+

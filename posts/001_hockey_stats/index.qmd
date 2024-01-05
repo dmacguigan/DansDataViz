@@ -1,20 +1,19 @@
 ---
-title: "Hockey Team Turnover"
+title: "How Does Hockey Roster Turnover Relate to Team Performance?"
 author: "Dan MacGuigan"
-date: "2024-01-03"
-categories: [code, analysis, API, sports, hockey]
+date: "2024-01-05"
+categories: [python, API, visualization, sports, hockey]
 
 css: styles.css
 ---
 
+Today we're going to practice Python coding and API usage by exploring data for the National Hockey League.
 
+While watching my favorite team this year (the Philadelphia Flyers), I've felt like I barely know the players. It seems like there was a lot of turnover in the roster over the past couple of years. 
 
-Today we're going to explore some sports data.
-While watching my favorite hockey team this year (the Philadeplphia Flyers), I've felt like I barely know the players. There was a lot of turnover in the roster in the past couple of years. 
+Can we quantify this roster turnover? Which seasons did the Flyers roster experience the most turnover?
 
-This got me thinking. Which year did the Flyers roster experience the most turnover?
-
-To answer this question, we will turn to the NHL's own [stats database](https://www.nhl.com/stats/). Annoyingly, we can only download 50 records at a time using their nice web browser interface. So instead, we'll need to use an Application Programming Interface, or API.
+To answer this question, we will turn to the NHL's own [stats database](https://www.nhl.com/stats/). Unfortunately, we can only download 50 records at a time using their nice web browser interface. So instead, we'll need to use an Application Programming Interface, or API.
 
 Fortunately, some folks have put together nice documentation [here](https://gitlab.com/dword4/nhlapi/-/blob/master/new-api.md) and [here](https://github.com/Zmalski/NHL-API-Reference?tab=readme-ov-file#get-team-roster-by-season) for the NHL API.
 
@@ -43,8 +42,7 @@ parse_json = json.loads(test_data) # parse the JSON data into a Python dictionar
 print(json.dumps(parse_json, indent=4)) # print the new dictionary object
 ```
 :::
-
-
+<br/>
 Ok, this is cool! We can see all of the data is in the `standings` item. But it's difficult to scroll through the whole data structure.
 
 Let's see if we can figure out how many wins the Philadelphia Flyers have this year. We'll go step by step, but you could write most of this code as a single line.
@@ -66,7 +64,7 @@ flyers_wins = flyers['wins'] # find the wins item in the Flyers dictionary
 print("The Philadelphia Flyers have", flyers_wins, "wins") 
 ```
 :::
-
+<br/>
 Nice! So that's the basics of how to navigate these data structures in Python. Let's try something more involved.
 
 Let's pull the current roster for the Philadelphia Flyers
@@ -88,7 +86,7 @@ roster_dict = json.loads(roster_data) # parse the JSON data into a Python dictio
 print(json.dumps(roster_dict, indent=4)) # print the new dictionary object
 ```
 :::
-
+<br/>
 Pretty messy. How about we just identify the keys in the dictionary?
 
 ```{python}
@@ -102,7 +100,7 @@ roster_dict.keys()
 roster_dict.keys()
 ```
 :::
-
+<br/>
 Nice, so now let's access the `forwards` element, then try to spit out the first player name.
 
 ```{python}
@@ -120,8 +118,9 @@ firstName = roster_dict['forwards'][0]['firstName']['default'] # access the 1st 
 print("Let's meet our first Flyers forward: ", firstName, " ", lastName, "!", sep='') # sep='' prints the output without spaces between the elements 
 ```
 :::
-
+<br/>
 Now let's try printing a list of all Flyers players on the current roster.
+
 ```{python}
 #| eval: false
 print("Introducing the full Flyers lineup!")
@@ -157,7 +156,7 @@ for x in roster_dict['goalies']: # loop through all items in the roster_dict goa
   print(x['firstName']['default'], x['lastName']['default'])
 ```
 :::
-
+<br/>
 After a bit of digging [here](https://github.com/Zmalski/NHL-API-Reference?tab=readme-ov-file#get-team-roster-by-season), it looks like we can access historic team rosters in a similar manner.
 
 ```{python}
@@ -203,10 +202,10 @@ for x in roster_dict['goalies']: # loop through all items in the roster_dict goa
   print(x['firstName']['default'], x['lastName']['default'])
 ```
 :::
-
+<br/>
 Now for the real question. How much turnover does the Flyers roster have from year to year? When did we see peak turnover?
 
-For this, we'll need to loop through all of the Flyers seasons, pull the rosters, and do a lookback on the previous year's roster.
+For this, we'll need to loop through all of the Flyers seasons, pull the rosters, and compare with the previous year's roster.
 
 Let's start by just looping through rosters year-by-year. The Flyers first season was in 1967-1968.
 
@@ -279,7 +278,7 @@ for i in range(1968, 2024):
 
 ```
 :::
-
+<br/>
 Looking good. However, it will be annoying to compare first and last names every season. Also, what if two players have the same name?
 
 Fortunately, the NHL API assigns each player a unique `id` attribute, so we can use those instead of names.
@@ -377,7 +376,7 @@ for i in range(1968, 2024):
   prev_roster_dict = roster_dict # do this to avoid extra data pull requests
 ```
 :::
-
+<br/>
 So now that we have a dictionary with our data values, let's make some figures! We'll use the `plotly` Python library. We'll also need the `pandas` library to format our data as a DataFrame object.
 
 ```{python}
@@ -387,9 +386,13 @@ import pandas as pd
 df = pd.DataFrame(perc_returning_dict.items(), columns=['Year', '% Roster Returning']) # convert dictionary to two column data frame
 
 fig = px.bar(df, x='Year', y='% Roster Returning', title = "Philadelphia Flyers Roster Continuity")
+
+fig.update_layout(
+    margin=dict(l=20, r=20, t=50, b=20))
+
 fig.show()
 ```
- 
+ <br/>
 Pretty bare bones. Let's make it prettier. Let's also drop the 2004-2005 season, since it was a lockout year.
 
 ```{python}
@@ -403,17 +406,19 @@ df = pd.DataFrame(perc_returning_dict.items(), columns=['Year', '% Roster Return
 fig = px.bar(df, x='Year', y='% Roster Returning', title = "Philadelphia Flyers Roster Continuity", template="plotly_dark") # use a dark template for contrast
 fig.update_traces(marker_color = "#F74902") # make the bars "Flyers orange"
 
+fig.update_layout(
+    margin=dict(l=20, r=20, t=50, b=20))
+
 fig.show()
 ```
-
+<br/>
 How well does roster continuity correlated with team performance? Do years with higher continuity also have more wins?
 
-Annoyingly, the NHL API does not have an easy way to pull team win-loss records for each season. To get win percentage per season, let's pull league standings on the season end date from every year. Note that have to look at only regulation wins, since the NHL used to allow ties.
+The NHL API does not have an easy way to pull team win-loss records for each season. To get win percentage per season, let's pull league standings on the season end date from every year. Note that have to look at only regulation wins, since the NHL used to allow ties.
 
 
 ```{python}
-#| eva: false
-#s = requests.get('https://api-web.nhle.com/v1/standings/' + str(1968) + '-03-01') # pull data
+#| eval: false
 s = requests.get('https://api-web.nhle.com/v1/standings-season')
 s_data = s.text # get just the data
 s_dict = json.loads(s_data) # parse the JSON data into a Python dictionary
@@ -440,7 +445,6 @@ for i in range(1968, 2024):
 :::{.scrolling}
 ```{python}
 #| echo: false
-s = requests.get('https://api-web.nhle.com/v1/standings/' + str(1968) + '-03-01') # pull data
 s = requests.get('https://api-web.nhle.com/v1/standings-season')
 s_data = s.text # get just the data
 s_dict = json.loads(s_data) # parse the JSON data into a Python dictionary
@@ -465,7 +469,7 @@ for i in range(1968, 2024):
     flyers_win_perc[i] = None
 ```
 :::
-
+<br/>
 Now let's plot regulation win percentage by season.
 
 ```{python}
@@ -477,10 +481,14 @@ df = pd.DataFrame(flyers_win_perc.items(), columns=['Year', 'Regulation Win %'])
 fig = px.bar(df, x='Year', y='Regulation Win %', title = "Philadelphia Flyers Season Performance", template="plotly_dark") # use a dark template for contrast
 fig.update_traces(marker_color = "white") # make the bars "Flyers orange"
 
+# reduce margin size (for better viewing on mobile)
+fig.update_layout(
+    margin=dict(l=20, r=20, t=50, b=20))
+
 fig.show()
 ```
-
-What about regulation win perentage vs roster retention?
+<br/>
+What about regulation win percentage vs roster retention?
 
 ```{python}
 import plotly.express as px
@@ -488,25 +496,23 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+perc_returning_dict[2004] = None
+
 df_1 = pd.DataFrame(flyers_win_perc.items(), columns=['Year', 'Regulation Win %']) # convert dictionary to two column data frame
 
 df_2 = pd.DataFrame(perc_returning_dict.items(), columns=['Year', '% Roster Returning']) # convert dictionary to two column data frame
 
 df = pd.merge(df_1, df_2, on="Year")
 
-print(df)
-
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 
 # Add traces
-fig.add_trace(go.Scatter(x=df["Year"], y=df['Regulation Win %'], name="Regulation Win %'", marker = dict(color = 'white')), secondary_y=False)
+fig.add_trace(go.Scatter(x=df["Year"], y=df['Regulation Win %'], name="Regulation Win %", marker = dict(color = 'white')), secondary_y=False)
 
 fig.add_trace(go.Scatter(x=df['Year'], y=df['% Roster Returning'], name="% Roster Returning", marker = dict(color="#F74902")), secondary_y=True)
 
 # Add figure title
-fig.update_layout(
-    title_text="Philadelphia Flyers Roster Continuity vs Wins"
-)
+fig.update_layout(title_text="Philadelphia Flyers Roster Continuity vs Wins")
 
 # Set x-axis title
 fig.update_xaxes(title_text="Year")
@@ -515,11 +521,149 @@ fig.update_xaxes(title_text="Year")
 fig.update_yaxes(title_text="Regulation Win %", secondary_y=False)
 fig.update_yaxes(title_text="% Roster Returning", secondary_y=True)
 
-# theme, hide grid lines
-fig.update_layout(template = "plotly_dark", yaxis2=dict(showgrid=False),
-              yaxis=dict(showgrid=False))
+# theme, hide grid lines, put legend on top
+# also reduce margin size (for better viewing on mobile)
+# automargin increases the margin size to prevent ticklabels from being cut off or overlapping with axis titles
+fig.update_layout(template = "plotly_dark", 
+                  yaxis2=dict(showgrid=False), 
+                  yaxis=dict(showgrid=False), 
+                  margin=dict(l=20, r=20, t=20, b=20),
+                  legend=dict(orientation="h", 
+                    yanchor="bottom", 
+                    y=1.02, 
+                    xanchor="right", 
+                    x=1))
 
 fig.show()
 ```
-
+<br/>
 Neat! We can see the Flyer's "Broad Street Bullies" period in the 70s and early 80s where they had a dominant win percentage, thanks in no small part to their consistent roster.
+
+We can also see a few cases where there's a lag between winning and roster retention. The Flyers winning percentage drops for 5 straight seasons from 1984-1989 and bottoms out around 40% until 1994. But roster retention stays high until 1990, when the Flyers enter a period of roster turmoil. In fact, [Wikipedia](https://en.wikipedia.org/wiki/Philadelphia_Flyers) lists 1991-1994 as the "Rebuilding years."
+
+How about another performance metric, like goal differential proportion? This is a team's goal differential (goals for - goals against) divided by the number of games played. So the larger this number, the more the team is outscoring opponents on average. Negative goal differential proportion means opposing teams outscored the Flyers, while positive values indicate the Flyers outscored other teams.
+
+First let's gather the data.
+```{python}
+#| eval: false
+s = requests.get('https://api-web.nhle.com/v1/standings-season')
+s_data = s.text # get just the data
+s_dict = json.loads(s_data) # parse the JSON data into a Python dictionary
+s_seasons = s_dict['seasons']
+
+flyers_goalP_dict = {} # dict to contain win percentage for each year
+
+for i in range(1968, 2024): 
+  j = i + 1 # get next year
+  year = int(str(i) + str(j))
+  if i != 2004: # skip the lockout year
+    season = next(item for item in s_seasons if item['id'] == year) # find the flyers in this seasons standings
+    season_end = season['standingsEnd']
+    stand = requests.get('https://api-web.nhle.com/v1/standings/' + season_end) # pull data from the end of the season
+    stand_dict = json.loads(stand.text) # convert to dict
+    flyers = next(item for item in stand_dict['standings'] if item['teamName']['default'] == 'Philadelphia Flyers') # find the list item with teamName 'Philadelphia Flyers'
+    flyers_goalP = flyers['goalDifferentialPctg'] # find the regulation win percentage item in the Flyers dictionary
+    #print(json.dumps(flyers, indent=4)) # print the new dictionary object
+    print(i, "-", j, " goal differential proportion: ", flyers_goalP, sep="")
+    flyers_goalP_dict[i] = flyers_goalP
+  else:
+    flyers_goalP_dict[i] = None
+```
+:::{.scrolling}
+```{python}
+#| echo: false
+s = requests.get('https://api-web.nhle.com/v1/standings-season')
+s_data = s.text # get just the data
+s_dict = json.loads(s_data) # parse the JSON data into a Python dictionary
+s_seasons = s_dict['seasons']
+
+flyers_goalP_dict = {} # dict to contain win percentage for each year
+
+for i in range(1968, 2024): 
+  j = i + 1 # get next year
+  year = int(str(i) + str(j))
+  if i != 2004: # skip the lockout year
+    season = next(item for item in s_seasons if item['id'] == year) # find the flyers in this seasons standings
+    season_end = season['standingsEnd']
+    stand = requests.get('https://api-web.nhle.com/v1/standings/' + season_end) # pull data from the end of the season
+    stand_dict = json.loads(stand.text) # convert to dict
+    flyers = next(item for item in stand_dict['standings'] if item['teamName']['default'] == 'Philadelphia Flyers') # find the list item with teamName 'Philadelphia Flyers'
+    flyers_goalP = flyers['goalDifferentialPctg'] # find the regulation win percentage item in the Flyers dictionary
+    #print(json.dumps(flyers, indent=4)) # print the new dictionary object
+    print(i, "-", j, " goal differential proportion: ", flyers_goalP, sep="")
+    flyers_goalP_dict[i] = flyers_goalP
+  else:
+    flyers_goalP_dict[i] = None
+```
+:::
+<br/>
+Now let's plot goal differential and win percentage together.
+
+```{python}
+# make a bar plot
+import plotly.express as px
+import pandas as pd
+import numpy as np
+
+df_1 = pd.DataFrame(flyers_win_perc.items(), columns=['Year', 'Regulation Win %']) # convert dictionary to two column data frame
+
+df_2 = pd.DataFrame(perc_returning_dict.items(), columns=['Year', '% Roster Returning']) # convert dictionary to two column data frame
+
+df_3  = pd.DataFrame(flyers_goalP_dict.items(), columns=['Year', 'Goal Differential Proportion']) # convert dictionary to two column data frame
+
+df = pd.merge(pd.merge(df_1, df_2, on="Year"), df_3, on="Year")
+
+df = df.dropna()
+
+fig = px.bar(df, x='Year', y='Goal Differential Proportion', color="Regulation Win %", title = "Philadelphia Flyers Season Performance", template="plotly_dark") # use a dark template for contrast
+
+fig.update_yaxes(title_text="Goal Differential per Game")
+
+fig.update_layout(coloraxis=dict(colorbar=dict(orientation='h', y=-0.5, xanchor="right", x=1, yanchor="bottom")))
+
+fig.update_layout(
+    margin=dict(l=20, r=20, t=50, b=20))
+
+fig.show()
+
+```
+<br/>
+Oof, 2006-2007 was a rough season. In fact, the Flyers finished dead last in the standings that year.
+
+Ok, let's try combining all of this information in one figure. 
+
+```{python}
+import plotly.express as px
+import pandas as pd
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+perc_returning_dict[2004] = None
+
+df_1 = pd.DataFrame(flyers_win_perc.items(), columns=['Year', 'Regulation Win %']) # convert dictionary to two column data frame
+
+df_2 = pd.DataFrame(perc_returning_dict.items(), columns=['Year', '% Roster Returning']) # convert dictionary to two column data frame
+
+df_3  = pd.DataFrame(flyers_goalP_dict.items(), columns=['Year', 'Goal Differential Proportion']) # convert dictionary to two column data frame
+
+df = pd.merge(pd.merge(df_1, df_2, on="Year"), df_3, on="Year")
+
+fig = px.scatter(df, x='Regulation Win %', y='Goal Differential Proportion', color='% Roster Returning', template="plotly_dark", color_continuous_scale="Viridis", hover_name="Year", title="Philadelphia Flyers Season Stats")
+
+fig.update_traces(marker=dict(size=10, line=dict(width=0.5, color='white'))) # add white outline around points
+
+fig.update_yaxes(title_text="Goal Differential per Game")
+
+fig.update_layout(coloraxis=dict(colorbar=dict(orientation='h', y=-0.5, xanchor="right", x=1, yanchor="bottom")))
+
+fig.show()
+
+```
+<br/>
+This figure shows the expected strong positive relationship between winning percentage and goal differential. However, the relationship between team performance and roster continuity is less clear. 
+
+The Flyers' best seasons all had relatively high roster continuity. But the Flyers also had relatively good seasons with high roster turnover. 
+
+For example, in 1998, the Flyers had a positive goal differential, won 43% of their games in regulation, and placed 7th overall in the league. But that season had their lowest ever roster retention, with only 42% of players returning.
+
+Well I think that's enough for this dataset. See you in the next post!
