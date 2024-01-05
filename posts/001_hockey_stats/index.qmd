@@ -1,5 +1,5 @@
 ---
-title: "How Does Hockey Roster Turnover Relate to Team Performance?"
+title: "Does Hockey Roster Turnover Relate to Team Performance?"
 author: "Dan MacGuigan"
 date: "2024-01-05"
 categories: [python, API, visualization, sports, hockey]
