@@ -388,7 +388,7 @@ df = pd.DataFrame(perc_returning_dict.items(), columns=['Year', '% Roster Return
 fig = px.bar(df, x='Year', y='% Roster Returning', title = "Philadelphia Flyers Roster Continuity")
 
 fig.update_layout(
-    margin=dict(l=20, r=20, t=50, b=20))
+    margin=dict(l=20, r=20, b=20))
 
 fig.show()
 ```
@@ -407,7 +407,7 @@ fig = px.bar(df, x='Year', y='% Roster Returning', title = "Philadelphia Flyers 
 fig.update_traces(marker_color = "#F74902") # make the bars "Flyers orange"
 
 fig.update_layout(
-    margin=dict(l=20, r=20, t=50, b=20))
+    margin=dict(l=20, r=20, b=20))
 
 fig.show()
 ```
@@ -483,7 +483,7 @@ fig.update_traces(marker_color = "white") # make the bars "Flyers orange"
 
 # reduce margin size (for better viewing on mobile)
 fig.update_layout(
-    margin=dict(l=20, r=20, t=50, b=20))
+    margin=dict(l=20, r=20, b=20))
 
 fig.show()
 ```
@@ -527,7 +527,7 @@ fig.update_yaxes(title_text="% Roster Returning", secondary_y=True)
 fig.update_layout(template = "plotly_dark", 
                   yaxis2=dict(showgrid=False), 
                   yaxis=dict(showgrid=False), 
-                  margin=dict(l=20, r=20, t=20, b=20),
+                  margin=dict(l=20, r=20,b=20),
                   legend=dict(orientation="h", 
                     yanchor="bottom", 
                     y=1.02, 
@@ -622,7 +622,7 @@ fig.update_yaxes(title_text="Goal Differential per Game")
 fig.update_layout(coloraxis=dict(colorbar=dict(orientation='h', y=-0.5, xanchor="right", x=1, yanchor="bottom")))
 
 fig.update_layout(
-    margin=dict(l=20, r=20, t=50, b=20))
+    margin=dict(l=20, r=20, b=20))
 
 fig.show()
 
@@ -654,7 +654,8 @@ fig.update_traces(marker=dict(size=10, line=dict(width=0.5, color='white'))) # a
 
 fig.update_yaxes(title_text="Goal Differential per Game")
 
-fig.update_layout(coloraxis=dict(colorbar=dict(orientation='h', y=-0.5, xanchor="right", x=1, yanchor="bottom")))
+fig.update_layout(margin=dict(l=20, r=20, b=20), 
+  coloraxis=dict(colorbar=dict(orientation='h', y=-0.5, xanchor="right", x=1, yanchor="bottom")))
 
 fig.show()
 
