@@ -4,6 +4,8 @@ project:
 
 website:
   title: "Dan's Data Viz"
+  site-url: "https://dmacguigan.github.io/DansDataViz/"
+  description: "Blog of various data visualization side projects"
   navbar:
     right:
       - about.qmd
@@ -11,10 +13,13 @@ website:
         href: https://github.com/dmacguigan
       - icon: linkedin
         href: https://www.linkedin.com/in/dmacguigan
+      - icon: rss
+        href: index.xml
 format:
   html:
-    theme: cosmo
+    theme: darkly
     css: styles.css
 
-
+execute:
+  freeze: true
 

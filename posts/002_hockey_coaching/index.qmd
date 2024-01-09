@@ -1,0 +1,412 @@
+---
+title: "National Hockey League Coaching Conundrums"
+author: "Dan MacGuigan"
+date: "2024-01-09"
+categories: [python, API, visualization, sports, hockey]
+
+css: styles.css
+---
+
+Let's return to some hockey stats to keep working on our Python and API skills.
+
+Today, we'll learn a bit about head coaching in the NHL. We're going to use a different database and API: [https://records.nhl.com/](https://records.nhl.com/).
+
+First, let's get the basic stats for every NHL franchise.
+
+```{python}
+#| eval: false
+import requests
+import json
+
+teams = json.loads(requests.get('https://records.nhl.com/site/api/franchise-detail').text) # pull request, get data (.text), and convert JSON to a Python dict
+print(json.dumps(teams, indent=4)) # print the new dictionary object
+```
+:::{.scrolling}
+```{python}
+#| echo: false
+import requests
+import json
+
+teams = json.loads(requests.get('https://records.nhl.com/site/api/franchise-detail').text) # pull request, get data (.text), and convert JSON to a Python dict
+print(json.dumps(teams, indent=4)) # print the new dictionary object
+```
+:::
+
+<br/>
+
+We'll start with one of the oldest NHL franchise, the Montreal Canadiens. We can see that their `id` = 1. Let's get some more info for that franchise.
+
+```{python}
+id = 1
+MTL = teams['data'][id - 1] # subtract 1 because python is 0-indexed
+print(json.dumps(MTL, indent=4)) # print the new dictionary object
+```
+<br/> 
+
+We see that there's a item `coachingHistory`, but it's in HTML "striped-list" format. Well need to parse this list. To do this, let's use the [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) Python library.
+
+```{python}
+#| eval: false
+from bs4 import BeautifulSoup
+import pandas as pd
+import re
+from unicodedata import normalize
+
+MTL_coaches_html = MTL['coachingHistory']
+l = BeautifulSoup(MTL_coaches_html, "html.parser").find_all("li") # isolate the "li" elements and convert to python list
+MTL_coaches = []
+for x in l:
+  MTL_coaches.append(normalize('NFKD',str(x))) # convert list items to string, also get rid of non-ASCII characters
+
+MTL_coaches = [x for x in MTL_coaches if ":" in x] # remove list elements that do not contain colons, these are usually comments
+
+print("The Montreal Canadiens have had " + str(len(MTL_coaches)) + " head coaches:", sep="")
+
+for i in MTL_coaches:
+  temp = re.sub("<[/]*li>", "", str(i)) # use regex to remove HTML tags (<li>)
+  temp2 = temp.split(":") # split the string on a colon
+  coach = temp2[0] # first element is the coach name
+  tenure = temp2[1].strip() # strip to remove leading and trailing whitespace
+  print(coach + ", " + tenure, sep="")
+```
+:::{.scrolling}
+```{python}
+#| echo: false
+from bs4 import BeautifulSoup
+import pandas as pd
+import re
+from unicodedata import normalize
+
+MTL_coaches_html = MTL['coachingHistory']
+l = BeautifulSoup(MTL_coaches_html, "html.parser").find_all("li") # isolate the "li" elements and convert to python list
+MTL_coaches = []
+for x in l:
+  MTL_coaches.append(normalize('NFKD',str(x))) # convert list items to string, also get rid of non-ASCII characters
+
+MTL_coaches = [x for x in MTL_coaches if ":" in x] # remove list elements that do not contain colons, these are usually comments
+
+print("The Montreal Canadiens have had " + str(len(MTL_coaches)) + " head coaches:", sep="")
+
+for i in MTL_coaches:
+  temp = re.sub("<[/]*li>", "", str(i)) # use regex to remove HTML tags (<li>)
+  temp2 = temp.split(":") # split the string on a colon
+  coach = temp2[0] # first element is the coach name
+  tenure = temp2[1].strip() # strip to remove leading and trailing whitespace
+  print(coach + ", " + tenure, sep="")
+```
+:::
+<br/> 
+
+Now we can start answering some questions. For instance, which teams have had the least amount of head coach turnover?
+
+```{python}
+import requests
+import json
+
+teams = json.loads(requests.get('https://records.nhl.com/site/api/franchise-detail').text) # pull request, get data (.text), and convert JSON to a Python dict
+
+# arrays for data
+seasons_per_coach = {}
+
+for team in teams['data']:
+  if team['active'] == True: # only look at teams that still exist
+    team_name = team['teamAbbrev']
+
+    team_first_season = int(str(team['firstSeasonId'])[:-4]) # remove last 4 characters from seasonID and convert to integer
+    team_total_seasons = 2023 - team_first_season # how many seasons has the team existed?
+
+    team_html = team['coachingHistory']
+    l = BeautifulSoup(team_html, "html.parser").find_all("li") # isolate the "li" elements and convert to python list
+    team_coaches = []
+    for x in l:
+      team_coaches.append(normalize('NFKD',str(x))) # convert list items to string, also get rid of non-ASCII characters
+
+    team_coaches = [x for x in team_coaches if ":" in x] # remove list elements that do not contain colons, these are usually comments
+    total_coaches = len(team_coaches)
+
+    seasons_per_coach[team_name] = round(team_total_seasons /total_coaches, 2) # how many seasons per coach, on average?
+
+# manually make dictionaries of team primary and secondary colors, based on https://teamcolorcodes.com/nhl-team-color-codes/ and https://usteamcolors.com/nhl-colors/
+team_primary_color={
+'ANA':'#111111',
+'ARI':'#8C2633',
+'BOS':'#FFB81C',
+'BUF':'#003087',
+'CAR':'#CE1126',
+'CBJ':'#002654',
+'CGY':'#D2001C',
+'CHI':'#CF0A2C',
+'COL':'#6F263D',
+'DAL':'#006847',
+'DET':'#CE1126',
+'EDM':'#041E42',
+'FLA':'#C8102E',
+'LAK':'#111111',
+'MIN':'#154734',
+'MTL':'#AF1E2D',
+'NJD':'#CE1126',
+'NSH':'#FFB81C',
+'NYI':'#00539B',
+'NYR':'#0038A8',
+'OTT':'#DA1A32',
+'PHI':'#F74902',
+'PIT':'#FFB81C',
+'SEA':'#001628',
+'SJS':'#006D75',
+'STL':'#002F87',
+'TBL':'#002868',
+'TOR':'#00205B',
+'VAN':'#00205B',
+'VGK':'#B4975A',
+'WPG':'#041E42',
+'WSH':'#041E42'
+}
+
+team_secondary_color={
+'ANA':'#F95602',
+'ARI':'#E2D6B5',
+'BOS':'#000000',
+'BUF':'#FFB81C',
+'CAR':'#000000',
+'CBJ':'#CE1126',
+'CGY':'#FAAF19',
+'CHI':'#000000',
+'COL':'#236192',
+'DAL':'#8F8F8C',
+'DET':'#FFFFFF',
+'EDM':'#FF4C00',
+'FLA':'#041E42',
+'LAK':'#A2AAAD',
+'MIN':'#a6192e',
+'MTL':'#192168',
+'NJD':'#000000',
+'NSH':'#041E42',
+'NYI':'#F47D30',
+'NYR':'#CE1126',
+'OTT':'#000000',
+'PHI':'#000000',
+'PIT':'#010101',
+'SEA':'#99D9D9',
+'SJS':'#000000',
+'STL':'#FCB514',
+'TBL':'#FFFFFF',
+'TOR':'#FFFFFF',
+'VAN':'#00843D',
+'VGK':'#333F42',
+'WPG':'#AC162C',
+'WSH':'#C8102E'
+}
+
+import pandas as pd
+# convert dictionaries to data frames
+df_1 = pd.DataFrame(seasons_per_coach.items(), columns=['team', 'HC_avg_tenure']) 
+df_2 = pd.DataFrame(team_primary_color.items(), columns=['team', 'col1']) 
+df_3 = pd.DataFrame(team_secondary_color.items(), columns=['team', 'col2']) 
+
+# join data frames on color
+df = pd.merge(pd.merge(df_1, df_2, on="team"), df_3, on="team")
+df = df.sort_values('HC_avg_tenure', ascending=False) # sort dataframe by head coach tenure
+
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+# bar plot of teams, ordered by seasons per coach
+fig = px.bar(df, x='team', y='HC_avg_tenure', template="plotly_dark", 
+title = "Average NHL Head Coach Tenure") # use a dark template for contrast
+
+# use team colors for the bars
+fig.update_traces(marker_color=df['col1'], 
+      marker_line=dict(width=2, color=df['col2'])) 
+
+fig.update_yaxes(title_text="Average HC Tenure (seasons)")
+fig.update_xaxes(title_text="Team")
+
+# reduce margins for better viewing on mobile
+fig.update_layout(margin=dict(l=20, r=20, b=20),
+                  plot_bgcolor="dimgrey") # use grey for plot background to better see team colors
+
+fig.show()
+
+```
+<br/>
+
+The Nashville Predators (NSH) sure are an outlier of coaching consistency. They have only had 4 head coaches in their entire history. Admittedly, they were only founded in 1998, but other teams founded in that era like the Anaheim Ducks (ANA - 1993) and the Columbus Blue Jackets (CBJ - 2000) have been far worse off. 
+
+At the other end of the spectrum are the New Jersey Devils (NJD). The longest-serving head coach for the Devils was Jacques Lemaire, who led the team for only 5 years.
+
+Let's try to answer another coaching question: how often do teams re-hire the same head coach? We'll use [Counter](https://docs.python.org/3/library/collections.html#collections.Counter) from the Python `collections` library to do this.
+
+```{python}
+#| eval: false
+import requests
+import json
+from collections import Counter
+import pandas as pd
+
+teams = json.loads(requests.get('https://records.nhl.com/site/api/franchise-detail').text) # pull request, get data (.text), and convert JSON to a Python dict
+
+coach_repeats = {}
+rows_list = []
+
+for team in teams['data']:
+  sum = 0
+  if team['active'] == True: # only look at teams that still exist
+    team_name = team['teamAbbrev']
+    team_full_name = normalize('NFKD', team['teamFullName'])
+
+    team_first_season = int(str(team['firstSeasonId'])[:-4]) # remove last 4 characters from seasonID and convert to integer
+    team_total_seasons = 2023 - team_first_season # how many seasons has the team existed?
+
+    team_html = team['coachingHistory']
+    l = BeautifulSoup(team_html, "html.parser").find_all("li") # isolate the "li" elements and convert to python list
+    team_coaches = []
+    for x in l:
+      team_coaches.append(normalize('NFKD',str(x))) # convert list items to string, also get rid of non-ASCII characters
+
+    team_coaches = [x for x in team_coaches if ":" in x] # remove list elements that do not contain colons, these are usually comments
+  
+    coaches = []
+    for x in team_coaches:
+      temp = re.sub("<[/]*li>", "", str(x)) # use regex to remove HTML tags (<li>)
+      coaches.append(temp.split(":")[0]) # split the string on a colon, get first element (coach name)
+    
+    coach_repeats[team_name] = Counter(coaches).most_common() # count how many times each coach appeared for each team
+
+    # count how many head coaches had multiple stints with the same team
+    # and print all head coaches with more than one stint with the same team
+    for i in coach_repeats[team_name]:
+      if i[1] > 1:
+        temp = {}
+        temp.update([("team", team_name),
+                    ("coach", i[0]),
+                    ("times_coached", i[1])])
+        rows_list.append(temp)
+
+
+    # which head coach had the most stints with each franchise?
+    #if coach_repeats[team_name][0][1] > 1: # only show repeat coaches 
+    #  print(coach_repeats[team_name][0][0], "was head coach for the",
+    #        team_full_name, coach_repeats[team_name][0][1], "times")
+
+# convert list of dictionaries to data frame
+hc_df = pd.DataFrame(rows_list, columns=["coach", "team", "times_coached"])
+print(hc_df.sort_values('times_coached', ascending=False))
+```
+:::{.scrolling}
+```{python}
+#| echo: false
+import requests
+import json
+from collections import Counter
+import pandas as pd
+
+teams = json.loads(requests.get('https://records.nhl.com/site/api/franchise-detail').text) # pull request, get data (.text), and convert JSON to a Python dict
+
+coach_repeats = {}
+rows_list = []
+
+for team in teams['data']:
+  sum = 0
+  if team['active'] == True: # only look at teams that still exist
+    team_name = team['teamAbbrev']
+    team_full_name = normalize('NFKD', team['teamFullName'])
+
+    team_first_season = int(str(team['firstSeasonId'])[:-4]) # remove last 4 characters from seasonID and convert to integer
+    team_total_seasons = 2023 - team_first_season # how many seasons has the team existed?
+
+    team_html = team['coachingHistory']
+    l = BeautifulSoup(team_html, "html.parser").find_all("li") # isolate the "li" elements and convert to python list
+    team_coaches = []
+    for x in l:
+      team_coaches.append(normalize('NFKD',str(x))) # convert list items to string, also get rid of non-ASCII characters
+
+    team_coaches = [x for x in team_coaches if ":" in x] # remove list elements that do not contain colons, these are usually comments
+  
+    coaches = []
+    for x in team_coaches:
+      temp = re.sub("<[/]*li>", "", str(x)) # use regex to remove HTML tags (<li>)
+      coaches.append(temp.split(":")[0]) # split the string on a colon, get first element (coach name)
+    
+    coach_repeats[team_name] = Counter(coaches).most_common() # count how many times each coach appeared for each team
+
+    # count how many head coaches had multiple stints with the same team
+    # and print all head coaches with more than one stint with the same team
+    for i in coach_repeats[team_name]:
+      if i[1] > 1:
+        temp = {}
+        temp.update([("team", team_name),
+                    ("coach", i[0]),
+                    ("times_coached", i[1])])
+        rows_list.append(temp)
+
+
+    # which head coach had the most stints with each franchise?
+    #if coach_repeats[team_name][0][1] > 1: # only show repeat coaches 
+    #  print(coach_repeats[team_name][0][0], "was head coach for the",
+    #        team_full_name, coach_repeats[team_name][0][1], "times")
+
+# convert list of dictionaries to data frame
+hc_df = pd.DataFrame(rows_list, columns=["coach", "team", "times_coached"])
+print(hc_df.sort_values('times_coached', ascending=False))
+```
+:::
+<br/>
+
+Something seems fishy. Did the New York Rangers (NYR) really have Phil Esposito as their head coach 5 different times?
+
+Well...technically yes. Let's take a look at the other coaches for the Rangers between Esposito's first and last stints with the team.
+
+```{python}
+#| echo: false
+import requests
+import json
+
+teams = json.loads(requests.get('https://records.nhl.com/site/api/franchise-detail').text) # pull request, get data (.text), and convert JSON to a Python dict
+
+NYR = next(item for item in teams["data"] if item['teamAbbrev'] == 'NYR') # find the NYR stats
+
+NYR_coaches_html = NYR['coachingHistory']
+l = BeautifulSoup(NYR_coaches_html, "html.parser").find_all("li") # isolate the "li" elements and convert to python list
+NYR_coaches = []
+for x in l:
+  NYR_coaches.append(normalize('NFKD',str(x))) # convert list items to string, also get rid of non-ASCII characters
+
+NYR_coaches = [x for x in NYR_coaches if ":" in x] # remove list elements that do not contain colons, these are usually comments
+
+x = 0
+for i in NYR_coaches:
+  temp = re.sub("<[/]*li>", "", str(i)) # use regex to remove HTML tags (<li>)
+  temp2 = temp.split(":") # split the string on a colon
+  coach = temp2[0] # first element is the coach name
+  
+  # some conditionals to only print seasons between Esposito's first and last season as head coach
+  if coach == "Phil Esposito":
+    x = x + 1
+  if x > 0:
+    tenure = temp2[1].strip() # strip to remove leading and trailing whitespace
+    print(coach + ", " + tenure, sep="")
+  if x == 5: # stop when we hit Esposito's 5th season
+    break
+```
+<br/>
+
+That's strange. Phil Esposito was only with the NY Rangers from 1986 until 1989. But during that time, the Rangers swapped between three head coaches: Phil Esposito, Tom Webster, and Michel Bergeron. 
+
+As it turns out, there's an interesting story behind Esposito's oddball coaching career. Esposito was brought onboard to be the NY Rangers general manager in 1986. He fired the previous head coach (Ted Sator) partway into the 1986-1987 season and temporarily took over head coaching duties for a few days in November of 1986.
+
+Phil Esposito quickly hired a new head coach, Tom Webster. However, after coaching only five games, Webster came down with a severe inner ear infection that meant he was unable to travel by air. So for the remainder of the season, Webster coached only home games for the NY Webster, while Esposito traveled with the team to coach away games.
+
+Webster resigned his position in April of 1987. Esposito then hired Michel Bergeron as the next head coach of the Rangers. Bergeron was immediately unpopular with fans and players. Fans were angry at how much it took to hire Bergeron away from the Quebec Nordiques ($100,000 and a first-round pick). Players disliked his fiery temper, which reportedly led to several Rangers prospects refusing to sign with the team. 
+
+Eventually, the relationship between Esposito and Bergeron soured, and Bergeron was fired during the 1988-1989 season. Esposito coached the last two games of the regular season, then saw his team swept in the first round of the playoffs. In May of 1989, Esposito himself was fired.
+
+So should we really count Esposito as the head coach of the NY Rangers five separate times? Probably not. I hope this example illustrates how it's always crucial to carefully inspect databases. Oddities like Phil Esposito can easily fly under the radar and skew our visualizations and analyses.
+
+Sources:
+
+[On April 27 in NYR history: Calling it quits after 16 games as coach](https://bluelinestation.com/2022/04/27/april-27-new-york-rangers-history-coach-quits-16-games/)
+
+[Clash of the like-minded: The Bergeron-Esposito feud](https://bluelinestation.com/2020/10/05/new-york-rangers-blueshirts-briefs-esposito-bergeron-feud/)
+
+[On May 24 in NYR history: Enough is enough, Trader Phil fired](https://bluelinestation.com/2022/05/24/may-24-new-york-rangers-history-phil-esposito-fired/)
