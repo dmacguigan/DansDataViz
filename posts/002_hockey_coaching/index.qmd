@@ -205,22 +205,23 @@ df_3 = pd.DataFrame(team_secondary_color.items(), columns=['team', 'col2'])
 
 # join data frames on color
 df = pd.merge(pd.merge(df_1, df_2, on="team"), df_3, on="team")
-df = df.sort_values('HC_avg_tenure', ascending=False) # sort dataframe by head coach tenure
+df = df.sort_values('HC_avg_tenure', ascending=True) # sort dataframe by head coach tenure
 
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 # bar plot of teams, ordered by seasons per coach
-fig = px.bar(df, x='team', y='HC_avg_tenure', template="plotly_dark", 
-title = "Average NHL Head Coach Tenure") # use a dark template for contrast
+fig = px.bar(df, y='team', x='HC_avg_tenure', template="plotly_dark", 
+            title = "Average NHL Head Coach Tenure",
+            height=900, hover_name='team') 
 
 # use team colors for the bars
 fig.update_traces(marker_color=df['col1'], 
       marker_line=dict(width=2, color=df['col2'])) 
 
-fig.update_yaxes(title_text="Average HC Tenure (seasons)")
-fig.update_xaxes(title_text="Team")
+fig.update_xaxes(title_text="Average HC Tenure (seasons)")
+fig.update_yaxes(title_text="Team")
 
 # reduce margins for better viewing on mobile
 fig.update_layout(margin=dict(l=20, r=20, b=20),
@@ -395,9 +396,9 @@ That's strange. Phil Esposito was only with the NY Rangers from 1986 until 1989.
 
 As it turns out, there's an interesting story behind Esposito's oddball coaching career. Esposito was brought onboard to be the NY Rangers general manager in 1986. He fired the previous head coach (Ted Sator) partway into the 1986-1987 season and temporarily took over head coaching duties for a few days in November of 1986.
 
-Phil Esposito quickly hired a new head coach, Tom Webster. However, after coaching only five games, Webster came down with a severe inner ear infection that meant he was unable to travel by air. So for the remainder of the season, Webster coached only home games for the NY Webster, while Esposito traveled with the team to coach away games.
+Phil Esposito quickly hired a new head coach, Tom Webster. However, after coaching only five games, Webster came down with a severe inner ear infection that meant he was unable to travel by air. So for the remainder of the season, Webster coached only home games, while Esposito coached away games.
 
-Webster resigned his position in April of 1987. Esposito then hired Michel Bergeron as the next head coach of the Rangers. Bergeron was immediately unpopular with fans and players. Fans were angry at how much it took to hire Bergeron away from the Quebec Nordiques ($100,000 and a first-round pick). Players disliked his fiery temper, which reportedly led to several Rangers prospects refusing to sign with the team. 
+Webster resigned his position in April of 1987. Esposito then hired Michel Bergeron as the next head coach of the Rangers. Bergeron was immediately unpopular with fans and players. Fans were angry at how much the Rangers spent to hire Bergeron away from the Quebec Nordiques ($100,000 and a first-round pick). Players disliked his fiery temper, which reportedly led to several Rangers prospects refusing to sign with the team. 
 
 Eventually, the relationship between Esposito and Bergeron soured, and Bergeron was fired during the 1988-1989 season. Esposito coached the last two games of the regular season, then saw his team swept in the first round of the playoffs. In May of 1989, Esposito himself was fired.
 
