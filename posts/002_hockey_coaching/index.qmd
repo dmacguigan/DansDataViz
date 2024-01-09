@@ -359,7 +359,6 @@ Something seems fishy. Did the New York Rangers (NYR) really have Phil Esposito 
 Well...technically yes. Let's take a look at the other coaches for the Rangers between Esposito's first and last stints with the team.
 
 ```{python}
-#| echo: false
 import requests
 import json
 

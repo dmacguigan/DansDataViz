@@ -1520,9 +1520,9 @@ font-style: inherit;"># use grey for plot background to better see team colors</
 <span id="cb7-128">fig.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
 
-<div>                            <div id="594e82f0-78da-42c7-b951-312200bba0d0" class="plotly-graph-div" style="height:900px; width:100%;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("594e82f0-78da-42c7-b951-312200bba0d0")) {                    Plotly.newPlot(                        "594e82f0-78da-42c7-b951-312200bba0d0",                        [{"alignmentgroup":"True","hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003eHC_avg_tenure=%{x}\u003cbr\u003eteam=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["NJD","STL","FLA","DAL","LAK","NYR","OTT","SEA","VGK","CBJ","EDM","ARI","BUF","CGY","CHI","VAN","NYI","PIT","PHI","WPG","CAR","WSH","TOR","ANA","COL","SJS","BOS","DET","MTL","MIN","TBL","NSH"],"legendgroup":"","marker":{"color":["#CE1126","#002F87","#C8102E","#006847","#111111","#0038A8","#DA1A32","#001628","#B4975A","#002654","#041E42","#8C2633","#003087","#D2001C","#CF0A2C","#00205B","#00539B","#FFB81C","#F74902","#041E42","#CE1126","#041E42","#00205B","#111111","#6F263D","#006D75","#FFB81C","#CE1126","#AF1E2D","#154734","#002868","#FFB81C"],"pattern":{"shape":""},"line":{"color":["#000000","#FCB514","#041E42","#8F8F8C","#A2AAAD","#CE1126","#000000","#99D9D9","#333F42","#CE1126","#FF4C00","#E2D6B5","#FFB81C","#FAAF19","#000000","#00843D","#F47D30","#010101","#000000","#AC162C","#000000","#C8102E","#FFFFFF","#F95602","#236192","#000000","#000000","#FFFFFF","#192168","#a6192e","#FFFFFF","#041E42"],"width":2}},"name":"","offsetgroup":"","orientation":"h","showlegend":false,"textposition":"auto","x":[1.4,1.65,1.67,1.81,1.93,1.94,1.94,2.0,2.0,2.09,2.1,2.1,2.12,2.12,2.2,2.21,2.22,2.24,2.33,2.4,2.44,2.45,2.47,2.5,2.59,2.91,2.91,3.03,3.03,3.29,3.44,6.25],"xaxis":"x","y":["NJD","STL","FLA","DAL","LAK","NYR","OTT","SEA","VGK","CBJ","EDM","ARI","BUF","CGY","CHI","VAN","NYI","PIT","PHI","WPG","CAR","WSH","TOR","ANA","COL","SJS","BOS","DET","MTL","MIN","TBL","NSH"],"yaxis":"y","type":"bar"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"rgb(17,17,17)","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#f2f5fa"},"error_y":{"color":"#f2f5fa"},"marker":{"line":{"color":"rgb(17,17,17)","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#A2B1C6","gridcolor":"#506784","linecolor":"#506784","minorgridcolor":"#506784","startlinecolor":"#A2B1C6"},"baxis":{"endlinecolor":"#A2B1C6","gridcolor":"#506784","linecolor":"#506784","minorgridcolor":"#506784","startlinecolor":"#A2B1C6"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"line":{"color":"#283442"}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"marker":{"line":{"color":"#283442"}},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#506784"},"line":{"color":"rgb(17,17,17)"}},"header":{"fill":{"color":"#2a3f5f"},"line":{"color":"rgb(17,17,17)"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#f2f5fa","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#f2f5fa"},"geo":{"bgcolor":"rgb(17,17,17)","lakecolor":"rgb(17,17,17)","landcolor":"rgb(17,17,17)","showlakes":true,"showland":true,"subunitcolor":"#506784"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"dark"},"paper_bgcolor":"rgb(17,17,17)","plot_bgcolor":"rgb(17,17,17)","polar":{"angularaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"bgcolor":"rgb(17,17,17)","radialaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"},"yaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"},"zaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"}},"shapedefaults":{"line":{"color":"#f2f5fa"}},"sliderdefaults":{"bgcolor":"#C8D4E3","bordercolor":"rgb(17,17,17)","borderwidth":1,"tickwidth":0},"ternary":{"aaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"baxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"bgcolor":"rgb(17,17,17)","caxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""}},"title":{"x":0.05},"updatemenudefaults":{"bgcolor":"#506784","borderwidth":0},"xaxis":{"automargin":true,"gridcolor":"#283442","linecolor":"#506784","ticks":"","title":{"standoff":15},"zerolinecolor":"#283442","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#283442","linecolor":"#506784","ticks":"","title":{"standoff":15},"zerolinecolor":"#283442","zerolinewidth":2}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"Average HC Tenure (seasons)"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"Team"}},"legend":{"tracegroupgap":0},"title":{"text":"Average NHL Head Coach Tenure"},"barmode":"relative","height":900,"margin":{"l":20,"r":20,"b":20},"plot_bgcolor":"dimgrey"},                        {"responsive": true}                    ).then(function(){
+<div>                            <div id="dd64d302-bf75-4e5e-9256-03a06acf7ce9" class="plotly-graph-div" style="height:900px; width:100%;"></div>            <script type="text/javascript">                require(["plotly"], function(Plotly) {                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("dd64d302-bf75-4e5e-9256-03a06acf7ce9")) {                    Plotly.newPlot(                        "dd64d302-bf75-4e5e-9256-03a06acf7ce9",                        [{"alignmentgroup":"True","hovertemplate":"\u003cb\u003e%{hovertext}\u003c\u002fb\u003e\u003cbr\u003e\u003cbr\u003eHC_avg_tenure=%{x}\u003cbr\u003eteam=%{y}\u003cextra\u003e\u003c\u002fextra\u003e","hovertext":["NJD","STL","FLA","DAL","LAK","NYR","OTT","SEA","VGK","CBJ","EDM","ARI","BUF","CGY","CHI","VAN","NYI","PIT","PHI","WPG","CAR","WSH","TOR","ANA","COL","SJS","BOS","DET","MTL","MIN","TBL","NSH"],"legendgroup":"","marker":{"color":["#CE1126","#002F87","#C8102E","#006847","#111111","#0038A8","#DA1A32","#001628","#B4975A","#002654","#041E42","#8C2633","#003087","#D2001C","#CF0A2C","#00205B","#00539B","#FFB81C","#F74902","#041E42","#CE1126","#041E42","#00205B","#111111","#6F263D","#006D75","#FFB81C","#CE1126","#AF1E2D","#154734","#002868","#FFB81C"],"pattern":{"shape":""},"line":{"color":["#000000","#FCB514","#041E42","#8F8F8C","#A2AAAD","#CE1126","#000000","#99D9D9","#333F42","#CE1126","#FF4C00","#E2D6B5","#FFB81C","#FAAF19","#000000","#00843D","#F47D30","#010101","#000000","#AC162C","#000000","#C8102E","#FFFFFF","#F95602","#236192","#000000","#000000","#FFFFFF","#192168","#a6192e","#FFFFFF","#041E42"],"width":2}},"name":"","offsetgroup":"","orientation":"h","showlegend":false,"textposition":"auto","x":[1.4,1.65,1.67,1.81,1.93,1.94,1.94,2.0,2.0,2.09,2.1,2.1,2.12,2.12,2.2,2.21,2.22,2.24,2.33,2.4,2.44,2.45,2.47,2.5,2.59,2.91,2.91,3.03,3.03,3.29,3.44,6.25],"xaxis":"x","y":["NJD","STL","FLA","DAL","LAK","NYR","OTT","SEA","VGK","CBJ","EDM","ARI","BUF","CGY","CHI","VAN","NYI","PIT","PHI","WPG","CAR","WSH","TOR","ANA","COL","SJS","BOS","DET","MTL","MIN","TBL","NSH"],"yaxis":"y","type":"bar"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"rgb(17,17,17)","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#f2f5fa"},"error_y":{"color":"#f2f5fa"},"marker":{"line":{"color":"rgb(17,17,17)","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#A2B1C6","gridcolor":"#506784","linecolor":"#506784","minorgridcolor":"#506784","startlinecolor":"#A2B1C6"},"baxis":{"endlinecolor":"#A2B1C6","gridcolor":"#506784","linecolor":"#506784","minorgridcolor":"#506784","startlinecolor":"#A2B1C6"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"line":{"color":"#283442"}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"marker":{"line":{"color":"#283442"}},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#506784"},"line":{"color":"rgb(17,17,17)"}},"header":{"fill":{"color":"#2a3f5f"},"line":{"color":"rgb(17,17,17)"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#f2f5fa","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#f2f5fa"},"geo":{"bgcolor":"rgb(17,17,17)","lakecolor":"rgb(17,17,17)","landcolor":"rgb(17,17,17)","showlakes":true,"showland":true,"subunitcolor":"#506784"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"dark"},"paper_bgcolor":"rgb(17,17,17)","plot_bgcolor":"rgb(17,17,17)","polar":{"angularaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"bgcolor":"rgb(17,17,17)","radialaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"},"yaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"},"zaxis":{"backgroundcolor":"rgb(17,17,17)","gridcolor":"#506784","gridwidth":2,"linecolor":"#506784","showbackground":true,"ticks":"","zerolinecolor":"#C8D4E3"}},"shapedefaults":{"line":{"color":"#f2f5fa"}},"sliderdefaults":{"bgcolor":"#C8D4E3","bordercolor":"rgb(17,17,17)","borderwidth":1,"tickwidth":0},"ternary":{"aaxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"baxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""},"bgcolor":"rgb(17,17,17)","caxis":{"gridcolor":"#506784","linecolor":"#506784","ticks":""}},"title":{"x":0.05},"updatemenudefaults":{"bgcolor":"#506784","borderwidth":0},"xaxis":{"automargin":true,"gridcolor":"#283442","linecolor":"#506784","ticks":"","title":{"standoff":15},"zerolinecolor":"#283442","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#283442","linecolor":"#506784","ticks":"","title":{"standoff":15},"zerolinecolor":"#283442","zerolinewidth":2}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"Average HC Tenure (seasons)"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"Team"}},"legend":{"tracegroupgap":0},"title":{"text":"Average NHL Head Coach Tenure"},"barmode":"relative","height":900,"margin":{"l":20,"r":20,"b":20},"plot_bgcolor":"dimgrey"},                        {"responsive": true}                    ).then(function(){
                             
-var gd = document.getElementById('594e82f0-78da-42c7-b951-312200bba0d0');
+var gd = document.getElementById('dd64d302-bf75-4e5e-9256-03a06acf7ce9');
 var x = new MutationObserver(function (mutations, observer) {{
         var display = window.getComputedStyle(gd).display;
         if (!display || display === 'none') {{
@@ -1826,6 +1826,181 @@ font-style: inherit;">False</span>))</span></code></pre></div>
 <p>Something seems fishy. Did the New York Rangers (NYR) really have Phil Esposito as their head coach 5 different times?</p>
 <p>Well…technically yes. Let’s take a look at the other coaches for the Rangers between Esposito’s first and last stints with the team.</p>
 <div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> requests</span>
+<span id="cb10-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> json</span>
+<span id="cb10-3"></span>
+<span id="cb10-4">teams <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> json.loads(requests.get(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'https://records.nhl.com/site/api/franchise-detail'</span>).text) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># pull request, get data (.text), and convert JSON to a Python dict</span></span>
+<span id="cb10-5"></span>
+<span id="cb10-6">NYR <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">next</span>(item <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> item <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> teams[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data"</span>] <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> item[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'teamAbbrev'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'NYR'</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># find the NYR stats</span></span>
+<span id="cb10-7"></span>
+<span id="cb10-8">NYR_coaches_html <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> NYR[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'coachingHistory'</span>]</span>
+<span id="cb10-9">l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> BeautifulSoup(NYR_coaches_html, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"html.parser"</span>).find_all(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"li"</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># isolate the "li" elements and convert to python list</span></span>
+<span id="cb10-10">NYR_coaches <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb10-11"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> x <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> l:</span>
+<span id="cb10-12">  NYR_coaches.append(normalize(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'NFKD'</span>,<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>(x))) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># convert list items to string, also get rid of non-ASCII characters</span></span>
+<span id="cb10-13"></span>
+<span id="cb10-14">NYR_coaches <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [x <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> x <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> NYR_coaches <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">":"</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> x] <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># remove list elements that do not contain colons, these are usually comments</span></span>
+<span id="cb10-15"></span>
+<span id="cb10-16">x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb10-17"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> NYR_coaches:</span>
+<span id="cb10-18">  temp <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> re.sub(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"&lt;[/]*li&gt;"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">""</span>, <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>(i)) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># use regex to remove HTML tags (&lt;li&gt;)</span></span>
+<span id="cb10-19">  temp2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> temp.split(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">":"</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># split the string on a colon</span></span>
+<span id="cb10-20">  coach <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> temp2[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>] <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># first element is the coach name</span></span>
+<span id="cb10-21">  </span>
+<span id="cb10-22">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># some conditionals to only print seasons between Esposito's first and last season as head coach</span></span>
+<span id="cb10-23">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> coach <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Phil Esposito"</span>:</span>
+<span id="cb10-24">    x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb10-25">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb10-26">    tenure <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> temp2[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].strip() <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># strip to remove leading and trailing whitespace</span></span>
+<span id="cb10-27">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(coach <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">", "</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> tenure, sep<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">""</span>)</span>
+<span id="cb10-28">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>: <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># stop when we hit Esposito's 5th season</span></span>
+<span id="cb10-29">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">break</span></span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Phil Esposito, April 1-9, 1989
 Michel Bergeron, Oct. 8, 1987 – March 29, 1989
