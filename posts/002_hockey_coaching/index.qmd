@@ -232,9 +232,9 @@ fig.show()
 ```
 <br/>
 
-The Nashville Predators (NSH) sure are an outlier of coaching consistency. They have only had 4 head coaches in their entire history. Admittedly, they were only founded in 1998, but other teams founded in that era like the Anaheim Ducks (ANA - 1993) and the Columbus Blue Jackets (CBJ - 2000) have been far worse off. 
+The Nashville Predators (NSH) sure are an outlier of coaching consistency. They have only had four head coaches in their entire history. Admittedly, they were only founded in 1998, but other teams founded in that era like the Anaheim Ducks (ANA - 1993) and the Columbus Blue Jackets (CBJ - 2000) have been far worse off. 
 
-At the other end of the spectrum are the New Jersey Devils (NJD). The longest-serving head coach for the Devils was Jacques Lemaire, who led the team for only 5 years.
+At the other end of the spectrum are the New Jersey Devils (NJD). The longest-serving head coach for the Devils was Jacques Lemaire, who led the team for only five years.
 
 Let's try to answer another coaching question: how often do teams re-hire the same head coach? We'll use [Counter](https://docs.python.org/3/library/collections.html#collections.Counter) from the Python `collections` library to do this.
 
@@ -283,12 +283,6 @@ for team in teams['data']:
                     ("coach", i[0]),
                     ("times_coached", i[1])])
         rows_list.append(temp)
-
-
-    # which head coach had the most stints with each franchise?
-    #if coach_repeats[team_name][0][1] > 1: # only show repeat coaches 
-    #  print(coach_repeats[team_name][0][0], "was head coach for the",
-    #        team_full_name, coach_repeats[team_name][0][1], "times")
 
 # convert list of dictionaries to data frame
 hc_df = pd.DataFrame(rows_list, columns=["coach", "team", "times_coached"])
@@ -341,12 +335,6 @@ for team in teams['data']:
                     ("times_coached", i[1])])
         rows_list.append(temp)
 
-
-    # which head coach had the most stints with each franchise?
-    #if coach_repeats[team_name][0][1] > 1: # only show repeat coaches 
-    #  print(coach_repeats[team_name][0][0], "was head coach for the",
-    #        team_full_name, coach_repeats[team_name][0][1], "times")
-
 # convert list of dictionaries to data frame
 hc_df = pd.DataFrame(rows_list, columns=["coach", "team", "times_coached"])
 print(hc_df.sort_values('times_coached', ascending=False))
@@ -354,11 +342,11 @@ print(hc_df.sort_values('times_coached', ascending=False))
 :::
 <br/>
 
-Something seems fishy. Did the New York Rangers (NYR) really have Phil Esposito as their head coach 5 different times?
+Something seems fishy. Did the New York Rangers (NYR) really have Phil Esposito as their head coach five different times?
 
 Well...technically yes. Let's take a look at the other coaches for the Rangers between Esposito's first and last stints with the team.
 
-```{python}ost 
+```{python}
 import requests
 import json
 
