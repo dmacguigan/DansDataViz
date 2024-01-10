@@ -7,11 +7,11 @@ categories: [python, API, visualization, sports, hockey]
 css: styles.css
 ---
 
-Let's return to some hockey stats to keep working on our Python and API skills.
+Let's return to some hockey stats databases and keep working on our Python and API skills.
 
 Today, we'll learn a bit about head coaching in the NHL. We're going to use a different database and API: [https://records.nhl.com/](https://records.nhl.com/).
 
-First, let's get the basic stats for every NHL franchise.
+First, let's look at some basic stats for every NHL franchise.
 
 ```{python}
 #| eval: false
@@ -43,7 +43,7 @@ print(json.dumps(MTL, indent=4)) # print the new dictionary object
 ```
 <br/> 
 
-We see that there's a item `coachingHistory`, but it's in HTML "striped-list" format. Well need to parse this list. To do this, let's use the [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) Python library.
+There's a item `coachingHistory`, but it's in HTML "striped-list" format. We'll need to parse this list. To do this, let's use the [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) Python library.
 
 ```{python}
 #| eval: false
@@ -232,7 +232,7 @@ fig.show()
 ```
 <br/>
 
-The Nashville Predators (NSH) sure are an outlier of coaching consistency. They have only had four head coaches in their entire history. Admittedly, they were only founded in 1998, but other teams founded in that era like the Anaheim Ducks (ANA - 1993) and the Columbus Blue Jackets (CBJ - 2000) have been far worse off. 
+The Nashville Predators (NSH) sure are an outlier of coaching consistency. They've only had four head coaches in their entire history. Admittedly, they were only founded in 1998, but other teams originating in that era like the Anaheim Ducks (ANA - 1993) and the Columbus Blue Jackets (CBJ - 2000) have been far worse off. 
 
 At the other end of the spectrum are the New Jersey Devils (NJD). The longest-serving head coach for the Devils was Jacques Lemaire, who led the team for only five years.
 
@@ -344,7 +344,7 @@ print(hc_df.sort_values('times_coached', ascending=False))
 
 Something seems fishy. Did the New York Rangers (NYR) really have Phil Esposito as their head coach five different times?
 
-Well...technically yes. Let's take a look at the other coaches for the Rangers between Esposito's first and last stints with the team.
+Well...technically yes. But let's take a look at the other coaches for the Rangers between Esposito's first and last stints with the team.
 
 ```{python}
 import requests
@@ -379,7 +379,7 @@ for i in NYR_coaches:
 ```
 <br/>
 
-That's strange. Phil Esposito was only with the NY Rangers from 1986 until 1989. But during that time, the Rangers swapped between three head coaches: Phil Esposito, Tom Webster, and Michel Bergeron. 
+That's strange. Esposito was only with the NY Rangers from 1986 until 1989. But during that time, the Rangers swapped between three head coaches: Phil Esposito, Tom Webster, and Michel Bergeron. 
 
 As it turns out, there's an interesting story behind Esposito's oddball coaching career. Esposito was brought onboard to be the NY Rangers general manager in 1986. He fired the previous head coach (Ted Sator) partway into the 1986-1987 season and temporarily took over head coaching duties for a few days in November of 1986.
 
