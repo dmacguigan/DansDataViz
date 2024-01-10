@@ -214,7 +214,7 @@ from plotly.subplots import make_subplots
 # bar plot of teams, ordered by seasons per coach
 fig = px.bar(df, y='team', x='HC_avg_tenure', template="plotly_dark", 
             title = "Average NHL Head Coach Tenure",
-            height=900, hover_name='team') 
+            height=800, hover_name='team') 
 
 # use team colors for the bars
 fig.update_traces(marker_color=df['col1'], 
@@ -358,7 +358,7 @@ Something seems fishy. Did the New York Rangers (NYR) really have Phil Esposito 
 
 Well...technically yes. Let's take a look at the other coaches for the Rangers between Esposito's first and last stints with the team.
 
-```{python}
+```{python}ost 
 import requests
 import json
 
