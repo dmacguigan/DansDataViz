@@ -224,7 +224,7 @@ fig.update_xaxes(title_text="Average HC Tenure (seasons)")
 fig.update_yaxes(title_text="Team")
 
 # reduce margins for better viewing on mobile
-fig.update_layout(margin=dict(l=20, r=20, b=20),
+fig.update_layout(margin=dict(l=20, r=20, b=20), dragmode=False,
                   plot_bgcolor="dimgrey") # use grey for plot background to better see team colors
 
 fig.show()
