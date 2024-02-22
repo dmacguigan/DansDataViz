@@ -1,0 +1,512 @@
+---
+title: "Hockey Hat Tricks"
+author: "Dan MacGuigan"
+date: "2024-02-22"
+categories: [python, API, visualization, sports, hockey]
+
+css: styles.css
+---
+
+In hockey (and some other sports), a hat trick is three goals scored by the same player in a single game. How common are hat tricks in the NHL?
+
+We'll again turn to the NHL's [stats database](https://www.nhl.com/stats/), with API documentation help from [here](https://gitlab.com/dword4/nhlapi/-/blob/master/new-api.md) and [here](https://github.com/Zmalski/NHL-API-Reference?tab=readme-ov-file#get-team-roster-by-season).
+
+First, let's just look at the 2022-2023 season for one team. How about the Buffalo Sabres? We'll need to loop through every Sabres game from this season and find games with hat tricks.
+
+Let's look at the data structure. Here's the first Sabres game that season.
+
+```{python}
+#| eval: false
+import requests
+import json
+
+team = "BUF"
+season = 20222023
+link = "https://api-web.nhle.com/v1/club-schedule-season/" + str(team) + "/" + str(season)
+print(link)
+sched = json.loads(requests.get(link).text) # pull request, get data (.text), and convert JSON to a Python dict
+game1 = sched["games"][0] # look at the first game
+print(json.dumps(game1, indent=4)) # print the new dictionary object
+print("")
+game1_date = game1["gameDate"]
+print("The date of the Sabres first game this season is: " + str(game1_date))
+game1_ID = game1["id"]
+print("The ID of the Sabres first game this season is: " + str(game1_ID))
+```
+:::{.scrolling}
+```{python}
+#| echo: false
+import requests
+import json
+
+team = "BUF"
+season = 20222023
+link = "https://api-web.nhle.com/v1/club-schedule-season/" + str(team) + "/" + str(season)
+print(link)
+sched = json.loads(requests.get(link).text) # pull request, get data (.text), and convert JSON to a Python dict
+game1 = sched["games"][0] # look at the first game
+print(json.dumps(game1, indent=4)) # print the new dictionary object
+print("")
+game1_date = game1["gameDate"]
+print("The date of the Sabres first game this season is: " + str(game1_date))
+game1_ID = game1["id"]
+print("The ID of the Sabres first game this season is: " + str(game1_ID))
+```
+:::
+<br/>
+
+Unfortunately, this data structure doesn't show us the goals scored by each player. To find that, we'll need to cross reference a different database.
+
+```{python}
+#| eval: false
+link = "https://api-web.nhle.com/v1/score/" + str(game1_date)
+box_scores = json.loads(requests.get(link).text)["games"] # pull request, get data (.text), and convert JSON to a Python dict
+
+game1_score = next(item for item in box_scores if item['id'] == game1_ID) # find the Sabres game using the game ID from our previous bit of code
+
+print(json.dumps(game1_score, indent=4)) # print the new dictionary object
+```
+:::{.scrolling}
+```{python}
+#| echo: false
+link = "https://api-web.nhle.com/v1/score/" + str(game1_date)
+box_scores = json.loads(requests.get(link).text)["games"] # pull request, get data (.text), and convert JSON to a Python dict
+
+game1_score = next(item for item in box_scores if item['id'] == game1_ID) # find the Sabres game using the game ID from our previous bit of code
+
+print(json.dumps(game1_score, indent=4)) # print the new dictionary object
+```
+:::
+<br/>
+
+This data structure has info on each goal scored this game. Let's figure out a way to tally the number of goals scored by each player. We'll use the `Counter` function from the `collections` library.
+
+```{python}
+import collections
+
+scorers = [i["playerId"] for i in game1_score['goals']] # extract player IDs for each goal scored
+scorers_table = dict(collections.Counter(scorers)) # count how many goals are scored by each player
+
+print("goals scored by player ID")
+print(scorers_table)
+```
+<br/>
+
+Now that we've got the basics, we can set up a loop to go through all Sabres games in the 2022-2023 season.
+```{python}
+#| eval: false
+team = "BUF"
+season = 20222023
+
+link = "https://api-web.nhle.com/v1/club-schedule-season/" + str(team) + "/" + str(season)
+sched = json.loads(requests.get(link).text) # pull request, get data (.text), and convert JSON to a Python dict
+
+print(team + " games with hat tricks...")
+print("date:{{player_ID: [number_of_goals, player_name]}}")
+for game in sched["games"]: # loop through every focal team game in the schedule
+  gameDATE = game["gameDate"]
+  gameID = game["id"]
+
+  link2 = "https://api-web.nhle.com/v1/score/" + str(gameDATE)
+  box_scores = json.loads(requests.get(link2).text)["games"] # pull request, get data (.text), and convert JSON to a Python dict
+  score = next(item for item in box_scores if item['id'] == gameID) # find the game using the game ID from our previous bit of code
+
+  team_goals = [d for d in score['goals'] if d['teamAbbrev'] in team] # only get goals scored by the team
+
+  scorers = [i["playerId"] for i in team_goals] # extract player IDs for each goal scored
+  scorers_table = dict(collections.Counter(scorers))  
+
+  hat_tricks_scorers = dict((k, v) for k, v in scorers_table.items() if v >= 3) # get scorers with more than 3 goals
+
+  for key in hat_tricks_scorers: # loop through hat trick scorers
+    player = next(item for item in team_goals if item['playerId']== key)['name']['default'] # get player name based on player ID
+    hat_tricks_scorers[key] = [hat_tricks_scorers[key]] # convert dict value to list
+    hat_tricks_scorers[key] += [player] # add player name as a value to player ID key
+
+  if bool(hat_tricks_scorers): # only return results if there was a hat trick
+    print(gameDATE + ":" + str(hat_tricks_scorers))
+```
+:::{.scrolling}
+```{python}
+#| echo: false
+team = "BUF"
+season = 20222023
+
+link = "https://api-web.nhle.com/v1/club-schedule-season/" + str(team) + "/" + str(season)
+sched = json.loads(requests.get(link).text) # pull request, get data (.text), and convert JSON to a Python dict
+
+print(team + " games with hat tricks...")
+print("date:{{player_ID: [number_of_goals, player_name]}}")
+for game in sched["games"]: # loop through every focal team game in the schedule
+  gameDATE = game["gameDate"]
+  gameID = game["id"]
+
+  link2 = "https://api-web.nhle.com/v1/score/" + str(gameDATE)
+  box_scores = json.loads(requests.get(link2).text)["games"] # pull request, get data (.text), and convert JSON to a Python dict
+  score = next(item for item in box_scores if item['id'] == gameID) # find the game using the game ID from our previous bit of code
+
+  team_goals = [d for d in score['goals'] if d['teamAbbrev'] in team] # only get goals scored by the team
+
+  scorers = [i["playerId"] for i in team_goals] # extract player IDs for each goal scored
+  scorers_table = dict(collections.Counter(scorers))  
+
+  hat_tricks_scorers = dict((k, v) for k, v in scorers_table.items() if v >= 3) # get scorers with more than 3 goals
+
+  for key in hat_tricks_scorers: # loop through hat trick scorers
+    player = next(item for item in team_goals if item['playerId']== key)['name']['default'] # get player name based on player ID
+    hat_tricks_scorers[key] = [hat_tricks_scorers[key]] # convert dict value to list
+    hat_tricks_scorers[key] += [player] # add player name as a value to player ID key
+
+  if bool(hat_tricks_scorers): # only return results if there was a hat trick
+    print(gameDATE + ":" + str(hat_tricks_scorers))
+```
+:::
+<br/>
+
+Tage Thompson had 4 hat tricks that season, impressive!
+
+We can expand this to look at all teams in the 2022-2023 season. It will take a little while to run this code. We'll use the `datetime` and `dateutil` libraries to loop through every day in that season. Also, let's only look at regular season games (`"gameType": 2`). Lastly, we also need to ignore shootout goals (encoded by the `periodDescriptor` value), since these aren't counted toward a hat trick.
+
+This code will take a few minutes to run.
+
+```{python}
+from datetime import date, timedelta
+import dateutil.parser as dateparser
+
+season = 20222023
+
+# get start and end date of season
+standings = json.loads(requests.get("https://api-web.nhle.com/v1/standings-season").text)["seasons"] # pull request, get data (.text), and convert JSON to a Python dict
+
+start_date = dateparser.parse(next(item for item in standings if item["id"] == season)["standingsStart"])
+end_date = dateparser.parse(next(item for item in standings if item["id"] == season)["standingsEnd"])
+
+delta = timedelta(days=1)
+
+all_hat_tricks = {}
+
+while start_date.date() <= end_date.date():
+    date = start_date.strftime("%Y-%m-%d")
+
+    link2 = "https://api-web.nhle.com/v1/score/" + str(date)
+    box_scores = json.loads(requests.get(link2).text)["games"] # pull request, get data (.text), and convert JSON to a Python dict
+
+    hat_tricks_scorers_date = {} # empty dictionary to contain all hat trick scorers on this date
+
+    if bool(box_scores): # only look at dates with games
+
+      for game in box_scores: # loop through each game on each date
+        if game['gameType'] == 2: # only look at regular season games
+          goals = [d for d in game["goals"] if d['periodDescriptor']['periodType'] != "SO"] # ignore shootout goals
+          scorers = [i["playerId"] for i in goals] # extract player IDs for each goal scored
+          scorers_table = dict(collections.Counter(scorers))  
+          hat_tricks_scorers = dict((k, v) for k, v in scorers_table.items() if v >= 3) # get scorers with more than 3 goals
+          if bool(hat_tricks_scorers): # if there was a hat trick in this game
+            for key in hat_tricks_scorers: # loop through hat trick scorers
+              player = next(item for item in goals if item['playerId'] == key)['name']['default'] # get player name based on player ID
+              team = next(item for item in goals if item['playerId'] == key)['teamAbbrev'] # get player name based on player ID
+              hat_tricks_scorers[key] = [hat_tricks_scorers[key]] # convert dict value to list
+              hat_tricks_scorers[key] += [player] # add player name as a value to player ID key
+              hat_tricks_scorers[key] += [team] # add team abbreviation as a value to player ID key
+              hat_tricks_scorers_date[key] = hat_tricks_scorers[key] # update the date dictionary
+    if bool(hat_tricks_scorers_date): # if there was a hat trick on this date, update the main hat tricks dictionary 
+      all_hat_tricks[date] = hat_tricks_scorers_date
+
+    start_date += delta # increment date by 1
+
+print("hat tricks were scored during " + str(len(all_hat_tricks)) + " games in the 2022-2023 NHL season")
+```
+
+Let's convert our messy `all_hat_tricks` dictionary to a cleaner data frame.
+
+```{python}
+import pandas as pd
+
+df_data = []
+for i in all_hat_tricks: # loop through all dates
+  for j in all_hat_tricks[i]: # loop through all hat tricks each date
+    df_data.append([i, j, all_hat_tricks[i][j][1], all_hat_tricks[i][j][2], all_hat_tricks[i][j][0]]) # write data for each hat trick to list of list
+
+all_hat_tricks_df = pd.DataFrame(df_data, columns=['date', 'player_ID', 'player_name', 'team', 'goals']) # convert list of lists to dataframe
+
+print(all_hat_tricks_df.head(5)) # print first five rows
+```
+<br/>
+
+Nice, that should be easier to work with.
+How many hat tricks were there in the 2022-2023 season? 
+
+```{python}
+print("Number of hat tricks in the 2022-2023 season: " + str(len(all_hat_tricks_df)))
+```
+<br/>
+
+How about a quick plot?
+
+```{python}
+import plotly.express as px
+
+all_hat_tricks_df['hat_tricks'] = range(1, 1 + len(all_hat_tricks_df))
+
+fig = px.line(all_hat_tricks_df, x='date', y="hat_tricks",
+ title = "NHL 2022-2023 Season Hat Tricks",
+ template="plotly_dark",
+ line_shape='hv') # line_shape will plot lines as steps
+fig.update_xaxes(title_text="")
+fig.update_yaxes(title_text="number of hat tricks")
+fig.update_traces(line_color='cyan', line_width=3)
+
+# reduce margins for better viewing on mobile
+fig.update_layout(margin=dict(l=20, r=20, b=20))
+
+fig.show()
+```
+<br/>
+
+I wonder which NHL season had the most hat tricks per game played. To answer this question, we can loop over all NHL seasons and extract the hat trick data. 
+
+This code will take a few hours to run since we're doing a lot of API queries. 
+
+```{python}
+#| eval: false
+from datetime import date, timedelta
+import dateutil.parser as dateparser
+
+# get start and end date of season
+standings = json.loads(requests.get("https://api-web.nhle.com/v1/standings-season").text)["seasons"] # pull request, get data (.text), and convert JSON to a Python dict
+
+# data structures to store results
+every_hat_trick=[]
+hat_tricks_by_season=[] 
+
+for season in standings:
+  season_id = season['id']
+
+  if season_id != 20232024: # skip current season
+    
+    start_date = dateparser.parse(season["standingsStart"])
+    end_date = dateparser.parse(season["standingsEnd"])
+
+    delta = timedelta(days=1)
+
+    season_games = 0 # counter for the number of games in the season
+    season_hat_tricks = 0 # counter for the number of hat tricks
+
+    while start_date.date() <= end_date.date():
+        date = start_date.strftime("%Y-%m-%d")
+
+        link2 = "https://api-web.nhle.com/v1/score/" + str(date)
+        box_scores = json.loads(requests.get(link2).text)["games"] # pull request, get data (.text), and convert JSON to a Python dict
+
+        hat_tricks_scorers_date = {} # empty dictionary to contain all hat trick scorers on this date
+
+        if bool(box_scores): # only look at dates with games
+
+          for game in box_scores: # loop through each game on each date
+            if game['gameType'] == 2: # only look at regular season games
+              season_games += 1 # increment the number of games for the season
+              goals = [d for d in game["goals"] if d['periodDescriptor']['periodType'] != "SO"] # ignore shootout goals
+              scorers = [i["playerId"] for i in goals] # extract player IDs for each goal scored
+              scorers_table = dict(collections.Counter(scorers))  # count the number of goals per player
+              hat_tricks_scorers = dict((k, v) for k, v in scorers_table.items() if v >= 3) # get scorers with more than 3 goals
+              if bool(hat_tricks_scorers): # if there was a hat trick in this game
+                for key in hat_tricks_scorers: # loop through hat trick scorers
+                  player = next(item for item in goals if item['playerId'] == key)['name']['default'] # get player name based on player ID
+                  team = next(item for item in goals if item['playerId'] == key)['teamAbbrev'] # get player name based on player ID
+                  game_id = game['id']
+                  temp = [season_id, game_id, team, key, player, hat_tricks_scorers[key]]
+                  every_hat_trick.append(temp) # add hat trick data to list
+                  season_hat_tricks += 1 # increment number of hat tricks for the season
+
+        start_date += delta # increment date by 1
+    
+    hat_tricks_by_season.append([season_id, season_games, season_hat_tricks]) # add new season data to list
+
+    print(str(season_id) + ", games = " + str(season_games) + ", hat tricks = " + str(season_hat_tricks))
+
+```
+:::{.scrolling}
+```{python}
+#| echo: false
+from datetime import date, timedelta
+import dateutil.parser as dateparser
+
+# get start and end date of season
+standings = json.loads(requests.get("https://api-web.nhle.com/v1/standings-season").text)["seasons"] # pull request, get data (.text), and convert JSON to a Python dict
+
+# data structures to store results
+every_hat_trick=[]
+hat_tricks_by_season=[] 
+
+for season in standings:
+  season_id = season['id']
+
+  if season_id != 20232024: # skip current season
+    
+    start_date = dateparser.parse(season["standingsStart"])
+    end_date = dateparser.parse(season["standingsEnd"])
+
+    delta = timedelta(days=1)
+
+    season_games = 0 # counter for the number of games in the season
+    season_hat_tricks = 0 # counter for the number of hat tricks
+
+    while start_date.date() <= end_date.date():
+        date = start_date.strftime("%Y-%m-%d")
+
+        link2 = "https://api-web.nhle.com/v1/score/" + str(date)
+        box_scores = json.loads(requests.get(link2).text)["games"] # pull request, get data (.text), and convert JSON to a Python dict
+
+        hat_tricks_scorers_date = {} # empty dictionary to contain all hat trick scorers on this date
+
+        if bool(box_scores): # only look at dates with games
+
+          for game in box_scores: # loop through each game on each date
+            if game['gameType'] == 2: # only look at regular season games
+              season_games += 1 # increment the number of games for the season
+              goals = [d for d in game["goals"] if d['periodDescriptor']['periodType'] != "SO"] # ignore shootout goals
+              scorers = [i["playerId"] for i in goals] # extract player IDs for each goal scored
+              scorers_table = dict(collections.Counter(scorers))  # count the number of goals per player
+              hat_tricks_scorers = dict((k, v) for k, v in scorers_table.items() if v >= 3) # get scorers with more than 3 goals
+              if bool(hat_tricks_scorers): # if there was a hat trick in this game
+                for key in hat_tricks_scorers: # loop through hat trick scorers
+                  player = next(item for item in goals if item['playerId'] == key)['name']['default'] # get player name based on player ID
+                  team = next(item for item in goals if item['playerId'] == key)['teamAbbrev'] # get player name based on player ID
+                  game_id = game['id']
+                  temp = [season_id, game_id, team, key, player, hat_tricks_scorers[key]]
+                  every_hat_trick.append(temp) # add hat trick data to list
+                  season_hat_tricks += 1 # increment number of hat tricks for the season
+
+        start_date += delta # increment date by 1
+    
+    hat_tricks_by_season.append([season_id, season_games, season_hat_tricks]) # add new season data to list
+
+    print(str(season_id) + ", games = " + str(season_games) + ", hat tricks = " + str(season_hat_tricks))
+```
+:::
+<br/>
+
+Phew, finally done. Let's answer our question about which season has the highest rate of hat tricks.
+
+```{python}
+hat_tricks_by_season_df = pd.DataFrame(hat_tricks_by_season, columns=['season_long', 'games', 'hat_tricks']) # convert list of lists to dataframe
+
+hat_tricks_by_season_df['hat_tricks_per_game'] = round(hat_tricks_by_season_df['hat_tricks'] / hat_tricks_by_season_df['games'], 3) # calculate number of hat tricks per game
+
+hat_tricks_by_season_df['temp'] = hat_tricks_by_season_df['season_long'].astype(str)
+
+hat_tricks_by_season_df['temp1'] = hat_tricks_by_season_df['temp'].str[:-4]
+hat_tricks_by_season_df['temp2'] = hat_tricks_by_season_df['temp'].str[-4:]
+
+hat_tricks_by_season_df['season'] = hat_tricks_by_season_df[['temp1', 'temp2']].apply(lambda row: '-'.join(row.values.astype(str)), axis=1)
+
+fig = px.bar(hat_tricks_by_season_df, y='hat_tricks_per_game', x=str('season'),
+  template="plotly_dark",
+  hover_name='season',
+  title = "NHL Hat Trick Rate by Season")
+
+fig.update_yaxes(title_text="hat tricks per game")
+fig.update_traces(marker_color="cyan") 
+
+# reduce margins for better viewing on mobile
+fig.update_layout(margin=dict(l=20, r=20, b=20))
+
+fig.show()
+```
+<br/>
+
+The NHL's early seasons were the golden age of hat tricks. On average, there was actually more than one hat trick per game during the very first season! The rate of hat tricks declined drastically in the 1920s and 30s.
+
+So what caused this decline? Probably many factors. First, improved goalie equipment coupled with rule changes led to a decline in scoring. According to [hockey-reference.com](https://www.hockey-reference.com/leagues/stats.html), teams averaged 4.75 goals per game during the 1917-1918 NHL season. Compare that to only 3.18 goals per game in 2022-2023 season. 
+
+Second, and perhaps more importantly, team rosters have gotten larger. In the early years of the NHL, only 9 skaters per team were allowed to play during any given game. Todays teams have twice as many skaters per game. More players on the team means less ice time for any given player and fewer opportunities to rack up goals. 
+
+A complete analysis of hat trick rates would require consideration of these factors and more.
+
+One last question. How many times has more than one hat trick been scored in an NHL game?
+
+```{python}
+every_hat_trick_df = pd.DataFrame(every_hat_trick, columns=['season_id', "game_id", 'team', 'player_id', 'player', 'goals']) # convert list of lists to dataframe
+
+print("there have been " + str(len(every_hat_trick_df.index)) + " hat tricks in NHL history")
+print("")
+
+games_hts = dict(collections.Counter(every_hat_trick_df['game_id'])) # count hat tricks for each game
+multi_ht_games = dict((k, v) for k, v in games_hts.items() if v >= 2) # get only games with multiple hat tricks
+
+print("there have been " + str(len(multi_ht_games)) + " games with multiple hat tricks")
+print("")
+
+three_ht_games = dict((k, v) for k, v in games_hts.items() if v >= 3) # get only games with more than 3 hat tricks
+
+print("there have been " + str(len(three_ht_games)) + " games with more than 3 hat tricks")
+
+print("")
+
+# find the game with the most hat tricks
+max_hts = max(games_hts.values())
+n_games_max = sum(value == max_hts for value in games_hts.values()) # how many games have the max number of hat tricks?
+
+max_ht_games = dict((k, v) for k, v in games_hts.items() if v >= max_hts) # get only games with multiple hat tricks
+
+print("the maximum number of hat tricks scored in an NHL game is " + str(max_hts))
+print("there have been " + str(n_games_max) + " games with " + str(max_hts) + " hat tricks")
+
+c = 1
+for i in max_ht_games:
+  print("game " + str(c) + ":")
+  max_hts_df = every_hat_trick_df.loc[every_hat_trick_df['game_id'] == i]
+  print(max_hts_df)
+  c += 1
+```
+<br/>
+
+Wow, three games with four hat tricks each! 
+
+Let's look at the first game with four hat tricks. We can look at the [box score](https://www.hockey-reference.com/boxscores/191712220TRA.html) for this game where the Toronto Arenas (TAN) blew out the Ottawa Senators (SEN) by a score of 11-4. However, one Ottawa player still managed to score a hat trick. 
+
+Ottawa's hat trick was scored by a player named "C. Denneny." Weirdly, there was also a Toronto hat trick scorer named "C. Denneny." As it turns out, Corb Denneny (Toronto) and Cy Denneny (Ottawa) were brothers! Both are now members of the Hockey Hall of Fame. 
+
+I wonder how many times brothers or relatives have scored hat tricks in the same game.
+
+```{python}
+#| eval: false
+print("the following games have multiple hat tricks scored by players with the same last name:")
+print("")
+
+for i in multi_ht_games:
+  temp = every_hat_trick_df[every_hat_trick_df['game_id'] == i] # get data for multi hat trick games
+  temp2 = temp['player'].str[3:].tolist() # convert player column to list
+  temp2_set = set(temp2) # create set
+  if len(temp2) != len(temp2_set): # if lengths are not equal, list contains duplicate values
+    brother_hts = every_hat_trick_df.loc[every_hat_trick_df['game_id'] == i]
+    print(brother_hts)
+```
+
+:::{.scrolling}
+```{python}
+#| echo: false
+print("the following games have multiple hat tricks scored by players with the same last name:")
+print("")
+
+count = 1
+for i in multi_ht_games:
+  temp = every_hat_trick_df[every_hat_trick_df['game_id'] == i] # get data for multi hat trick games
+  temp2 = temp['player'].str[3:].tolist() # convert player column to list
+  temp2_set = set(temp2) # create set
+  if len(temp2) != len(temp2_set): # if lengths are not equal, list contains duplicate values
+    print("game " + str(count) + ":")
+    brother_hts = every_hat_trick_df.loc[every_hat_trick_df['game_id'] == i]
+    print(brother_hts)
+    count += 1
+```
+:::
+<br/>
+
+There have been seven NHL games where two players with the same last name both scored hat tricks! Turns out our brothers from the previous code block, Corb Denneny and Cy Denneny, have actually scored hat tricks together three separate times. 
+
+Odie and Sprague Cleghorn are another pair of brothers who scored a hat trick in the same game, but this time they both played for the same team. In 1946, brother Dough and Max Bentley achieved a similar feat while both playing for the Chicago Blackhawks. 
+
+And lastly, brothers Peter and Anton Šťastný of the Quebec Nordiques scored hat tricks together twice in the 1980-1981 season. This was their first year in the NHL, having just defected to Canada from communist Czechoslovakia.
+
+This is one of my favorite things about digging through sports databases. You can find all manner of strange statistical anomalies and reveal fascinating human stories that might have otherwise been lost to time.
