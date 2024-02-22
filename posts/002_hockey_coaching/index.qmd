@@ -7,11 +7,11 @@ categories: [python, API, visualization, sports, hockey]
 css: styles.css
 ---
 
-Let's return to some hockey stats to keep working on our Python and API skills.
+Let's return to some hockey stats databases and keep working on our Python and API skills.
 
 Today, we'll learn a bit about head coaching in the NHL. We're going to use a different database and API: [https://records.nhl.com/](https://records.nhl.com/).
 
-First, let's get the basic stats for every NHL franchise.
+First, let's look at some basic stats for every NHL franchise.
 
 ```{python}
 #| eval: false
@@ -43,7 +43,7 @@ print(json.dumps(MTL, indent=4)) # print the new dictionary object
 ```
 <br/> 
 
-We see that there's a item `coachingHistory`, but it's in HTML "striped-list" format. Well need to parse this list. To do this, let's use the [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) Python library.
+There's a item `coachingHistory`, but it's in HTML "striped-list" format. We'll need to parse this list. To do this, let's use the [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) Python library.
 
 ```{python}
 #| eval: false
@@ -214,7 +214,7 @@ from plotly.subplots import make_subplots
 # bar plot of teams, ordered by seasons per coach
 fig = px.bar(df, y='team', x='HC_avg_tenure', template="plotly_dark", 
             title = "Average NHL Head Coach Tenure",
-            height=900, hover_name='team') 
+            height=800, hover_name='team') 
 
 # use team colors for the bars
 fig.update_traces(marker_color=df['col1'], 
@@ -224,7 +224,7 @@ fig.update_xaxes(title_text="Average HC Tenure (seasons)")
 fig.update_yaxes(title_text="Team")
 
 # reduce margins for better viewing on mobile
-fig.update_layout(margin=dict(l=20, r=20, b=20),
+fig.update_layout(margin=dict(l=20, r=20, b=20), dragmode=False,
                   plot_bgcolor="dimgrey") # use grey for plot background to better see team colors
 
 fig.show()
@@ -232,9 +232,9 @@ fig.show()
 ```
 <br/>
 
-The Nashville Predators (NSH) sure are an outlier of coaching consistency. They have only had 4 head coaches in their entire history. Admittedly, they were only founded in 1998, but other teams founded in that era like the Anaheim Ducks (ANA - 1993) and the Columbus Blue Jackets (CBJ - 2000) have been far worse off. 
+The Nashville Predators (NSH) sure are an outlier of coaching consistency. They've only had four head coaches in their entire history. Admittedly, they were only founded in 1998, but other teams originating in that era like the Anaheim Ducks (ANA - 1993) and the Columbus Blue Jackets (CBJ - 2000) have been far worse off. 
 
-At the other end of the spectrum are the New Jersey Devils (NJD). The longest-serving head coach for the Devils was Jacques Lemaire, who led the team for only 5 years.
+At the other end of the spectrum are the New Jersey Devils (NJD). The longest-serving head coach for the Devils was Jacques Lemaire, who led the team for only five years.
 
 Let's try to answer another coaching question: how often do teams re-hire the same head coach? We'll use [Counter](https://docs.python.org/3/library/collections.html#collections.Counter) from the Python `collections` library to do this.
 
@@ -283,12 +283,6 @@ for team in teams['data']:
                     ("coach", i[0]),
                     ("times_coached", i[1])])
         rows_list.append(temp)
-
-
-    # which head coach had the most stints with each franchise?
-    #if coach_repeats[team_name][0][1] > 1: # only show repeat coaches 
-    #  print(coach_repeats[team_name][0][0], "was head coach for the",
-    #        team_full_name, coach_repeats[team_name][0][1], "times")
 
 # convert list of dictionaries to data frame
 hc_df = pd.DataFrame(rows_list, columns=["coach", "team", "times_coached"])
@@ -341,12 +335,6 @@ for team in teams['data']:
                     ("times_coached", i[1])])
         rows_list.append(temp)
 
-
-    # which head coach had the most stints with each franchise?
-    #if coach_repeats[team_name][0][1] > 1: # only show repeat coaches 
-    #  print(coach_repeats[team_name][0][0], "was head coach for the",
-    #        team_full_name, coach_repeats[team_name][0][1], "times")
-
 # convert list of dictionaries to data frame
 hc_df = pd.DataFrame(rows_list, columns=["coach", "team", "times_coached"])
 print(hc_df.sort_values('times_coached', ascending=False))
@@ -354,9 +342,9 @@ print(hc_df.sort_values('times_coached', ascending=False))
 :::
 <br/>
 
-Something seems fishy. Did the New York Rangers (NYR) really have Phil Esposito as their head coach 5 different times?
+Something seems fishy. Did the New York Rangers (NYR) really have Phil Esposito as their head coach five different times?
 
-Well...technically yes. Let's take a look at the other coaches for the Rangers between Esposito's first and last stints with the team.
+Well...technically yes. But let's take a look at the other coaches for the Rangers between Esposito's first and last stints with the team.
 
 ```{python}
 import requests
@@ -391,7 +379,7 @@ for i in NYR_coaches:
 ```
 <br/>
 
-That's strange. Phil Esposito was only with the NY Rangers from 1986 until 1989. But during that time, the Rangers swapped between three head coaches: Phil Esposito, Tom Webster, and Michel Bergeron. 
+That's strange. Esposito was only with the NY Rangers from 1986 until 1989. But during that time, the Rangers swapped between three head coaches: Phil Esposito, Tom Webster, and Michel Bergeron. 
 
 As it turns out, there's an interesting story behind Esposito's oddball coaching career. Esposito was brought onboard to be the NY Rangers general manager in 1986. He fired the previous head coach (Ted Sator) partway into the 1986-1987 season and temporarily took over head coaching duties for a few days in November of 1986.
 
