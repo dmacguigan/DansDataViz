@@ -4105,7 +4105,7 @@ font-style: inherit;">False</span>))</span></code></pre></div>
 <p><br></p>
 <p>Something seems fishy. Did the New York Rangers (NYR) really have Phil Esposito as their head coach 5 different times?</p>
 <p>Well…technically yes. Let’s take a look at the other coaches for the Rangers between Esposito’s first and last stints with the team.</p>
-<pre class="xzrltcczost"><code>import requests
+<pre class="vtmbxsdfost"><code>import requests
 import json
 
 teams = json.loads(requests.get('https://records.nhl.com/site/api/franchise-detail').text) # pull request, get data (.text), and convert JSON to a Python dict
