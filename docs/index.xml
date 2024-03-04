@@ -12,6 +12,235 @@
 <generator>quarto-1.3.450</generator>
 <lastBuildDate>Thu, 22 Feb 2024 05:00:00 GMT</lastBuildDate>
 <item>
+  <title>The New Space Race</title>
+  <dc:creator>Dan MacGuigan</dc:creator>
+  <link>https://dmacguigan.github.io/DansDataViz/posts/004_global_satellite_launches/index.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Recently, I listened to a <a href="https://www.nytimes.com/2024/02/28/podcasts/the-daily/us-russia-space.html">NY Times story</a> about how the world is entering a new space race. The US, China, and Russia are all vying for military dominance and developing new weapons to target satellites. The story also touched on the increasing role of private companies in space.</p>
+<p>I was curious to see just how much satellite launches are accelerating. I found a few nice visualizations, like <a href="https://www.economist.com/graphic-detail/2018/10/18/the-space-race-is-dominated-by-new-contenders">this one</a> from the Economist. However, I could not find any plots that showed launches up to the present day.</p>
+<p>So I figured let’s make our own. For the data, we’ll turn to <a href="https://planet4589.org/">Jonathan’s Space Report</a>, a fantastic (and old school) website with a massive amount of data on the entire history of spaceflight. This website appears to be the passion project of Jonathan McDowell, a researcher at the Harvard-Smithsonian Center for Astrophysics. So thank you Jonathan!</p>
+<p>First, let’s download and read in the data.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> wget</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb1-3"></span>
+<span id="cb1-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># download database of launches</span></span>
+<span id="cb1-5">url <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'https://planet4589.org/space/gcat/tsv/derived/launchlog.tsv'</span></span>
+<span id="cb1-6">filename <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> wget.download(url)</span>
+<span id="cb1-7"></span>
+<span id="cb1-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># read in tsv file to data frame</span></span>
+<span id="cb1-9">launches <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.read_table(filename,  sep<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\t</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb1-10"></span>
+<span id="cb1-11"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># we need to remove the first row, since it's not data</span></span>
+<span id="cb1-12">launches <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> launches.drop(index<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span>
+<span id="cb1-13"></span>
+<span id="cb1-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># examine data table</span></span>
+<span id="cb1-15">launches.head()</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">#Launch_Tag</th>
+<th data-quarto-table-cell-role="th">Launch_Date</th>
+<th data-quarto-table-cell-role="th">Piece</th>
+<th data-quarto-table-cell-role="th">Type</th>
+<th data-quarto-table-cell-role="th">Name</th>
+<th data-quarto-table-cell-role="th">PLName</th>
+<th data-quarto-table-cell-role="th">JCAT</th>
+<th data-quarto-table-cell-role="th">SatOwner</th>
+<th data-quarto-table-cell-role="th">SatState</th>
+<th data-quarto-table-cell-role="th">LV_Type</th>
+<th data-quarto-table-cell-role="th">Flight_ID</th>
+<th data-quarto-table-cell-role="th">Platform</th>
+<th data-quarto-table-cell-role="th">Launch_Site</th>
+<th data-quarto-table-cell-role="th">Launch_Pad</th>
+<th data-quarto-table-cell-role="th">Ascent_Site</th>
+<th data-quarto-table-cell-role="th">Ascent_Pad</th>
+<th data-quarto-table-cell-role="th">Agency</th>
+<th data-quarto-table-cell-role="th">LVState</th>
+<th data-quarto-table-cell-role="th">Launch_Code</th>
+<th data-quarto-table-cell-role="th">LTCite</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1</td>
+<td>1957 ALP</td>
+<td>1957 Oct 4 1928:34</td>
+<td>1957 ALP 2</td>
+<td>P</td>
+<td>1-y ISZ</td>
+<td>PS-1</td>
+<td>S00002</td>
+<td>OKB1</td>
+<td>SU</td>
+<td>Sputnik 8K71PS</td>
+<td>M1-PS</td>
+<td>-</td>
+<td>NIIP-5</td>
+<td>LC1</td>
+<td>-</td>
+<td>-</td>
+<td>MVS</td>
+<td>SU</td>
+<td>OS</td>
+<td>Energiya</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2</td>
+<td>1957 BET</td>
+<td>1957 Nov 3 0230:42</td>
+<td>1957 BET 1</td>
+<td>P A</td>
+<td>2-y ISZ</td>
+<td>PS-2</td>
+<td>S00003</td>
+<td>OKB1</td>
+<td>SU</td>
+<td>Sputnik 8K71PS</td>
+<td>M1-2PS</td>
+<td>-</td>
+<td>NIIP-5</td>
+<td>LC1</td>
+<td>-</td>
+<td>-</td>
+<td>MVS</td>
+<td>SU</td>
+<td>OS</td>
+<td>Grahn-WWW</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">3</td>
+<td>1957-F01</td>
+<td>1957 Dec 6 1644:35</td>
+<td>1957-F01</td>
+<td>P F</td>
+<td>Vanguard</td>
+<td>Vanguard Test Satellite F</td>
+<td>F00002</td>
+<td>NRL</td>
+<td>US</td>
+<td>Vanguard</td>
+<td>TV-3</td>
+<td>-</td>
+<td>CC</td>
+<td>LC18A</td>
+<td>-</td>
+<td>-</td>
+<td>NRL</td>
+<td>US</td>
+<td>OF</td>
+<td>Vang-ER9948</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4</td>
+<td>1958 ALP</td>
+<td>1958 Feb 1 0347:56</td>
+<td>1958 ALP</td>
+<td>P A</td>
+<td>Explorer I</td>
+<td>Explorer 1</td>
+<td>S00004</td>
+<td>ABMA/JPLA</td>
+<td>US</td>
+<td>Jupiter C</td>
+<td>RS-29 UE</td>
+<td>-</td>
+<td>CC</td>
+<td>LC26A</td>
+<td>-</td>
+<td>-</td>
+<td>ABMA</td>
+<td>US</td>
+<td>OS</td>
+<td>JunoFam</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">5</td>
+<td>1958-F01</td>
+<td>1958 Feb 5 0733</td>
+<td>1958-F01</td>
+<td>P F</td>
+<td>Vanguard</td>
+<td>Vanguard Test Satellite G</td>
+<td>F00004</td>
+<td>NRL</td>
+<td>US</td>
+<td>Vanguard</td>
+<td>TV-3BU</td>
+<td>-</td>
+<td>CC</td>
+<td>LC18A</td>
+<td>-</td>
+<td>-</td>
+<td>NRL</td>
+<td>US</td>
+<td>OF</td>
+<td>Vang-ER9955</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+
+
+
+ ]]></description>
+  <category>python</category>
+  <category>visualization</category>
+  <category>GIS</category>
+  <category>politics</category>
+  <category>satellites</category>
+  <guid>https://dmacguigan.github.io/DansDataViz/posts/004_global_satellite_launches/index.html</guid>
+  <pubDate>Thu, 22 Feb 2024 05:00:00 GMT</pubDate>
+</item>
+<item>
   <title>Hockey Hat Tricks</title>
   <dc:creator>Dan MacGuigan</dc:creator>
   <link>https://dmacguigan.github.io/DansDataViz/posts/003_hockey_hat_tricks/index.html</link>

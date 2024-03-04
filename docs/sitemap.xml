@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://dmacguigan.github.io/DansDataViz/posts/003_hockey_hat_tricks/index.html</loc>
-    <lastmod>2024-02-23T02:45:32.412Z</lastmod>
+    <lastmod>2024-02-29T16:21:37.993Z</lastmod>
   </url>
   <url>
     <loc>https://dmacguigan.github.io/DansDataViz/posts/001_hockey_stats/index.html</loc>
@@ -14,10 +14,14 @@
   </url>
   <url>
     <loc>https://dmacguigan.github.io/DansDataViz/index.html</loc>
-    <lastmod>2024-02-23T02:45:26.461Z</lastmod>
+    <lastmod>2024-02-29T16:21:38.289Z</lastmod>
   </url>
   <url>
     <loc>https://dmacguigan.github.io/DansDataViz/posts/002_hockey_coaching/index.html</loc>
     <lastmod>2024-02-23T02:45:31.038Z</lastmod>
+  </url>
+  <url>
+    <loc>https://dmacguigan.github.io/DansDataViz/posts/004_global_satellite_launches/index.html</loc>
+    <lastmod>2024-02-29T16:21:39.069Z</lastmod>
   </url>
 </urlset>

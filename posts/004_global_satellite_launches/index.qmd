@@ -1,0 +1,94 @@
+---
+title: "The New Space Race"
+author: "Dan MacGuigan"
+date: "2024-02-22"
+categories: [python, visualization, GIS, politics, satellites]
+
+css: styles.css
+---
+
+Recently, I listened to a [story](https://www.nytimes.com/2024/02/28/podcasts/the-daily/us-russia-space.html) from the New York Times about how the world is entering a new space race. The US, China, and Russia are all vying for military dominance and developing new weapons to target satellites. The story also touched on the increasing role of private companies in space. 
+
+I was curious to see just how much satellite launches are accelerating. I found a few nice visualizations, like [this one](https://www.economist.com/graphic-detail/2018/10/18/the-space-race-is-dominated-by-new-contenders) from the Economist. Let's see if we can recreate these figures, but with an x-axis that extends to the present day.
+
+For the data, we'll turn to [Jonathan's Space Report](https://planet4589.org/), a fantastic (and old school) website with a massive amount of information on the entire history of spaceflight. It also has tons of cool [data visualizations](https://planet4589.org/space/stats/launches.html). This website appears to be the passion project of Jonathan McDowell, a researcher at the  Harvard-Smithsonian Center for Astrophysics. So thank you Jonathan!
+
+First, let's download and read in the data.
+
+```{python}
+import wget
+import pandas as pd
+import os.path
+
+# download database of launches, if it doesn't already exist
+if not os.path.isfile("satcat.tsv"):
+  print("test")
+  url = 'https://planet4589.org/space/gcat/tsv/cat/satcat.tsv'
+  filename = wget.download(url)
+
+# read in tsv file to data frame
+sats = pd.read_table(filename,  sep='\t')
+
+# we need to remove the first row, since it does not contain data
+sats = sats.drop(index=0)
+
+print("there are " + str(len(sats.index)) + " satellites in this dataset")
+
+# examine data table
+sats.head()
+```
+<br/>
+
+Let's plot the total number of satellites launched through time. First, we'll need to reformat the `LDate` (launch date) column and deal with problematic entries.
+
+```{python}
+import dateutil.parser as dateparser
+import numpy as np
+
+test = sats['LDate']
+
+LDate_fmt=[]
+probs=0
+for i in test:
+  try:
+    LDate_fmt.append(dateparser.parse(i).strftime("%Y-%m-%d"))
+  except Exception:
+    LDate_fmt.append(np.nan)
+    probs += 1
+
+# add new formatted column
+sats['LDate_fmt'] = LDate_fmt
+
+# remove rows with NaN for date
+sats_noNa = sats[sats['LDate_fmt'].notna()].copy()
+
+# sort data frame by date
+sats_noNa.sort_values(by=['LDate_fmt'], inplace=True)
+
+# add cumulative sum column
+max = int(len(sats_noNa.index)) + 1
+print(max)
+sats_noNa['cumsum'] = list(range(1, max, 1))
+
+print(str(probs) + " rows had problematic launch dates, replaced with NaN")
+```
+<br/>
+
+Now for a quick plot.
+
+```{python}
+import plotly.express as px
+
+fig = px.line(sats_noNa, x='LDate_fmt', y="cumsum",
+ title="Cumulative number of global satellites launches",
+ template="plotly_dark",
+ line_shape='hv') # line_shape will plot lines as steps
+fig.update_xaxes(title_text="year")
+fig.update_yaxes(title_text="satellites")
+fig.update_traces(line_color='cyan', line_width=3)
+
+# reduce margins for better viewing on mobile
+fig.update_layout(margin=dict(l=20, r=20, b=20))
+
+fig.show()
+```
