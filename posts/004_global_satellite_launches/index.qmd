@@ -24,10 +24,10 @@ import os.path
 if not os.path.isfile("satcat.tsv"):
   print("test")
   url = 'https://planet4589.org/space/gcat/tsv/cat/satcat.tsv'
-  filename = wget.download(url)
+  wget.download(url)
 
 # read in tsv file to data frame
-sats = pd.read_table(filename,  sep='\t')
+sats = pd.read_table("satcat.tsv",  sep='\t')
 
 # we need to remove the first row, since it does not contain data
 sats = sats.drop(index=0)
@@ -91,4 +91,45 @@ fig.update_traces(line_color='cyan', line_width=3)
 fig.update_layout(margin=dict(l=20, r=20, b=20))
 
 fig.show()
+```
+<br/>
+
+Let's break it down into a yearly bar plot.
+
+```{python}
+import collections
+
+# add column with just launch year
+dates = sats_noNa['LDate_fmt']
+LDate_year=[]
+for i in dates:
+  LDate_year.append(dateparser.parse(i).strftime("%Y"))
+sats_noNa['LYear'] = LDate_year
+
+# get table of launches by year
+LYear_table = dict(collections.Counter(sats_noNa['LYear'].tolist()))
+df_data = []
+for key in LYear_table:
+  df_data.append([key, LYear_table[key]])
+LYear_table_df = pd.DataFrame(df_data, columns=['year', 'launches']) # convert lists to dataframe
+
+# now make a bar plot
+fig = px.bar(LYear_table_df, x='year', y='launches',
+ title="Global satellites launches per year",
+ template="plotly_dark")
+fig.update_traces(marker_color='cyan')
+fig.show()
+```
+<br/>
+
+Our plot looks a little strange. There are massive peaks that seem out of place in 1999, 1982, and a few other years. Were there really more satellites launched in orbit in 1999 than in 2023?
+
+We can see the issue also manifests in our previous line plot of cumulative launches. There are few points where the line goes vertical, indicating that many satellites were launched on the exact same day. The most obvious of these spikes occurred on May 10, 1999. 
+
+Is this real? Or is this an artifact of the data structure we downloaded from [Jonathan's Space Report](https://planet4589.org/)?
+
+Let's isolate the launches on May 10, 1999.
+
+```{python}
+
 ```
