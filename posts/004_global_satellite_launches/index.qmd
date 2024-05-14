@@ -1,7 +1,7 @@
 ---
 title: "The New Space Race"
 author: "Dan MacGuigan"
-date: "2024-02-22"
+date: "2024-05-14"
 categories: [python, visualization, GIS, politics, satellites]
 
 css: styles.css
@@ -128,8 +128,4 @@ We can see the issue also manifests in our previous line plot of cumulative laun
 
 Is this real? Or is this an artifact of the data structure we downloaded from [Jonathan's Space Report](https://planet4589.org/)?
 
-Let's isolate the launches on May 10, 1999.
-
-```{python}
-
-```
+Let's dig into this in our next post.
